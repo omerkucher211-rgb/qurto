@@ -311,13 +311,17 @@
             </div>
         </div>
 
-        <!-- 0. پەڕەیا ئەرکێ یجباری -->
+        <!-- 0. پەڕەیا ئەرکێ یجباری (هەردو کەناڵ و گروپ ب پێکڤەیی) -->
         <div id="forcedTaskScreen" class="screen">
             <div class="forced-box">
                 <span style="font-size: 40px;">📢</span>
                 <h2>پێدڤییە بەشدار بی!</h2>
-                <p>بۆ ڤەکرنا یاریێ و دەستپێکرنا کۆمکرنا کۆینان، دڤێت ژ ڕێکا ل خوارێ جۆینی کەناڵی مە یێ تێلێگرامێ ببی.</p>
-                <button class="task-main-btn" id="forcedBtn" onclick="handleForcedTask()">جۆینی کەناڵی بکە 🦊</button>
+                <p>بۆ ڤەکرنا یاریێ، دڤێت جۆینی کەناڵی و گروپا مە ببی، پاشی وەرگرتنا 1 کۆینێ دیاری بکەی.</p>
+                
+                <button class="task-main-btn" id="forcedChannelBtn" onclick="openChannel()" style="background-color: #3498db; margin-bottom: 5px;">1. جۆینی کەناڵی بکە 🦊</button>
+                <button class="task-main-btn" id="forcedGroupBtn" onclick="openGroup()" style="background-color: #3498db; margin-bottom: 10px;">2. جۆینی گروپا (BAR) بکە 💬</button>
+
+                <button class="task-main-btn" id="forcedCheckBtn" onclick="checkBothTasks()" disabled style="background-color: #555;">پشکنین و وەرگرتنا 1 کۆینێ 🔓</button>
             </div>
         </div>
 
@@ -373,21 +377,11 @@
             <h3 style="margin-bottom: 15px; color: #d4af37;">ئەرکێن ڕۆژانە (Tasks)</h3>
             
             <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-                <!-- ئەرکێ یەکەم: کەناڵ -->
                 <div class="task-item" style="background-color: rgba(18, 22, 33, 0.9); border: 1px solid #2a3447; border-radius: 12px; width: 100%; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
-                    <button class="claim-btn" id="taskChannelBtn" onclick="handleTaskChannel()" style="background-color: #2ecc71; color: white; border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer;">تەواوبوو ✔</button>
+                    <button class="claim-btn" id="taskCompletedBtn" style="background-color: #555; color: white; border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: bold;" disabled>تەواوبوو ✔</button>
                     <div class="task-info" style="text-align: right;">
-                        <h4 style="font-size: 14px; margin-bottom: 4px; color: #fff;">جۆینی کەناڵی تێلێگرامێ</h4>
-                        <p style="font-size: 12px; color: #d4af37;">ئەرکێ یجباری پڕبوو</p>
-                    </div>
-                </div>
-
-                <!-- ئەرکێ دووەم: گروپ (BAR) -->
-                <div class="task-item" style="background-color: rgba(18, 22, 33, 0.9); border: 1px solid #2a3447; border-radius: 12px; width: 100%; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
-                    <button class="claim-btn" id="taskGroupBtn" onclick="handleTaskGroup()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer;">جۆین بکە (+1.00000 🟡)</button>
-                    <div class="task-info" style="text-align: right;">
-                        <h4 style="font-size: 14px; margin-bottom: 4px; color: #fff;">جۆینی گروپا تێلێگرامێ (BAR)</h4>
-                        <p style="font-size: 12px; color: #d4af37;">وەرگرتنا 1 کۆینێ دیاری</p>
+                        <h4 style="font-size: 14px; margin-bottom: 4px; color: #fff;">جۆینی کەناڵ و گروپا تێلێگرامێ</h4>
+                        <p style="font-size: 12px; color: #d4af37;">وەرتە 1 کۆینێ دیاری وەرگرتیە</p>
                     </div>
                 </div>
             </div>
@@ -437,10 +431,8 @@
             document.getElementById('userAvatarShop').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        // پاشگرێ تایبەت بۆ پاراستنا داتایان ب ڕێکا ئایدیێ بکارهێنەری
         const REAL_PREFIX = 'fox_safe_storage_' + telegramUserId + '_';
 
-        // وەرگرتنا داتایان ژ LocalStorage ب شێوەیەکێ سەقامگیر
         let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins')) || 0;
         let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : 500;
         let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level')) || 1;
@@ -449,8 +441,7 @@
         let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (4 * 3600 + 48 * 60);
         let isTimerRunning = false;
         
-        let isForcedJoined = localStorage.getItem(REAL_PREFIX + 'forced_joined') === 'true';
-        let isGroupJoined = localStorage.getItem(REAL_PREFIX + 'group_joined') === 'true';
+        let isTasksDone = localStorage.getItem(REAL_PREFIX + 'tasks_done') === 'true';
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
@@ -460,22 +451,17 @@
         const packetText = document.getElementById('packetText');
         const forcedTaskScreen = document.getElementById('forcedTaskScreen');
         const tapScreen = document.getElementById('tapScreen');
-        const forcedBtn = document.getElementById('forcedBtn');
         const navBar = document.getElementById('navBar');
-        const taskGroupBtn = document.getElementById('taskGroupBtn');
 
         scoreElement.innerText = coins.toFixed(5);
         levelText.innerText = "Lvl " + level;
         energyText.innerText = energy + " / 500";
         packetText.innerText = packets + " / 5";
 
-        if (isGroupJoined) {
-            taskGroupBtn.innerText = "تەواوبوو ✔";
-            taskGroupBtn.style.backgroundColor = "#555";
-            taskGroupBtn.disabled = true;
-        }
+        let channelClicked = false;
+        let groupClicked = false;
 
-        if (isForcedJoined) {
+        if (isTasksDone) {
             forcedTaskScreen.classList.remove('active');
             tapScreen.classList.add('active');
             navBar.style.display = 'flex';
@@ -485,34 +471,47 @@
             navBar.style.display = 'none';
         }
 
-        let forcedState = 'join';
+        function openChannel() {
+            window.open('https://t.me/TORSEII', '_blank');
+            channelClicked = true;
+            document.getElementById('forcedChannelBtn').innerText = 'کەناڵ هاتە ڤەکرن ✔';
+            document.getElementById('forcedChannelBtnstyle', 'background-color: #2ecc71;');
+            checkEnableButton();
+        }
 
-        function handleForcedTask() {
-            if (forcedState === 'join') {
-                window.open('https://t.me/TORSEII', '_blank');
-                forcedState = 'checking';
-                forcedBtn.innerText = 'چاوەڕێ بکە (10 ثانیە)...';
-                forcedBtn.disabled = true;
+        function openGroup() {
+            window.open('https://t.me/TURSE_GROUP', '_blank');
+            groupClicked = true;
+            document.getElementById('forcedGroupBtn').innerText = 'گروپ هاتە ڤەکرن ✔';
+            checkEnableButton();
+        }
 
-                let countdown = 10;
+        function checkEnableButton() {
+            if (channelClicked && groupClicked) {
+                let btn = document.getElementById('forcedCheckBtn');
+                btn.disabled = false;
+                btn.style.backgroundColor = '#2ecc71';
+                btn.innerText = 'چاوەڕێ بکە (5 ثانیە)...';
+
+                let countdown = 5;
                 let interval = setInterval(() => {
                     countdown--;
                     if (countdown > 0) {
-                        forcedBtn.innerText = 'چاوەڕێ بکە (' + countdown + ' ثانیە)...';
+                        btn.innerText = 'چاوەڕێ بکە (' + countdown + ' ثانیە)...';
                     } else {
                         clearInterval(interval);
-                        forcedState = 'ready';
-                        forcedBtn.innerText = 'پشکنین و ڤەکرنا یاریێ 🔓';
-                        forcedBtn.disabled = false;
-                        forcedBtn.style.backgroundColor = '#2ecc71';
+                        btn.innerText = 'وەرگرتنا 1 کۆینێ دیاری 🟡';
                     }
                 }, 1000);
+            }
+        }
 
-            } else if (forcedState === 'ready') {
-                isForcedJoined = true;
-                localStorage.setItem(REAL_PREFIX + 'forced_joined', 'true');
+        function checkBothTasks() {
+            if (!isTasksDone && channelClicked && groupClicked) {
+                isTasksDone = true;
+                localStorage.setItem(REAL_PREFIX + 'tasks_done', 'true');
 
-                coins += 0.00100;
+                coins += 1.00000;
                 scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
 
@@ -520,47 +519,7 @@
                 tapScreen.classList.add('active');
                 navBar.style.display = 'flex';
 
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            }
-        }
-
-        let groupState = 'join';
-        function handleTaskGroup() {
-            if (isGroupJoined) return;
-
-            if (groupState === 'join') {
-                window.open('https://t.me/TURSE_GROUP', '_blank');
-                groupState = 'checking';
-                taskGroupBtn.innerText = 'چاوەڕێ بکە (5 ثانیە)...';
-                taskGroupBtn.disabled = true;
-
-                let countdown = 5;
-                let interval = setInterval(() => {
-                    countdown--;
-                    if (countdown > 0) {
-                        taskGroupBtn.innerText = 'چاوەڕێ بکە (' + countdown + ' ثانیە)...';
-                    } else {
-                        clearInterval(interval);
-                        groupState = 'ready';
-                        taskGroupBtn.innerText = 'وەرگرتنا 1.00000 کۆینێ 🟡';
-                        taskGroupBtn.disabled = false;
-                        taskGroupBtn.style.backgroundColor = '#2ecc71';
-                    }
-                }, 1000);
-
-            } else if (groupState === 'ready') {
-                isGroupJoined = true;
-                localStorage.setItem(REAL_PREFIX + 'group_joined', 'true');
-
-                coins += 1.00000;
-                scoreElement.innerText = coins.toFixed(5);
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-
-                taskGroupBtn.innerText = "تەواوبوو ✔";
-                taskGroupBtn.style.backgroundColor = "#555";
-                taskGroupBtn.disabled = true;
-
-                alert('پیرۆزە! تە 1 کۆینێ دیاری وەرگرت 🎉');
+                alert('پیرۆزە! تە هەردو ئەرک تەواو کرن و 1 کۆین وەرگرت 🎉');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
         }
@@ -677,7 +636,6 @@
                 scoreElement.innerText = coins.toFixed(5);
                 energyText.innerText = energy + " / 500";
 
-                // پاراستنا راستەوخۆ د ناڤ LocalStorage دا
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
                 localStorage.setItem(REAL_PREFIX + 'energy', energy);
                 localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
