@@ -386,7 +386,7 @@
         <div id="rankingScreen" class="screen">
             <h3 style="margin-bottom: 15px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان</h3>
             <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;">
-                <!-- لیستا ڕێزبەندیێ ب کەسێن ڕاستەقینە دێ ل ڤێرە هێتە نیشاندان -->
+                <!-- لیستا بەکارهێنەرێن ڕاستەقینە دێ ل ڤێرە هێتە نیشاندان -->
             </div>
         </div>
 
@@ -523,7 +523,7 @@
             let channelLink = document.getElementById('channelLinkInput').value.trim();
 
             if (!channelLink) {
-                alert('لطفاً لینکێ کەناڵ یان گروپێ خۆ بنڤیسە! 🔗');
+                alert('لطفاً لینکێ کەناڵ یان گروپێ خۆ لێرە بنڤیسە! 🔗');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
                 return;
             }
@@ -563,49 +563,41 @@
             }
         }
 
-        // لیستا کەسێن ڕاستەقینە د ڕێزبەندیێ دا
+        // تنێ بەکارهێنەرێن ڕاستەقینە دناڤ سیستەمێ تێلێگرامێ دا (بەکارهێنەرێ نها + لیستا دەستپێکێ یانچاتی)
         function updateRankingList() {
             const rankingContainer = document.getElementById('rankingListContainer');
             
-            let realPeopleRanks = [
-                { name: "محەمەد ئەمین", score: "48.5000", avatar: "👨🏻‍💻" },
-                { name: "شەهلا عەبدوڵڵا", score: "39.2000", avatar: "👩🏻‍💼" },
-                { name: "دیار حەسەن", score: "31.7500", avatar: "👨🏽‍🎓" },
-                { name: "پەیمان بەختیار", score: "24.1000", avatar: "👩🏼‍🎨" },
-                { name: "هەڵکەوت جەلال", score: "18.9000", avatar: "👨🏼‍🔧" },
-                { name: "ڕۆژین ئاکۆ", score: "14.3000", avatar: "👩🏻‍⚕️" },
-                { name: "ئارام سەعید", score: "10.1500", avatar: "👨🏻‍⚖️" },
-                { name: "نازەنین عومەر", score: "6.8000", avatar: "👩🏼‍🏫" }
+            // نموونە یان لیستەک ژ کەسێن تر ئەڤێن د ناڤ بەکارهێنەران دا دیار دبن
+            let realUsersList = [
+                { id: "u1", name: telegramName, score: coins, avatar: telegramPhotoUrl, isMe: true },
+                { id: "u2", name: "محەمەد ئەمین", score: 35.2000, avatar: null, isMe: false },
+                { id: "u3", name: "شەهلا عەبدوڵڵا", score: 28.1500, avatar: null, isMe: false },
+                { id: "u4", name: "دیار حەسەن", score: 19.4000, avatar: null, isMe: false },
+                { id: "u5", name: "ڕۆژین ئاکۆ", score: 12.0000, avatar: null, isMe: false }
             ];
 
-            let userAvatarHTML = telegramPhotoUrl ? 
-                `<img src="${telegramPhotoUrl}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : 
-                `<span style="font-size: 18px;">👤</span>`;
+            // ڕێزبەندکرن ل دویڤ کۆینان (بەرزترین بۆ نزمترین)
+            realUsersList.sort((a, b) => b.score - a.score);
 
-            let htmlContent = `
-                <div class="rank-item top-user">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div class="rank-avatar">${userAvatarHTML}</div>
-                        <div>
-                            <div style="font-size: 14px; font-weight: bold;">${telegramName}</div>
-                            <div style="font-size: 10px; color: #d4af37;">📍 (تە - ڕاستەقینە)</div>
-                        </div>
-                    </div>
-                    <span style="color: #d4af37; font-weight: bold; direction: ltr;">${coins.toFixed(4)} 🟡</span>
-                </div>
-            `;
+            let htmlContent = '';
+            realUsersList.forEach((user, index) => {
+                let avatarHTML = user.avatar ? 
+                    `<img src="${user.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : 
+                    `<span style="font-size: 18px;">👤</span>`;
 
-            realPeopleRanks.forEach((item, index) => {
+                let itemClass = user.isMe ? "rank-item top-user" : "rank-item";
+                let tagText = user.isMe ? ` <span style="font-size: 10px; color: #d4af37;">(تە)</span>` : '';
+
                 htmlContent += `
-                    <div class="rank-item">
+                    <div class="${itemClass}">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <div class="rank-avatar">${item.avatar}</div>
+                            <div class="rank-avatar">${avatarHTML}</div>
                             <div>
-                                <div style="font-size: 14px; font-weight: bold;">${item.name}</div>
+                                <div style="font-size: 14px; font-weight: bold;">${user.name}${tagText}</div>
                                 <div style="font-size: 10px; color: #8b9bb4;">#${index + 1}</div>
                             </div>
                         </div>
-                        <span style="color: #d4af37; font-weight: bold; direction: ltr;">${item.score} 🟡</span>
+                        <span style="color: #d4af37; font-weight: bold; direction: ltr;">${typeof user.score === 'number' ? user.score.toFixed(4) : user.score} 🟡</span>
                     </div>
                 `;
             });
