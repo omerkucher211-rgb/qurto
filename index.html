@@ -63,7 +63,7 @@
             font-weight: bold;
         }
 
-        /* بەشێن سکرینان (Screens) */
+        /* بەشێن سکرینان */
         .screen {
             display: none;
             flex-direction: column;
@@ -130,7 +130,6 @@
             font-weight: bold;
             cursor: pointer;
             text-align: center;
-            text-decoration: none;
         }
 
         /* تەسکی چەناڵێ */
@@ -149,6 +148,7 @@
         .task-info h4 {
             font-size: 14px;
             margin-bottom: 4px;
+            color: #fff;
         }
 
         .task-info p {
@@ -172,7 +172,7 @@
             cursor: not-allowed;
         }
 
-        /* لژنا خوارێ (Navigation Bar) */
+        /* لژنا خوارێ (Navigation Bar) - ڕیزبەندیا ڕاستەقینە */
         .nav-bar {
             display: flex;
             justify-content: space-around;
@@ -190,6 +190,7 @@
             text-decoration: none;
             gap: 4px;
             cursor: pointer;
+            flex: 1;
         }
 
         .nav-item.active {
@@ -206,15 +207,15 @@
     <div class="game-container">
         <!-- سەرێ یاریێ -->
         <div class="header">
+            <div class="coin-balance">
+                FOX <span id="score">0.0000</span> 🟡
+            </div>
             <div class="user-level">
-                <span>🦊</span>
-                <div>
+                <div style="text-align: right;">
                     <div style="font-size: 12px; font-weight: bold;">MALAGA 🇪🇸</div>
                     <div style="font-size: 10px; color: #d4af37;">Lvl 1</div>
                 </div>
-            </div>
-            <div class="coin-balance">
-                🟡 <span id="score">0.0000</span> <span style="color: #2ecc71;">FOX</span>
+                <span>🦊</span>
             </div>
         </div>
 
@@ -226,44 +227,46 @@
 
             <div class="info-card">
                 <div class="info-row">
-                    <span>📦 پەکێت:</span>
                     <span style="font-weight: bold;">4/5</span>
+                    <span>:پەکێت 📦</span>
                 </div>
                 <div class="info-row" style="color: #8b9bb4; font-size: 12px;">
-                    <span>پەکیتا داهاتی:</span>
                     <span>04:48:00</span>
+                    <span>:پەکیتا داهاتی</span>
                 </div>
                 <hr style="border: 0; border-top: 1px solid #2a3447;">
                 <div class="info-row">
-                    <span>⚡ ئینرجی:</span>
                     <span style="font-weight: bold;">494 / 500</span>
+                    <span>:ئینرجی ⚡</span>
                 </div>
-                <button class="action-btn">⚡ بەکاربینە (Use)</button>
+                <button class="action-btn">بەکاربینە (Use) ⚡</button>
             </div>
         </div>
 
-        <!-- 2. پەڕەیا تاڕکان (Tasks Screen) -->
+        <!-- 2. پەڕەیا شوپ (Shop Screen) -->
+        <div id="shopScreen" class="screen" style="justify-content: center; align-items: center;">
+            <h3 style="color: #d4af37;">🛒 دووکان</h3>
+        </div>
+
+        <!-- 3. پەڕەیا ڕیکلام (Ads Screen) -->
+        <div id="adsScreen" class="screen" style="justify-content: center; align-items: center;">
+            <h3 style="color: #d4af37;">🎬 ڕیکلام</h3>
+        </div>
+
+        <!-- 4. پەڕەیا ئەرکان (Tasks Screen) -->
         <div id="tasksScreen" class="screen">
             <h3 style="margin-bottom: 15px; color: #d4af37;">ئەرکێن ڕۆژانە (Tasks)</h3>
             
             <div class="task-item">
-                <div class="task-info">
-                    <h4>جۆینی چەناڵا تێلێگرامێ بکه</h4>
+                <button class="claim-btn" id="taskBtn" onclick="completeTask()">جۆین بکە</button>
+                <div class="task-info" style="text-align: right;">
+                    <h4>جۆینی چەناڵا تێلێگرامێ بکە</h4>
                     <p>+0.001 FOX</p>
                 </div>
-                <button class="claim-btn" id="taskBtn" onclick="completeTask()">جۆین بکە</button>
             </div>
         </div>
 
-        <!-- پەڕەیێن دی (Shop و Ads - بۆ نموونە) -->
-        <div id="shopScreen" class="screen" style="justify-content: center; align-items: center;">
-            <h3>🛒 دووکان (بزحف زوو دێ هێت)</h3>
-        </div>
-        <div id="adsScreen" class="screen" style="justify-content: center; align-items: center;">
-            <h3>🎬 ڕیکلام (بزحف زوو دێ هێت)</h3>
-        </div>
-
-        <!-- لژنا خوارێ (Navigation Bar) -->
+        <!-- لژنا خوارێ (Navigation Bar) - ڕیزبەندی: Tap, Shop, Ads, Tasks -->
         <div class="nav-bar">
             <a onclick="switchTab('tapScreen', event)" class="nav-item active" id="navTap">
                 <span class="icon">👆</span>
@@ -294,7 +297,7 @@
         const tapBtn = document.getElementById('tapBtn');
         let taskDone = false;
 
-        // لێدانا کۆینان ب کلیککرنێ
+        // زێدەکرنا 0.0001 ل هەڕ کلیکەکێ
         tapBtn.addEventListener('click', function() {
             coins += 0.0001;
             scoreElement.innerText = coins.toFixed(4);
@@ -313,13 +316,11 @@
             event.currentTarget.classList.add('active');
         }
 
-        // جێبەجێکرنا تەسکی چەناڵێ
+        // جێبەجێکرنا تەسکی چەناڵێ و زێدەکرنا 0.001
         function completeTask() {
             if (!taskDone) {
-                // ڤەکردنا چەناڵا تە ل تێلێگرامێ یان براوزەری
                 window.open('https://t.me/TORSEII', '_blank');
 
-                // زێدەکرنا 0.001 بۆ سەر کۆینان
                 coins += 0.0010;
                 scoreElement.innerText = coins.toFixed(4);
                 
