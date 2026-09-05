@@ -328,6 +328,52 @@
             flex-direction: column;
             gap: 12px;
         }
+
+        /* دیزاینا چرخی 12 پشکی */
+        .wheel-wrapper {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 10px auto;
+        }
+        .wheel-pointer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 22px solid #e74c3c;
+            z-index: 20;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
+        }
+        .wheel-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid #d4af37;
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.15, 0.8, 0.15, 1);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+        .wheel-slice {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            left: 0; top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+            border: 0.5px solid rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
@@ -412,25 +458,22 @@
             </div>
         </div>
 
-        <!-- 2. پەڕەیا شوپ (دووکان و بەشێن نوی) -->
+        <!-- 2. پەڕەیا شوپ (دووکان) -->
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px; padding-top: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 2px;">🛒 دووکان و پەرەپێدان</h3>
 
-            <!-- کڕینا پرێمیوم -->
             <div class="shop-section" style="border: 2px solid #d4af37; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(18, 22, 33, 0.95) 100%);">
                 <h4 style="font-size: 14px; color: #d4af37;">پەکەتا پرێمیوم (2x Tap) ✨</h4>
                 <p style="font-size: 11px; color: #b0c4de;">تەپ تەپا تە دێ بیتە دوو هێندە بۆ هەمیشە.</p>
                 <button id="buyPremiumBtn" onclick="buyPremium()" style="background-color: #f39c12; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">کڕین (1 FOX 🟡)</button>
             </div>
 
-            <!-- پێشڤەبرنا ئینرجییێ -->
             <div class="shop-section">
                 <h4 style="font-size: 14px; color: #fff;">بەرفرهکرنا ئینرجییێ ⚡ (+500 کاپاسیتى)</h4>
                 <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: <span id="energyUpgradeCost">0.50000</span> FOX</p>
                 <button onclick="upgradeEnergyCapacity()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">پێشڤەبرن (Upgrade)</button>
             </div>
 
-            <!-- مێمبەر بۆ کەناڵی -->
             <div class="shop-section">
                 <h4 style="font-size: 14px; color: #fff;">100 مێمبەر بۆ کەناڵی 🚀</h4>
                 <input type="text" id="channelLinkInput" placeholder="لینکێ کەناڵی لێرە بنڤیسە..." style="width: 100%; padding: 7px; border-radius: 6px; border: 1px solid #d4af37; background-color: #0b0f19; color: #fff; font-size: 12px; text-align: right; outline: none;">
@@ -438,29 +481,31 @@
             </div>
         </div>
 
-        <!-- 3. پەڕەیا ئەرکان و بانگکرنا هەڤالان و چرخی -->
+        <!-- 3. پەڕەیا ئەرکان و چرخێ 12 پشکی -->
         <div id="tasksScreen" class="screen" style="gap: 10px;">
-            <h3 style="color: #d4af37; margin-bottom: 5px;">🌟 ئەرک و دیاری</h3>
+            <h3 style="color: #d4af37; margin-bottom: 2px;">🌟 ئەرک و چرخی بەختەوەرێ</h3>
 
-            <!-- دیارییا ڕۆژانە -->
+            <div class="shop-section" style="text-align: center; align-items: center;">
+                <h4 style="font-size: 14px; color: #d4af37; margin-bottom: 4px;">🎡 چرخی بەختەوەرێ (12 خەڵات)</h4>
+                
+                <div class="wheel-wrapper">
+                    <div class="wheel-pointer"></div>
+                    <div class="wheel-container" id="wheelContainer"></div>
+                </div>
+
+                <button id="spinBtn" onclick="spinTheWheel()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 5px;">چراندنا چرخێ 🎯</button>
+            </div>
+
             <div class="shop-section">
                 <h4 style="font-size: 14px; color: #d4af37;">📅 دیارییا ڕۆژانە (Daily Streak)</h4>
                 <p style="font-size: 11px; color: #b0c4de;">هەموو ڕۆژەکێ وەرگرتنا 0.20000 FOX!</p>
                 <button id="claimDailyBtn" onclick="claimDailyBonus()" style="background-color: #27ae60; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا دیارییا ڕۆژانە 🎁</button>
             </div>
 
-            <!-- بانگکرنا هەڤالان (Referral) -->
             <div class="shop-section">
                 <h4 style="font-size: 14px; color: #d4af37;">👥 بانگکرنا هەڤالان (Referral System)</h4>
                 <p style="font-size: 11px; color: #b0c4de;">لینکێ خۆ پشکدار بکە و 0.50000 کۆین بۆ هەر هەڤالەکی وەربگرە!</p>
                 <button onclick="shareReferralLink()" style="background-color: #9b59b6; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">هنارتنا لینکێ بانگکرنێ 🔗</button>
-            </div>
-
-            <!-- چرخی بەختەوەرێ -->
-            <div class="shop-section">
-                <h4 style="font-size: 14px; color: #d4af37;">🎡 چرخی بەختەوەرێ (Spin Wheel)</h4>
-                <p style="font-size: 11px; color: #b0c4de;">ڕۆژانە جارەکێ ب بەخت کۆینێن بێ بەرانبەر بابهێنە!</p>
-                <button onclick="spinTheWheel()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">خولاندنا چرخێ 🎯</button>
             </div>
         </div>
 
@@ -515,7 +560,7 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        const REAL_PREFIX = 'fox_ultimate_storage_v3_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_ultimate_storage_v4_' + telegramUserId + '_';
 
         let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins')) || 0;
         let maxEnergy = parseInt(localStorage.getItem(REAL_PREFIX + 'max_energy')) || 500;
@@ -614,11 +659,111 @@
             }
         }
 
+        // 12 تشتێن چرخی بەختەوەرێ
+        const wheelPrizes = [
+            { text: "+0.05 FOX", type: "coins", value: 0.05, color: "#e74c3c" },
+            { text: "+0.10 FOX", type: "coins", value: 0.10, color: "#3498db" },
+            { text: "پەکێتا ڤالا ❌", type: "none", value: 0, color: "#2c3e50" },
+            { text: "+0.20 FOX", type: "coins", value: 0.20, color: "#2ecc71" },
+            { text: "+500 ئینرجی ⚡", type: "energy", value: 500, color: "#f39c12" },
+            { text: "+0.02 FOX", type: "coins", value: 0.02, color: "#9b59b6" },
+            { text: "سزایێ -0.05 📉", type: "coins", value: -0.05, color: "#34495e" },
+            { text: "+0.50 FOX 🟡", type: "coins", value: 0.50, color: "#1abc9c" },
+            { text: "+1000 ئینرجی ⚡", type: "energy", value: 1000, color: "#d35400" },
+            { text: "+0.15 FOX", type: "coins", value: 0.15, color: "#2980b9" },
+            { text: "بەختێ دووبارە 🔄", type: "none", value: 0, color: "#8e44ad" },
+            { text: "+1.00 FOX ⭐", type: "coins", value: 1.00, color: "#f1c40f" }
+        ];
+
+        let currentRotation = 0;
+
+        function renderWheel() {
+            const container = document.getElementById('wheelContainer');
+            container.innerHTML = '';
+            let sliceAngle = 360 / wheelPrizes.length;
+
+            wheelPrizes.forEach((prize, index) => {
+                let slice = document.createElement('div');
+                slice.className = 'wheel-slice';
+                slice.style.backgroundColor = prize.color;
+                // چراندن و جهگیرکرنا پارچەیێن چرخێ
+                slice.style.transform = `rotate(${index * sliceAngle}deg) skewY(-30deg)`;
+                
+                let span = document.createElement('span');
+                span.style.transform = `skewY(30deg) rotate(15deg)`;
+                span.style.position = 'absolute';
+                span.style.top = '15px';
+                span.style.right = '15px';
+                span.style.fontSize = '8px';
+                span.style.width = '55px';
+                span.style.display = 'block';
+                span.style.textAlign = 'center';
+                span.innerText = prize.text;
+
+                slice.appendChild(span);
+                container.appendChild(slice);
+            });
+        }
+        renderWheel();
+
+        // چراندنا چرخی بەختەوەرێ
+        function spinTheWheel() {
+            let today = new Date().toDateString();
+            if (lastSpinDay === today) {
+                showModal('چرخی بەختەوەرێ 🎡', 'تە ئەڤرۆ چرخ ڤەگوهاست، سبە دێ سەرلەنوێ ڤەکەت!');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
+            }
+            
+            let spinBtn = document.getElementById('spinBtn');
+            spinBtn.disabled = true;
+
+            lastSpinDay = today;
+            localStorage.setItem(REAL_PREFIX + 'last_spin', today);
+
+            let randomIndex = Math.floor(Math.random() * wheelPrizes.length);
+            let sliceAngle = 360 / wheelPrizes.length;
+            
+            // زڤرینەکا مەزن (بۆ نموونە 5 بۆ 8 خولان + زاویەیا تشتێ هەلبژاردى)
+            let extraSpins = 360 * 6;
+            let targetDegree = extraSpins + (360 - (randomIndex * sliceAngle) - (sliceAngle / 2));
+            
+            currentRotation += targetDegree;
+            let wheelContainer = document.getElementById('wheelContainer');
+            wheelContainer.style.transform = `rotate(${currentRotation}deg)`;
+
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+
+            setTimeout(() => {
+                spinBtn.disabled = false;
+                let wonPrize = wheelPrizes[randomIndex];
+
+                if (wonPrize.type === 'coins') {
+                    coins += wonPrize.value;
+                    if (coins < 0) coins = 0;
+                    scoreElement.innerText = coins.toFixed(5);
+                    localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                    showModal('ئەنجامێ چرخێ 🎯', `پیرۆزە! تە (${wonPrize.text}) وەرگرت!`);
+                } else if (wonPrize.type === 'energy') {
+                    energy += wonPrize.value;
+                    if (energy > maxEnergy) maxEnergy = energy;
+                    energyText.innerText = energy + " / " + maxEnergy;
+                    localStorage.setItem(REAL_PREFIX + 'energy', energy);
+                    localStorage.setItem(REAL_PREFIX + 'max_energy', maxEnergy);
+                    showModal('ئەنجامێ چرخێ ⚡', `پیرۆزە! تە (${wonPrize.text}) وەرگرت!`);
+                } else {
+                    showModal('ئەنجامێ چرخێ ❌', 'ئەڤرۆ بەختێ تە نەبوو، پشکا ڤالا دەرکەت! سبە تاقی بکەڤە.');
+                }
+
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }, 4000);
+        }
+
         // دیارییا ڕۆژانە
         function claimDailyBonus() {
             let today = new Date().toDateString();
             if (lastDailyClaim === today) {
-                showModal('ئاگاداری 📅', 'تە دیارییا ئەڤرۆ ڕوە ڕۆژانە وەرگرتییە! سبە وەرەڤە.');
+                showModal('ئاگاداری 📅', 'تە دیارییا ئەڤرۆ ڕۆژانە وەرگرتییە! سبە وەرەڤە.');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
                 return;
             }
@@ -631,34 +776,11 @@
             if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // سیستمێ بانگکرنا هەڤالان (Referral)
         function shareReferralLink() {
             let refLink = `https://t.me/share/url?url=https://t.me/YourBotName?start=ref_${telegramUserId}&text=ڤێ یارییا خۆش بکە و پێکڤە کۆینان کۆم بکەین! 🦊🔥`;
             window.open(refLink, '_blank');
         }
 
-        // چرخی بەختەوەرێ
-        function spinTheWheel() {
-            let today = new Date().toDateString();
-            if (lastSpinDay === today) {
-                showModal('چرخی بەختەوەرێ 🎡', 'تە ئەڤرۆ چرخ ڤەگوهاست، سبە دێ سەرلەنوێ ڤەکەت!');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-                return;
-            }
-            lastSpinDay = today;
-            localStorage.setItem(REAL_PREFIX + 'last_spin', today);
-
-            let rewards = [0.1, 0.3, 0.5, 1.0, 0.05, 0.2];
-            let won = rewards[Math.floor(Math.random() * rewards.length)];
-            coins += won;
-            scoreElement.innerText = coins.toFixed(5);
-            localStorage.setItem(REAL_PREFIX + 'coins', coins);
-
-            showModal('چرخی بەختەوەرێ 🎯', `پیرۆزە! ب بەخت تە (${won.toFixed(5)} FOX) وەرگرت!`);
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        }
-
-        // پێشڤەبرنا ئینرجییێ
         function upgradeEnergyCapacity() {
             let upgradeCost = 0.50000;
             if (coins >= upgradeCost) {
