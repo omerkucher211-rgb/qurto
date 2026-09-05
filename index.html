@@ -131,6 +131,10 @@
             text-align: center;
         }
 
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
         .task-item {
             background-color: rgba(18, 22, 33, 0.9);
             border: 1px solid #2a3447;
@@ -202,7 +206,7 @@
 <body>
 
     <div class="game-container">
-        <!-- سەرێ یاریێ (گۆڕینا جهێ ئیمۆجیێ ڕۆڤی بۆ لایێ چەپێ) -->
+        <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="user-level">
                 <span>🦊</span>
@@ -233,10 +237,10 @@
                 </div>
                 <hr style="border: 0; border-top: 1px solid #2a3447;">
                 <div class="info-row">
-                    <span style="font-weight: bold;">494 / 500</span>
+                    <span style="font-weight: bold;" id="energyText">500 / 500</span>
                     <span>:ئینرجی ⚡</span>
                 </div>
-                <button class="action-btn">بەکاربینە (Use) ⚡</button>
+                <button class="action-btn" id="useEnergyBtn" onclick="refillEnergy()">بەکاربینە (Use) ⚡</button>
             </div>
         </div>
 
@@ -263,7 +267,7 @@
             </div>
         </div>
 
-        <!-- لژنا خوارێ (گۆڕینا جهێ Task و Tap لێک) -->
+        <!-- لژنا خوارێ -->
         <div class="nav-bar">
             <a onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">📋</span>
@@ -292,30 +296,57 @@
         let savedCoins = localStorage.getItem('fox_coins') || sessionStorage.getItem('fox_coins');
         let coins = savedCoins !== null ? parseFloat(savedCoins) : 0.0000;
         
+        let savedEnergy = localStorage.getItem('fox_energy');
+        let energy = savedEnergy !== null ? parseInt(savedEnergy) : 500;
+
         let taskDone = (localStorage.getItem('fox_task_done') === 'true' || sessionStorage.getItem('fox_task_done') === 'true');
 
         const scoreElement = document.getElementById('score');
         const tapBtn = document.getElementById('tapBtn');
         const taskBtn = document.getElementById('taskBtn');
+        const energyText = document.getElementById('energyText');
 
         scoreElement.innerText = coins.toFixed(4);
+        energyText.innerText = energy + " / 500";
 
         if (taskDone) {
             taskBtn.innerText = 'وەرگرتن ✔';
             taskBtn.disabled = true;
         }
 
+        // کلیککرنا ل سەر کۆینی (Tap)
         tapBtn.addEventListener('click', function() {
-            coins += 0.0001;
-            scoreElement.innerText = coins.toFixed(4);
-            
-            localStorage.setItem('fox_coins', coins);
-            sessionStorage.setItem('fox_coins', coins);
+            if (energy > 0) {
+                energy -= 1;
+                coins += 0.0001;
 
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
+                scoreElement.innerText = coins.toFixed(4);
+                energyText.innerText = energy + " / 500";
+
+                localStorage.setItem('fox_coins', coins);
+                sessionStorage.setItem('fox_coins', coins);
+                localStorage.setItem('fox_energy', energy);
+
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('medium');
+                }
+            } else {
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
             }
         });
+
+        // ڤەگەراندنا ئینرجیی دەما دوگمەیا (Use) بەکارئینانێ دگۆژی
+        function refillEnergy() {
+            energy = 500;
+            energyText.innerText = energy + " / 500";
+            localStorage.setItem('fox_energy', energy);
+
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
 
         function switchTab(screenId, event) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
