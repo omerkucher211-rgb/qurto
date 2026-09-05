@@ -426,30 +426,25 @@
         tg.expand();
 
         let telegramUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
-        let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id : null;
+        let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id : 'malaga_permanent_fixed_id';
         let telegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'MALAGA 🇪🇸';
         let telegramPhotoUrl = telegramUser && telegramUser.photo_url ? telegramUser.photo_url : null;
-
-        if (!telegramUserId) {
-            telegramUserId = 'malaga_user_id_fixed';
-        }
 
         document.getElementById('userNameText').innerText = telegramName;
 
         if (telegramPhotoUrl) {
-            const headerAvatarContainer = document.getElementById('userAvatarHeader');
-            headerAvatarContainer.innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
-
-            const shopAvatarContainer = document.getElementById('userAvatarShop');
-            shopAvatarContainer.innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
+            document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
+            document.getElementById('userAvatarShop').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        const REAL_PREFIX = 'fox_permanent_save_v2_' + telegramUserId + '_';
+        // پاشگرێ تایبەت بۆ پاراستنا داتایان ب ڕێکا ئایدیێ بکارهێنەری
+        const REAL_PREFIX = 'fox_safe_storage_' + telegramUserId + '_';
 
-        let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins') || 0);
-        let energy = parseInt(localStorage.getItem(REAL_PREFIX + 'energy') ?? 500);
-        let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level') || 1);
-        let totalTaps = parseInt(localStorage.getItem(REAL_PREFIX + 'total_taps') || 0);
+        // وەرگرتنا داتایان ژ LocalStorage ب شێوەیەکێ سەقامگیر
+        let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins')) || 0;
+        let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : 500;
+        let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level')) || 1;
+        let totalTaps = parseInt(localStorage.getItem(REAL_PREFIX + 'total_taps')) || 0;
         let packets = localStorage.getItem(REAL_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'packets')) : 4;
         let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (4 * 3600 + 48 * 60);
         let isTimerRunning = false;
@@ -525,9 +520,7 @@
                 tapScreen.classList.add('active');
                 navBar.style.display = 'flex';
 
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
         }
 
@@ -568,10 +561,7 @@
                 taskGroupBtn.disabled = true;
 
                 alert('پیرۆزە! تە 1 کۆینێ دیاری وەرگرت 🎉');
-
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
         }
 
@@ -589,33 +579,12 @@
                 scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
 
-                let botToken = "BOTE_TOKEN_E_XVE"; 
-                let myChatId = "CHAT_ID_E_XVE";   
-
-                let message = `🔔 کڕینەکا نوی ل یاریێ هاتە کرن!\n\n` +
-                              `👤 ناڤێ بکارهێنەری: ${telegramName}\n` +
-                              `🆔 ئایدیێ تەلەگرامی: ${telegramUserId}\n` +
-                              `🔗 لینکێ کەناڵی: ${channelLink}\n` +
-                              `📦 مەتریا کڕی: 100 مێمبەر`;
-
-                if (botToken !== "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs" && myChatId !== "8920889734) {
-                    fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${myChatId}&text=${encodeURIComponent(message)}`)
-                    .then(response => response.json())
-                    .then(data => console.log("نامە هات هنارتن:", data))
-                    .catch(err => console.log("هەڵە د هنارتنێ دا:", err));
-                }
-
                 alert('پیرۆزە! تە 100 مێمبەر کڕین 🎉');
                 document.getElementById('channelLinkInput').value = '';
-
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
                 alert('کوینێن تە بس نینن! 🟡');
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('error');
-                }
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
         }
 
@@ -708,6 +677,7 @@
                 scoreElement.innerText = coins.toFixed(5);
                 energyText.innerText = energy + " / 500";
 
+                // پاراستنا راستەوخۆ د ناڤ LocalStorage دا
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
                 localStorage.setItem(REAL_PREFIX + 'energy', energy);
                 localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
@@ -718,26 +688,16 @@
 
                 const floatingEl = document.createElement('div');
                 floatingEl.className = 'floating-score';
-                
-                let displayReward = "+" + clickReward.toFixed(5);
-                floatingEl.innerText = displayReward;
-                
+                floatingEl.innerText = "+" + clickReward.toFixed(5);
                 floatingEl.style.left = (x - 30) + 'px';
                 floatingEl.style.top = (y - 20) + 'px';
 
                 tapBtn.appendChild(floatingEl);
+                setTimeout(() => floatingEl.remove(), 800);
 
-                setTimeout(() => {
-                    floatingEl.remove();
-                }, 800);
-
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.impactOccurred('medium');
-                }
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             } else {
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('error');
-                }
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
         });
 
@@ -751,18 +711,14 @@
                 energyText.innerText = energy + " / 500";
                 localStorage.setItem(REAL_PREFIX + 'energy', energy);
 
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
 
                 if (!isTimerRunning) {
                     totalSeconds = (4 * 3600 + 48 * 60);
                     startTimer();
                 }
             } else {
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('error');
-                }
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
         }
 
