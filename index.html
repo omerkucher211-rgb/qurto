@@ -307,7 +307,7 @@
 <body>
 
     <audio id="bgMusic" loop preload="auto">
-        <source src="abdulqahar_zakhoee.mp3" type="audio/mpeg">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
     </audio>
 
     <script>
@@ -326,7 +326,11 @@
                 music.play().then(() => {
                     isMusicPlaying = true;
                     document.getElementById('soundToggleBtn').innerHTML = '🎵 ON';
-                }).catch(e => console.log("Audio play blocked:", e));
+                }).catch(e => {
+                    console.log("Audio play error, using fallback stream:", e);
+                    isMusicPlaying = false;
+                    document.getElementById('soundToggleBtn').innerHTML = '🔇 OFF';
+                });
             }
         }
 
@@ -341,7 +345,10 @@
                 music.play().then(() => {
                     isMusicPlaying = true;
                     btn.innerHTML = '🎵 ON';
-                }).catch(e => console.log("Audio play blocked:", e));
+                }).catch(e => {
+                    console.log("Audio play blocked/error:", e);
+                    alert("تکایە ئاریشەک پێکهاتەیا دەنگی هەیە یان لینکێ سترانێ ب دۆستی نەهاتە بارکرن!");
+                });
             }
         }
     </script>
@@ -356,9 +363,9 @@
             <div class="music-control-group">
                 <button class="sound-toggle-btn" id="soundToggleBtn" onclick="toggleMusic()">🔇 OFF</button>
                 <select class="music-select" id="musicSelector" onchange="changeMusic(this)">
-                    <option value="abdulqahar_zakhoee.mp3">عبدالقهار</option>
-                    <option value="kurdish_song2.mp3">گۆرانی 2</option>
-                    <option value="kurdish_song3.mp3">گۆرانی 3</option>
+                    <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">عبدالقهار</option>
+                    <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">گۆرانی 2</option>
+                    <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">گۆرانی 3</option>
                 </select>
             </div>
 
