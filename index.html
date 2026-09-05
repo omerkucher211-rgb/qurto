@@ -143,23 +143,23 @@
             position: absolute;
             color: #ffd700;
             font-weight: bold;
-            font-size: 15px;
+            font-size: 11px;
             pointer-events: none;
-            animation: floatUp 0.8s ease-out forwards;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.8);
-            background: rgba(18, 22, 33, 0.95);
-            border: 2px solid #d4af37;
-            padding: 6px 12px;
-            border-radius: 12px;
+            animation: floatUp 0.7s ease-out forwards;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            background: rgba(18, 22, 33, 0.9);
+            border: 1.5px solid #d4af37;
+            padding: 3px 8px;
+            border-radius: 8px;
             z-index: 100;
             direction: ltr;
             white-space: nowrap;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 0 6px rgba(212, 175, 55, 0.3);
         }
 
         @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(0.8); }
-            100% { opacity: 0; transform: translateY(-90px) scale(1.1); }
+            0% { opacity: 1; transform: translateY(0) scale(0.4); }
+            100% { opacity: 0; transform: translateY(-70px) scale(0.8); }
         }
 
         .info-card {
@@ -331,6 +331,7 @@
     </script>
 
     <div class="game-container">
+        <!-- Header -->
         <div class="header">
             <div class="coin-balance">
                 🟡 <span id="score">0.00000</span>
@@ -349,6 +350,7 @@
             </div>
         </div>
 
+        <!-- 0. Forced Task Screen -->
         <div id="forcedTaskScreen" class="screen">
             <div class="forced-box">
                 <span style="font-size: 40px;">📢</span>
@@ -360,6 +362,7 @@
             </div>
         </div>
 
+        <!-- 1. Tap Screen -->
         <div id="tapScreen" class="screen main-content">
             <div class="big-coin-btn" id="tapBtn">
                 <img src="coin.jpg" alt="FOX Coin">
@@ -383,9 +386,11 @@
             </div>
         </div>
 
+        <!-- 2. Shop & Boosters Screen -->
         <div id="shopScreen" class="screen" style="align-items: center; justify-content: flex-start; gap: 12px;">
             <h3 style="color: #d4af37;">🛒 دووکانێ و بۆوێستەر</h3>
 
+            <!-- Premium -->
             <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%); border: 2px solid #d4af37; border-radius: 15px; width: 100%; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
                 <h4 style="font-size: 15px; color: #d4af37;">پەکەتا پرێمیوم (2x Tap)</h4>
                 <p style="font-size: 11px; color: #b0c4de; text-align: center;">تەپ تەپای تە دکەتە دوو هێندە!</p>
@@ -393,12 +398,14 @@
                 <button id="buyPremiumBtn" onclick="buyPremium()" style="background-color: #f39c12; color: white; border: none; border-radius: 8px; padding: 8px 15px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">کڕین ✨</button>
             </div>
 
+            <!-- Multitap Upgrade Booster -->
             <div class="section-box">
                 <h4 style="font-size: 14px; color: #fff;">بەرزکرنا ئاستێ کلیکی (Multitap)</h4>
                 <p style="font-size: 11px; color: #8b9bb4;">ئاستی هەنووکەیی: <span id="multitapLevelText">1</span> (+0.00001)</p>
                 <button onclick="upgradeMultitap()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">بهایێ بەرزکرنێ: 0.50 FOX 🟡</button>
             </div>
 
+            <!-- Buy Members -->
             <div class="section-box">
                 <h4 style="font-size: 14px; color: #fff;">100 مێمبەر بۆ کەناڵی</h4>
                 <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: 1.00 FOX 🟡</p>
@@ -407,15 +414,18 @@
             </div>
         </div>
 
+        <!-- 3. Tasks & Daily Streak Screen -->
         <div id="tasksScreen" class="screen" style="align-items: center; justify-content: flex-start; gap: 12px;">
             <h3 style="color: #d4af37;">📋 ئەرک و ڕۆژژمێرا ڕۆژانە</h3>
 
+            <!-- Daily Check-in Box -->
             <div class="section-box" style="border: 1.5px solid #d4af37;">
                 <h4 style="font-size: 14px; color: #d4af37;">📅 پاداشتێ سەردانا ڕۆژانە (Streak)</h4>
                 <p style="font-size: 11px; color: #b0c4de;" id="streakStatusText">ڕۆژی هەنووکەیی: ڕۆژی 1</p>
                 <button id="claimStreakBtn" onclick="claimDailyStreak()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">وەرگرتنا پاداشتێ ڕۆژانە 🎁</button>
             </div>
 
+            <!-- Referral System Box -->
             <div class="section-box">
                 <h4 style="font-size: 14px; color: #fff;">👥 بانگهێشتکرنا هاوڕێیان (Referral)</h4>
                 <p style="font-size: 11px; color: #8b9bb4;">هەر هاوڕێیەک بێنە، 0.50 کۆین وەربگرە!</p>
@@ -431,11 +441,13 @@
             </div>
         </div>
 
+        <!-- 4. Ranking Screen -->
         <div id="rankingScreen" class="screen">
             <h3 style="margin-bottom: 12px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان</h3>
             <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;"></div>
         </div>
 
+        <!-- Navigation Bar -->
         <div class="nav-bar" id="navBar">
             <button onclick="switchTab('rankingScreen', event)" class="nav-item" id="navRanking">
                 <span class="icon">🏆</span>
@@ -750,13 +762,13 @@
 
                 const floatingEl = document.createElement('div');
                 floatingEl.className = 'floating-score';
-                // لێرەدا `@T_U_R_S_E` و بڕی کۆین پێکەوە نیشان دەدەین
+                // نیشانە و کۆین بە قەبارەیەکی بچووکتر و جوانتر
                 floatingEl.innerHTML = `@T_U_R_S_E <span style="color:#2ecc71;">+${clickReward.toFixed(5)}</span>`;
-                floatingEl.style.left = (clientX - rect.left - 45) + 'px';
-                floatingEl.style.top = (clientY - rect.top - 25) + 'px';
+                floatingEl.style.left = (clientX - rect.left - 35) + 'px';
+                floatingEl.style.top = (clientY - rect.top - 20) + 'px';
 
                 tapBtn.appendChild(floatingEl);
-                setTimeout(() => floatingEl.remove(), 800);
+                setTimeout(() => floatingEl.remove(), 700);
 
                 if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             } else {
