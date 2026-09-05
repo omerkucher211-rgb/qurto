@@ -111,6 +111,7 @@
             position: relative;
         }
 
+        /* لێرەدا ئەیمەیشنا گەورەبوون و سەرکەوتن بۆ بازنێ هاتە زێدەکرن */
         .big-coin-btn {
             width: 160px;
             height: 160px;
@@ -122,14 +123,15 @@
             align-items: center;
             cursor: pointer;
             box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
-            transition: transform 0.05s ease;
             overflow: hidden;
             position: relative;
             touch-action: manipulation;
+            transition: transform 0.1s ease;
         }
 
-        .big-coin-btn:active {
-            transform: scale(0.93);
+        /* کاتێ تێپ دەبێت قەبارە مەزن دبێت و پچەک دچتە سەری */
+        .big-coin-btn.tapped {
+            transform: scale(1.15) translateY(-8px);
         }
 
         .big-coin-btn img {
@@ -485,12 +487,10 @@
 
         const REAL_PREFIX = 'fox_pro_storage_v4_' + telegramUserId + '_';
 
-        // پشکنین بۆ ئەوەی بزانین ئایا ئەوە یەکەمجاریەتی داخل بێت یان نا
         let isFirstTimeUser = localStorage.getItem(REAL_PREFIX + 'first_welcome_done');
         let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins'));
         
         if (isFirstTimeUser === null) {
-            // ئەگەر یەکەمجاریەتی، 1 کۆین وەک دیاری دەدەینێ بێ ئەوەی دەستکاری کەسانی تر بکەین
             coins = 1.00000;
             localStorage.setItem(REAL_PREFIX + 'coins', coins);
             localStorage.setItem(REAL_PREFIX + 'first_welcome_done', 'true');
@@ -794,6 +794,12 @@
                 localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
 
                 updateRankingList();
+
+                // لێرەدا ئەیمەیشنا گەورەبوون و سەرکەوتن بۆ بازنێ چالاک دکەین
+                tapBtn.classList.add('tapped');
+                setTimeout(() => {
+                    tapBtn.classList.remove('tapped');
+                }, 100);
 
                 const rect = tapBtn.getBoundingClientRect();
                 let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width / 2);
