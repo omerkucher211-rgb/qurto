@@ -216,6 +216,7 @@
 <body>
 
     <div class="game-container">
+        <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="coin-balance">
                 🟡 FOX <span id="score">0.0000</span>
@@ -229,6 +230,7 @@
             </div>
         </div>
 
+        <!-- 1. پەڕەیا تاپ -->
         <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
                 <img src="coin.jpg" alt="FOX Coin" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
@@ -252,15 +254,17 @@
             </div>
         </div>
 
+        <!-- 2. پەڕەیا شوپ -->
         <div id="shopScreen" class="screen" style="justify-content: center; align-items: center;">
             <h3 style="color: #d4af37;">🛒 دووکان</h3>
         </div>
 
+        <!-- 3. پەڕەیا ئەرکان -->
         <div id="tasksScreen" class="screen">
             <h3 style="margin-bottom: 15px; color: #d4af37;">ئەرکێن ڕۆژانە (Tasks)</h3>
             
             <div class="task-item">
-                <button class="claim-btn" id="taskBtn" onclick="completeTask()">جۆین بکە</button>
+                <button class="claim-btn" id="taskBtn" onclick="handleTask()">جۆین بکە</button>
                 <div class="task-info" style="text-align: right;">
                     <h4>جۆینی کەناڵێ تێلێگرامێ بکە</h4>
                     <p>+0.001 FOX</p>
@@ -268,6 +272,7 @@
             </div>
         </div>
 
+        <!-- لژنا خوارێ -->
         <div class="nav-bar">
             <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">📋</span>
@@ -294,7 +299,7 @@
         let packets = localStorage.getItem('fox_packets') !== null ? parseInt(localStorage.getItem('fox_packets')) : 4;
         let totalSeconds = localStorage.getItem('fox_timer') ? parseInt(localStorage.getItem('fox_timer')) : (4 * 3600 + 48 * 60);
         let isTimerRunning = false;
-        let taskDone = (localStorage.getItem('fox_task_done') === 'true');
+        let taskState = localStorage.getItem('fox_task_state') || 'join';
 
         const scoreElement = document.getElementById('score');
         const tapBtn = document.getElementById('tapBtn');
@@ -307,7 +312,10 @@
         energyText.innerText = energy + " / 500";
         packetText.innerText = packets + " / 5";
 
-        if (taskDone) {
+        if (taskState === 'checking') {
+            taskBtn.innerText = 'چاوەڕێ بکە...';
+            taskBtn.disabled = true;
+        } else if (taskState === 'claimed') {
             taskBtn.innerText = 'وەرگرتن ✔';
             taskBtn.disabled = true;
         }
@@ -326,4 +334,121 @@
                     timerText.innerText = 
                         String(hours).padStart(2, '0') + ":" + 
                         String(minutes).padStart(2, '0') + ":" + 
-                        String(seconds).padStart(2
+                        String(seconds).padStart(2, '0');
+
+                    localStorage.setItem('fox_timer', totalSeconds);
+                } else {
+                    packets = 5;
+                    packetText.innerText = packets + " / 5";
+                    localStorage.setItem('fox_packets', packets);
+                    localStorage.removeItem('fox_timer');
+                    isTimerRunning = false;
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+
+        if (packets < 5) {
+            startTimer();
+        }
+
+        // Tap لیدان
+        tapBtn.addEventListener('click', function() {
+            if (energy > 0) {
+                energy -= 1;
+                coins += 0.0001;
+
+                scoreElement.innerText = coins.toFixed(4);
+                energyText.innerText = energy + " / 500";
+
+                localStorage.setItem('fox_coins', coins);
+                localStorage.setItem('fox_energy', energy);
+
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('medium');
+                }
+            } else {
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
+            }
+        });
+
+        // ڤەکرنا پەکێتی (Use)
+        function usePacket() {
+            if (packets > 0) {
+                packets -= 1; 
+                packetText.innerText = packets + " / 5";
+                localStorage.setItem('fox_packets', packets);
+
+                energy = 500; 
+                energyText.innerText = energy + " / 500";
+                localStorage.setItem('fox_energy', energy);
+
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+
+                if (!isTimerRunning) {
+                    totalSeconds = (4 * 3600 + 48 * 60);
+                    startTimer();
+                }
+            } else {
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
+            }
+        }
+
+        function switchTab(screenId, event) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            document.getElementById(screenId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // سیستەمێ ئەرکی (20 چرکە)
+        function handleTask() {
+            if (taskState === 'join') {
+                window.open('https://t.me/TORSEII', '_blank');
+                
+                taskState = 'checking';
+                localStorage.setItem('fox_task_state', 'checking');
+                
+                taskBtn.innerText = 'چاوەڕێ بکە (20)...';
+                taskBtn.disabled = true;
+
+                let countdown = 20;
+                let checkInterval = setInterval(function() {
+                    countdown--;
+                    if (countdown > 0) {
+                        taskBtn.innerText = 'چاوەڕێ بکە (' + countdown + ')...';
+                    } else {
+                        clearInterval(checkInterval);
+                        taskState = 'ready';
+                        localStorage.setItem('fox_task_state', 'ready');
+                        taskBtn.innerText = 'پشکنین و وەرگرتن 🎁';
+                        taskBtn.disabled = false;
+                    }
+                }, 1000);
+
+            } else if (taskState === 'ready') {
+                coins += 0.0010;
+                scoreElement.innerText = coins.toFixed(4);
+                localStorage.setItem('fox_coins', coins);
+
+                taskState = 'claimed';
+                localStorage.setItem('fox_task_state', 'claimed');
+
+                taskBtn.innerText = 'وەرگرتن ✔';
+                taskBtn.disabled = true;
+
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
