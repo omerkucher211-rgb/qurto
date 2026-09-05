@@ -85,6 +85,7 @@
         .main-content {
             justify-content: center;
             gap: 20px;
+            position: relative;
         }
 
         .big-coin-btn {
@@ -100,10 +101,38 @@
             box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
             transition: transform 0.1s;
             overflow: hidden;
+            position: relative;
         }
 
         .big-coin-btn:active {
             transform: scale(0.95);
+        }
+
+        /* ستافێ نیشانا پوینتا ل دەمێ تەپکرنێ */
+        .floating-score {
+            position: absolute;
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 20px;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+            background: rgba(11, 15, 25, 0.85);
+            border: 2px solid #d4af37;
+            padding: 4px 10px;
+            border-radius: 10px;
+            z-index: 100;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.8);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-80px) scale(1.1);
+            }
         }
 
         .info-card {
@@ -369,8 +398,8 @@
             startTimer();
         }
 
-        // Tap لیدان + سیستمێ لیڤەلا بلند و دوبل بوونا پوینتێن هەر تەپەکێ
-        tapBtn.addEventListener('click', function() {
+        // Tap لیدان + نیشاندانا ژمارەی بلندا دەمێ تاپکرنێ (+ پوینت)
+        tapBtn.addEventListener('click', function(e) {
             if (energy > 0) {
                 energy -= 1;
                 totalTaps += 1;
@@ -391,6 +420,25 @@
                 localStorage.setItem(STORAGE_PREFIX + 'coins', coins);
                 localStorage.setItem(STORAGE_PREFIX + 'energy', energy);
                 localStorage.setItem(STORAGE_PREFIX + 'total_taps', totalTaps);
+
+                // دروستکرنا کاریگەرییا نیشاندانا ژمارەی ل جهێ پەنجەی
+                const rect = tapBtn.getBoundingClientRect();
+                const x = e.clientX ? e.clientX - rect.left : rect.width / 2;
+                const y = e.clientY ? e.clientY - rect.top : rect.height / 2;
+
+                const floatingEl = document.createElement('div');
+                floatingEl.className = 'floating-score';
+                // نیشاندانا کوینا زێدەبووی ب فرماتا دروست
+                let displayReward = clickReward < 0.0001 ? "+" + clickReward.toFixed(6) : "+" + clickReward.toFixed(4);
+                floatingEl.innerText = displayReward;
+                floatingEl.style.left = (x - 25) + 'px';
+                floatingEl.style.top = (y - 25) + 'px';
+
+                tapBtn.appendChild(floatingEl);
+
+                setTimeout(() => {
+                    floatingEl.remove();
+                }, 800);
 
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('medium');
