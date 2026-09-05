@@ -178,7 +178,6 @@
             transform: scale(0.98);
         }
 
-        /* ستايلێ پەڕەیا یجباری (بەرهەنگاربوونا ڤەکرنا یاریێ بێ جۆین) */
         #forcedTaskScreen {
             justify-content: center;
             align-items: center;
@@ -280,7 +279,7 @@
             </div>
         </div>
 
-        <!-- 0. پەڕەیا ئەرکێ یجباری (هەکە هشتا جۆین نەکربیت ئەڤە دیار دبيت) -->
+        <!-- 0. پەڕەیا ئەرکێ یجباری -->
         <div id="forcedTaskScreen" class="screen">
             <div class="forced-box">
                 <span style="font-size: 40px;">📢</span>
@@ -319,7 +318,7 @@
             <h3 style="color: #d4af37;">🛒 دووکان</h3>
         </div>
 
-        <!-- 3. پەڕەیا ئەرکان (ئاسایی) -->
+        <!-- 3. پەڕەیا ئەرکان -->
         <div id="tasksScreen" class="screen">
             <h3 style="margin-bottom: 15px; color: #d4af37;">ئەرکێن ڕۆژانە (Tasks)</h3>
             
@@ -363,9 +362,9 @@
             }
         }
 
-        const STORAGE_PREFIX = 'fox_unique_game_' + telegramUserId + '_';
-        const RESET_VERSION = 'v7_';
-        const REAL_PREFIX = STORAGE_PREFIX + RESET_VERSION;
+        // ⚠️ لێرەدا مە ناڤێ پاشەکەوتکرنێ ب تەمامی جێگیر کر (بێ گۆڕین ب پەی بەڕووبوومان) 
+        // دا کو هەر ئەپدەیتەکێ بکەی، داتایێن کڤن یێن یاریزانان ون نەبن و نەکەفنە سەرێ پێڤە.
+        const REAL_PREFIX = 'fox_permanent_save_' + telegramUserId + '_';
 
         let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins') || 0);
         let energy = parseInt(localStorage.getItem(REAL_PREFIX + 'energy') ?? 500);
@@ -375,7 +374,6 @@
         let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (4 * 3600 + 48 * 60);
         let isTimerRunning = false;
         
-        // پشکنینا ئەگەر یاریزانی بەری خۆ جۆین کربیت یان نە
         let isForcedJoined = localStorage.getItem(REAL_PREFIX + 'forced_joined') === 'true';
 
         const scoreElement = document.getElementById('score');
@@ -394,7 +392,6 @@
         energyText.innerText = energy + " / 500";
         packetText.innerText = packets + " / 5";
 
-        // ئەگەر بەری خۆ جۆین کربیت، ڕکەما یاریێ ڤەکەم، ئەگەر نە پەڕەیا یجباری نیشان بدە
         if (isForcedJoined) {
             forcedTaskScreen.classList.remove('active');
             tapScreen.classList.add('active');
@@ -402,14 +399,14 @@
         } else {
             forcedTaskScreen.classList.add('active');
             tapScreen.classList.remove('active');
-            navBar.style.display = 'none'; // لژنا خوارێ دئێخیت هەتا جۆین بکەت
+            navBar.style.display = 'none';
         }
 
-        let forcedState = 'join'; // join, checking, ready
+        let forcedState = 'join';
 
         function handleForcedTask() {
             if (forcedState === 'join') {
-                window.open('https://t.me/TORSEII', '_blank'); // لینکا کەناڵی تە
+                window.open('https://t.me/TORSEII', '_blank');
                 forcedState = 'checking';
                 forcedBtn.innerText = 'چاوەڕێ بکە (10 ثانیە)...';
                 forcedBtn.disabled = true;
@@ -432,12 +429,10 @@
                 isForcedJoined = true;
                 localStorage.setItem(REAL_PREFIX + 'forced_joined', 'true');
 
-                // خەڵاتەکێ بچووک ژی ددەتێ وەکو دیارییا جۆینکرنێ
                 coins += 0.0010;
                 scoreElement.innerText = coins.toFixed(4);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
 
-                // ڤەکرنا یاریێ و ڤەشارتنا پەڕەیا یجباری
                 forcedTaskScreen.classList.remove('active');
                 tapScreen.classList.add('active');
                 navBar.style.display = 'flex';
