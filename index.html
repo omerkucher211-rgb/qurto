@@ -96,19 +96,38 @@
             max-width: 85px;
         }
 
+        /* Profile Button - Lion Border Style */
         .user-level {
             background-color: rgba(20, 25, 35, 0.9);
-            border: 1px solid #d4af37;
+            border: 2px solid transparent;
+            border-image: linear-gradient(135deg, #d4af37, #ff4500, #d4af37) 1;
             border-radius: 12px;
             padding: 4px 8px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             cursor: pointer;
             transition: 0.2s;
+            position: relative;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
         }
         .user-level:active {
             transform: scale(0.95);
+        }
+
+        .lion-avatar-wrapper {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1.5px solid #ff4500;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            flex-shrink: 0;
+            box-shadow: 0 0 6px rgba(255, 69, 0, 0.6);
         }
 
         .screen {
@@ -256,12 +275,13 @@
             height: 38px;
             border-radius: 50%;
             overflow: hidden;
-            border: 1px solid #d4af37;
+            border: 2px solid #ff4500;
             background: #222;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-shrink: 0;
+            box-shadow: 0 0 5px rgba(255, 69, 0, 0.5);
         }
 
         .nav-bar {
@@ -369,13 +389,14 @@
                 </select>
             </div>
 
+            <!-- Lion Border Profile Header -->
             <div class="user-level" id="profileHeaderBtn" onclick="openProfileSettings()">
                 <div style="text-align: right;">
-                    <div style="font-size: 10px; font-weight: bold;" id="userNameText">FOX Player</div>
-                    <div style="font-size: 8px; color: #d4af37;" id="levelText">Lvl 1</div>
+                    <div style="font-size: 10px; font-weight: bold; color: #ffae42;" id="userNameText">FOX Player</div>
+                    <div style="font-size: 8px; color: #d4af37;" id="levelText">Lvl 1 🦁</div>
                 </div>
-                <div id="userAvatarHeader" style="width: 26px; height: 26px; border-radius: 50%; overflow: hidden; border: 1px solid #d4af37; background: #222; display: flex; justify-content: center; align-items: center;">
-                    <span id="fallbackAvatarHeader" style="font-size: 12px;">⚽</span>
+                <div class="lion-avatar-wrapper" id="userAvatarHeader">
+                    <span id="fallbackAvatarHeader" style="font-size: 13px;">🦁</span>
                 </div>
             </div>
         </div>
@@ -518,7 +539,7 @@
 
         function openProfileSettings() {
             let currentName = document.getElementById('userNameText').innerText;
-            let newName = prompt(`تایبەتمەندییا پروفایلی:\n\n🆔 Telegram ID: ${telegramUserId}\n\nتکایە ناڤێ خۆ یێ نوێ ل خوارێ بنڤیسە:`, currentName);
+            let newName = prompt(`تایبەتمەندییا پروفایلی (شێر 🦁):\n\n🆔 Telegram ID: ${telegramUserId}\n\nتکایە ناڤێ خۆ یێ نوێ ل خوارێ بنڤیسە:`, currentName);
             
             if (newName !== null && newName.trim() !== "") {
                 telegramName = newName.trim();
@@ -566,7 +587,7 @@
         const multitapLevelText = document.getElementById('multitapLevelText');
 
         scoreElement.innerText = coins.toFixed(5);
-        levelText.innerText = "Lvl " + level;
+        levelText.innerText = "Lvl " + level + " 🦁";
         energyText.innerText = energy + " / " + maxEnergy;
         packetText.innerText = packets + " / 5";
         multitapLevelText.innerText = multitapLevel;
@@ -783,7 +804,7 @@
                 htmlContent = `<p style="text-align: center; color: #8b9bb4; font-size: 13px; margin-top: 20px;">چ یاریزان نینن هێشتا...</p>`;
             } else {
                 usersArray.forEach((user, index) => {
-                    let avatarHTML = user.avatar ? `<img src="${user.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : `<span style="font-size: 18px;">⚽</span>`;
+                    let avatarHTML = user.avatar ? `<img src="${user.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : `<span style="font-size: 16px;">🦁</span>`;
                     let isMe = user.id === telegramUserId;
                     let itemClass = isMe ? "rank-item top-user" : "rank-item";
                     let tagText = isMe ? ` <span style="font-size: 10px; color: #d4af37;">(تە)</span>` : '';
@@ -794,7 +815,7 @@
                                 <div class="rank-avatar">${avatarHTML}</div>
                                 <div>
                                     <div style="font-size: 13px; font-weight: bold;">${user.name || 'FOX Player'}${tagText}</div>
-                                    <div style="font-size: 10px; color: #8b9bb4;">#${index + 1}</div>
+                                    <div style="font-size: 10px; color: #8b9bb4;">#${index + 1} 🦁</div>
                                 </div>
                             </div>
                             <span style="color: #d4af37; font-weight: bold; direction: ltr;">${parseFloat(user.score).toFixed(5)} 🟡</span>
@@ -827,7 +848,7 @@
                 let newLevel = Math.floor(totalTaps / 1000) + 1;
                 if (newLevel !== level) {
                     level = newLevel;
-                    levelText.innerText = "Lvl " + level;
+                    levelText.innerText = "Lvl " + level + " 🦁";
                     localStorage.setItem(REAL_PREFIX + 'level', level);
                 }
 
@@ -901,7 +922,7 @@
                     packetText.innerText = packets + " / 5";
                     localStorage.setItem(REAL_PREFIX + 'packets', packets);
                     localStorage.removeItem(REAL_PREFIX + 'timer');
-                    isTimerRunning = false;
+                    isTimerRunning, isTimerRunning = false;
                     clearInterval(timerInterval);
                 }
             }, 1000);
