@@ -338,12 +338,12 @@
             <h3 style="color: #d4af37; margin-bottom: 2px;">🛒 دووکان و تەلەبی</h3>
 
             <div class="shop-section" style="border: 2px solid #d4af37; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(18, 22, 33, 0.95) 100%);">
-                <h4 style="font-size: 14px; color: #d4af37;">تەلەبی / سەبسکرایبا سالانە (+1 سال) ✨</h4>
-                <p style="font-size: 11px; color: #b0c4de;">تەپ تەپا تە دێ بیتە دوو هێندە و ماوەیێ سالەکێ بۆ دێ هێتە زێدەکرن.</p>
+                <h4 style="font-size: 14px; color: #d4af37;">تەلەبی / پرێمیوما 7 ڕۆژی (+7 ڕۆژ) ✨</h4>
+                <p style="font-size: 11px; color: #b0c4de;">تەپ تەپا تە دێ بیتە دوو هێندە و ماوەیێ 7 ڕۆژان بۆ دێ هێتە زێدەکرن.</p>
                 <div id="subscriptionInfo" style="font-size: 11px; color: #2ecc71; margin-top: 4px; display: none;">
                     بسەرڤەچوون: <span id="expiryDateText" style="direction: ltr; display: inline-block;"></span>
                 </div>
-                <button id="buySubscriptionBtn" onclick="buySubscription()" style="background-color: #f39c12; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 5px;">کرنا تەلەبیێ (1 FOX 🟡)</button>
+                <button id="buySubscriptionBtn" onclick="buySubscription()" style="background-color: #f39c12; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 5px;">کرنا تەلەبیێ (0.2 FOX 🟡)</button>
             </div>
 
             <div class="shop-section">
@@ -358,12 +358,12 @@
             <h3 style="color: #d4af37; margin-bottom: 2px;">🌟 ئەرک</h3>
             <div class="shop-section">
                 <h4 style="font-size: 14px; color: #d4af37;">📅 دیارییا ڕۆژانە (Daily Streak)</h4>
-                <p style="font-size: 11px; color: #b0c4de;">هەموو ڕۆژەکێ وەرگرتنا 0.20000 FOX!</p>
+                <p style="font-size: 11px; color: #b0c4de;">هەموو ڕۆژەکێ وەرگرتنا 0.00050 FOX!</p>
                 <button id="claimDailyBtn" onclick="claimDailyBonus()" style="background-color: #27ae60; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا دیارییا ڕۆژانە 🎁</button>
             </div>
         </div>
 
-        <!-- لژنا خوارێ (تەنها 3 گمبەت مانە: Tasks, Shop, Tap) -->
+        <!-- لژنا خوارێ -->
         <div class="nav-bar" id="navBar">
             <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">🌟</span>
@@ -407,21 +407,40 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        const REAL_PREFIX = 'fox_ultimate_storage_v7_' + telegramUserId + '_';
+        // کۆدێ پاشەکەوتکرنێ یێ فەرمی یێ کەڤن (دا کۆینێن هەمیا وەکی خۆ بمینن و نینەبن سفێر)
+        const OLD_PREFIX = 'fox_ultimate_storage_v8_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_ultimate_storage_v9_' + telegramUserId + '_';
 
-        let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins')) || 0;
-        let maxEnergy = parseInt(localStorage.getItem(REAL_PREFIX + 'max_energy')) || 500;
-        let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : maxEnergy;
-        let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level')) || 1;
-        let totalTaps = parseInt(localStorage.getItem(REAL_PREFIX + 'total_taps')) || 0;
-        let packets = localStorage.getItem(REAL_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'packets')) : 4;
-        let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (2 * 3600);
+        // گۆڕینا کۆینان ژ گۆهەرتۆکا کەڤن بۆ یا نوی ئەگەر یا نوی هەبت یان نەبی
+        let savedCoins = localStorage.getItem(REAL_PREFIX + 'coins');
+        if (savedCoins === null) {
+            let oldCoins = localStorage.getItem(OLD_PREFIX + 'coins');
+            coins = oldCoins !== null ? parseFloat(oldCoins) : 0;
+        } else {
+            coins = parseFloat(savedCoins);
+        }
+
+        let maxEnergy = parseInt(localStorage.getItem(REAL_PREFIX + 'max_energy') || localStorage.getItem(OLD_PREFIX + 'max_energy')) || 500;
+        let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : (localStorage.getItem(OLD_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(OLD_PREFIX + 'energy')) : maxEnergy);
+        let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level') || localStorage.getItem(OLD_PREFIX + 'level')) || 1;
+        let totalTaps = parseInt(localStorage.getItem(REAL_PREFIX + 'total_taps') || localStorage.getItem(OLD_PREFIX + 'total_taps')) || 0;
+        let packets = localStorage.getItem(REAL_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'packets')) : (localStorage.getItem(OLD_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(OLD_PREFIX + 'packets')) : 4);
+        let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (localStorage.getItem(OLD_PREFIX + 'timer') ? parseInt(localStorage.getItem(OLD_PREFIX + 'timer')) : (2 * 3600));
         let isTimerRunning = false;
         
-        let isTasksDone = localStorage.getItem(REAL_PREFIX + 'tasks_done') === 'true';
-        let isSubscribed = localStorage.getItem(REAL_PREFIX + 'is_subscribed') === 'true';
-        let expiryDateString = localStorage.getItem(REAL_PREFIX + 'expiry_date') || '';
-        let lastDailyClaim = localStorage.getItem(REAL_PREFIX + 'last_daily') || '';
+        let isTasksDone = (localStorage.getItem(REAL_PREFIX + 'tasks_done') === 'true') || (localStorage.getItem(OLD_PREFIX + 'tasks_done') === 'true');
+        let isSubscribed = (localStorage.getItem(REAL_PREFIX + 'is_subscribed') === 'true') || (localStorage.getItem(OLD_PREFIX + 'is_subscribed') === 'true');
+        let expiryDateString = localStorage.getItem(REAL_PREFIX + 'expiry_date') || localStorage.getItem(OLD_PREFIX + 'expiry_date') || '';
+        let lastDailyClaim = localStorage.getItem(REAL_PREFIX + 'last_daily') || localStorage.getItem(OLD_PREFIX + 'last_daily') || '';
+
+        // Check if subscription has expired
+        if (isSubscribed && expiryDateString) {
+            let expiryTime = new Date(expiryDateString).getTime();
+            if (new Date().getTime() > expiryTime) {
+                isSubscribed = false;
+                localStorage.setItem(REAL_PREFIX + 'is_subscribed', 'false');
+            }
+        }
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
@@ -442,9 +461,8 @@
         packetText.innerText = packets + " / 5";
 
         if (isSubscribed && expiryDateString) {
-            buySubscriptionBtn.innerText = 'تەلەبییا سالانە چالاکە ✔';
+            buySubscriptionBtn.innerText = 'تەلەبییا 7 ڕۆژی چالاکە ✔';
             buySubscriptionBtn.style.backgroundColor = '#27ae60';
-            buySubscriptionBtn.disabled = true;
             subscriptionInfo.style.display = 'block';
             expiryDateText.innerText = expiryDateString;
         }
@@ -511,33 +529,31 @@
         }
 
         function buySubscription() {
-            if (isSubscribed) return;
-            if (coins >= 1.00000) {
-                coins -= 1.00000;
+            let subCost = 0.2;
+            if (coins >= subCost) {
+                coins -= subCost;
                 isSubscribed = true;
                 
                 let purchaseDate = new Date();
-                let expiryDate = new Date(purchaseDate);
-                expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+                let expiryDate = new Date(purchaseDate.getTime() + 7 * 24 * 60 * 60 * 1000);
                 
-                let formattedExpiry = expiryDate.toLocaleDateString();
+                let formattedExpiry = expiryDate.toLocaleString();
 
                 scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
                 localStorage.setItem(REAL_PREFIX + 'is_subscribed', 'true');
                 localStorage.setItem(REAL_PREFIX + 'expiry_date', formattedExpiry);
 
-                buySubscriptionBtn.innerText = 'تەلەبییا سالانە چالاکە ✔';
+                buySubscriptionBtn.innerText = 'تەلەبییا 7 ڕۆژی چالاکە ✔';
                 buySubscriptionBtn.style.backgroundColor = '#27ae60';
-                buySubscriptionBtn.disabled = true;
                 
                 subscriptionInfo.style.display = 'block';
                 expiryDateText.innerText = formattedExpiry;
 
-                showModal('پیرۆزە تەلەبی هاتە کرن! ✨', 'تە تەلەبییا سالانە سەرکەفتنەک کر و سالەک بۆ بسەرڤەچوونێ هاتە زێدەکرن بۆ ڕێکەفتا: ' + formattedExpiry);
+                showModal('پیرۆزە تەلەبییا 7 ڕۆژی! ✨', 'تە تەلەبییا 7 ڕۆژی سەرکەفتنەک کر و بۆ ماوەیێ حەفت ڕۆژان هاتە فعالکرن هەتا ڕێکەفتا: ' + formattedExpiry);
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
-                showModal('کێمیا کۆینان 🟡', 'پێدڤی ب 1 کۆینێ یە بۆ ئەنجامدانا ڤێ تەلەبیێ.');
+                showModal('کێمیا کۆینان 🟡', 'پێدڤی ب 0.2 FOX هەیە بۆ ئەنجامدانا ڤێ تەلەبیێ.');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
         }
@@ -551,10 +567,10 @@
             }
             lastDailyClaim = today;
             localStorage.setItem(REAL_PREFIX + 'last_daily', today);
-            coins += 0.20000;
+            coins += 0.00050;
             scoreElement.innerText = coins.toFixed(5);
             localStorage.setItem(REAL_PREFIX + 'coins', coins);
-            showModal('دیارییا ڕۆژانە 🎁', 'پیرۆزە! 0.20000 FOX هاتە زێدەکرن بۆ کۆینێن تە.');
+            showModal('دیارییا ڕۆژانە 🎁', 'پیرۆزە! 0.00050 FOX هاتە زێدەکرن بۆ کۆینێن تە.');
             if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
 
