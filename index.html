@@ -398,24 +398,29 @@
             </div>
         </div>
 
-        <!-- 2. پەڕەیا شوپ (دووکان) -->
+        <!-- 2. پەڕەیا شوپ (دووکان و بەشێ پرێمیوم) -->
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 15px; padding-top: 20px;">
-            <h3 style="color: #d4af37; margin-bottom: 5px;">🛒 دووکانێ</h3>
+            <h3 style="color: #d4af37; margin-bottom: 5px;">🛒 دووکانێ و پرێمیوم</h3>
 
-            <div style="background-color: rgba(18, 22, 33, 0.95); border: 2px solid #d4af37; border-radius: 18px; width: 100%; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);">
-                
-                <div id="userAvatarShop" style="width: 55px; height: 55px; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.3); border: 1.5px solid #d4af37;">
-                    <span id="fallbackAvatarShop" style="font-size: 34px; line-height: 1;">⚽</span>
-                </div>
+            <!-- بەشێ کڕینا پرێمیوم (2x Tap) -->
+            <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%); border: 2px solid #d4af37; border-radius: 18px; width: 100%; padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);">
+                <span style="font-size: 30px;">⭐</span>
+                <h4 style="font-size: 16px; color: #d4af37;">پەکەتا پرێمیوم (2x Tap)</h4>
+                <p style="font-size: 12px; color: #b0c4de; text-align: center;">ب کڕینا ڤی بەشی، تەپ تەپا تە دێ بیتە دوو هێندە (2x) بۆ هەمیشە!</p>
+                <p style="font-size: 13px; color: #d4af37; font-weight: bold;">بهایێ: 1.00000 FOX 🟡</p>
+                <button id="buyPremiumBtn" onclick="buyPremium()" style="background-color: #f39c12; color: white; border: none; border-radius: 10px; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%;">
+                    کڕینا پرێمیوم (1 کۆین) ✨
+                </button>
+            </div>
 
+            <!-- بەشێ کڕینا مێمبەرا -->
+            <div style="background-color: rgba(18, 22, 33, 0.95); border: 2px solid #2a3447; border-radius: 18px; width: 100%; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
                 <div style="text-align: center;">
-                    <h4 style="font-size: 16px; color: #fff; margin-bottom: 4px;">100 مێمبەر</h4>
-                    <p style="font-size: 13px; color: #d4af37; font-weight: bold;">بهایێ: 1.00000 FOX 🟡</p>
+                    <h4 style="font-size: 15px; color: #fff; margin-bottom: 2px;">100 مێمبەر بۆ کەناڵی</h4>
+                    <p style="font-size: 12px; color: #d4af37; font-weight: bold;">بهایێ: 1.00000 FOX 🟡</p>
                 </div>
-
-                <input type="text" id="channelLinkInput" placeholder="لینکێ کەناڵ یان گروپێ خۆ لێرە بنڤیسە..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #d4af37; background-color: rgba(11, 15, 25, 0.9); color: #fff; font-size: 13px; text-align: right; outline: none;">
-
-                <button onclick="buyMembers()" style="background-color: #2ecc71; color: white; border: none; border-radius: 10px; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%;">
+                <input type="text" id="channelLinkInput" placeholder="لینکێ کەناڵ یان گروپێ خۆ لێرە بنڤیسە..." style="width: 100%; padding: 9px; border-radius: 8px; border: 1px solid #d4af37; background-color: rgba(11, 15, 25, 0.9); color: #fff; font-size: 13px; text-align: right; outline: none;">
+                <button onclick="buyMembers()" style="background-color: #2ecc71; color: white; border: none; border-radius: 10px; padding: 9px 20px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">
                     کڕین (Buy) 🚀
                 </button>
             </div>
@@ -487,12 +492,11 @@
         let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level')) || 1;
         let totalTaps = parseInt(localStorage.getItem(REAL_PREFIX + 'total_taps')) || 0;
         let packets = localStorage.getItem(REAL_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'packets')) : 4;
-        
-        // ڤەگۆڕینا دەمی بۆ 2 دەمژمێر (2 * 3600 چرکە = 7200 چرکە)
         let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (2 * 3600);
         let isTimerRunning = false;
         
         let isTasksDone = localStorage.getItem(REAL_PREFIX + 'tasks_done') === 'true';
+        let isPremium = localStorage.getItem(REAL_PREFIX + 'is_premium') === 'true';
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
@@ -503,11 +507,19 @@
         const forcedTaskScreen = document.getElementById('forcedTaskScreen');
         const tapScreen = document.getElementById('tapScreen');
         const navBar = document.getElementById('navBar');
+        const buyPremiumBtn = document.getElementById('buyPremiumBtn');
 
         scoreElement.innerText = coins.toFixed(5);
         levelText.innerText = "Lvl " + level;
         energyText.innerText = energy + " / 500";
         packetText.innerText = packets + " / 5";
+
+        // ئەگەر پێشتر پرێمیوم کرڕی بیت
+        if (isPremium) {
+            buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔ (2x)';
+            buyPremiumBtn.style.backgroundColor = '#27ae60';
+            buyPremiumBtn.disabled = true;
+        }
 
         let channelClicked = false;
         let groupClicked = false;
@@ -571,6 +583,30 @@
 
                 alert('پیرۆزە! تە هەردو ئەرک تەواو کرن و 1 کۆین وەرگرت 🎉');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        // فۆنگشنا کڕینا پرێمیوم ب 1 کۆین و 2x تەپکرن
+        function buyPremium() {
+            if (isPremium) return;
+
+            if (coins >= 1.00000) {
+                coins -= 1.00000;
+                isPremium = true;
+                
+                scoreElement.innerText = coins.toFixed(5);
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                localStorage.setItem(REAL_PREFIX + 'is_premium', 'true');
+
+                buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔ (2x)';
+                buyPremiumBtn.style.backgroundColor = '#27ae60';
+                buyPremiumBtn.disabled = true;
+
+                alert('پیرۆزە! تە پەکەتا پرێمیوم کڕی و تەپ تەپا تە بوو بە 2x 🎉⭐');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                alert('کوینێن تە بس نینن! (پێدڤی ب 1 کۆینێ یە) 🟡');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
         }
 
@@ -668,12 +704,14 @@
             startTimer();
         }
 
+        // کاتێ تاپ دکەت (ئەگەر پرێمیوم بیت 2 هێندە د دەت)
         tapBtn.addEventListener('click', function(e) {
             if (energy > 0) {
                 energy -= 1;
                 totalTaps += 1;
 
-                let clickReward = 0.00001;
+                // ئەگەر پرێمیوم بیت خەڵات دوو هێندە دبیت (0.00002) ئەگەر نا (0.00001)
+                let clickReward = isPremium ? 0.00002 : 0.00001;
                 coins += clickReward;
 
                 let newLevel = Math.floor(totalTaps / 1000) + 1;
@@ -722,7 +760,7 @@
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
 
                 if (!isTimerRunning) {
-                    totalSeconds = (2 * 3600); // 2 دەمژمێر (7200 چرکە)
+                    totalSeconds = (2 * 3600);
                     startTimer();
                 }
             } else {
