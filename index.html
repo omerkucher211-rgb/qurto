@@ -228,11 +228,11 @@
 
             <div class="info-card">
                 <div class="info-row">
-                    <span style="font-weight: bold;">4/5</span>
+                    <span id="packetText" style="font-weight: bold;">4/5</span>
                     <span>:پەکێت 📦</span>
                 </div>
                 <div class="info-row" style="color: #8b9bb4; font-size: 12px;">
-                    <span>04:48:00</span>
+                    <span id="timerText">04:48:00</span>
                     <span>:پەکیتا داهاتی</span>
                 </div>
                 <hr style="border: 0; border-top: 1px solid #2a3447;">
@@ -267,7 +267,7 @@
             </div>
         </div>
 
-        <!-- لژنا خوارێ (جهێ Tasks ل چەپێ و Tap ل ڕاستێ) -->
+        <!-- لژنا خوارێ -->
         <div class="nav-bar">
             <a onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">📋</span>
@@ -301,10 +301,14 @@
 
         let taskDone = (localStorage.getItem('fox_task_done') === 'true' || sessionStorage.getItem('fox_task_done') === 'true');
 
+        // دەمژمێرا پەکێتان (ب چرکە کێم دبیت)
+        let totalSeconds = localStorage.getItem('fox_timer') ? parseInt(localStorage.getItem('fox_timer')) : (4 * 3600 + 48 * 60);
+
         const scoreElement = document.getElementById('score');
         const tapBtn = document.getElementById('tapBtn');
         const taskBtn = document.getElementById('taskBtn');
         const energyText = document.getElementById('energyText');
+        const timerText = document.getElementById('timerText');
 
         scoreElement.innerText = coins.toFixed(4);
         energyText.innerText = energy + " / 500";
@@ -314,7 +318,24 @@
             taskBtn.disabled = true;
         }
 
-        // کلیککرنا ل سەر کۆینی (Tap) - ئینرجی دکێم بکە هەتا دبیتە 0
+        // کارپێکرنا دەمژمێرێ
+        setInterval(function() {
+            if (totalSeconds > 0) {
+                totalSeconds--;
+                let hours = Math.floor(totalSeconds / 3600);
+                let minutes = Math.floor((totalSeconds % 3600) / 60);
+                let seconds = totalSeconds % 60;
+
+                timerText.innerText = 
+                    String(hours).padStart(2, '0') + ":" + 
+                    String(minutes).padStart(2, '0') + ":" + 
+                    String(seconds).padStart(2, '0');
+
+                localStorage.setItem('fox_timer', totalSeconds);
+            }
+        }, 1000);
+
+        // کلیککرنا ل سەر کۆینی (Tap)
         tapBtn.addEventListener('click', function() {
             if (energy > 0) {
                 energy -= 1;
@@ -337,7 +358,7 @@
             }
         });
 
-        // ڤەگەراندنا ئینرجیی بۆ 500 دەما دوگمەیا (Use) دگۆژی
+        // ڤەگەراندنا ئینرجیی بۆ 500
         function refillEnergy() {
             energy = 500;
             energyText.innerText = energy + " / 500";
