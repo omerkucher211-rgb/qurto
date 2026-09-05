@@ -259,7 +259,7 @@
         }
         .modal-content {
             background: #121621;
-            border: 2px solid #d4af37;
+            border: 2px solid #2481cc;
             border-radius: 20px;
             padding: 20px;
             width: 100%;
@@ -268,6 +268,19 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+        }
+
+        .modal-input {
+            width: 100%;
+            background: #0b0f19;
+            border: 1px solid #2481cc;
+            border-radius: 8px;
+            padding: 10px;
+            color: #ffffff;
+            font-size: 13px;
+            outline: none;
+            direction: ltr;
+            text-align: center;
         }
     </style>
 </head>
@@ -328,11 +341,10 @@
                     </div>
                     <div>
                         <h4 style="font-size: 14px; color: #ffffff;">100 مێمبەرێن تەلەگرامێ 👥</h4>
-                        <p style="font-size: 11px; color: #73b3e7;">زێدەکرنا 100 مێمبەر بۆ کەناڵ یان گرووپا تە.</p>
+                        <p style="font-size: 11px; color: #73b3e7;">لینکێ کەناڵێ خۆ دەنە تێدا (بهایێ: 1 FOX)</p>
                     </div>
                 </div>
-                <p style="font-size: 11px; color: #d4af37; font-weight: bold; text-align: left; direction: ltr;">Price: 1.0 FOX 🟡</p>
-                <button id="buyTelegramMembersBtn" onclick="buyTelegramMembers()" style="background-color: #2481cc; color: white; border: none; border-radius: 8px; padding: 9px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">کرنا 100 مێمبەرا (1 FOX)</button>
+                <button onclick="openTelegramModal()" style="background-color: #2481cc; color: white; border: none; border-radius: 8px; padding: 9px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">دانانا لینکێ کەناڵێ و کرین (1 FOX) 🎯</button>
             </div>
 
             <div class="shop-section" style="border: 2px solid #d4af37; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(18, 22, 33, 0.95) 100%);">
@@ -378,9 +390,25 @@
         </div>
     </div>
 
+    <!-- پۆداڵ بۆ وەرگرتنا لینکێ کەناڵێ مێمبەرا -->
+    <div id="telegramModal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="font-size: 20px;">👥</span>
+                <h3 style="color: #2481cc; font-size: 16px;">لینکێ کەناڵێ خۆ بنوڤیسە</h3>
+            </div>
+            <p style="font-size: 12px; color: #b0c4de;">بهایێ 100 مێمبەرا پێدڤی ب 1 FOX هەیە.</p>
+            <input type="text" id="channelLinkInput" class="modal-input" placeholder="t.me/your_channel یا @channel">
+            <div style="display: flex; gap: 8px; margin-top: 5px;">
+                <button onclick="submitTelegramMembers()" style="flex: 1; background-color: #2481cc; color: white; border: none; border-radius: 8px; padding: 9px; font-weight: bold; cursor: pointer;">ناردن (Send)</button>
+                <button onclick="closeTelegramModal()" style="flex: 1; background-color: #e74c3c; color: white; border: none; border-radius: 8px; padding: 9px; font-weight: bold; cursor: pointer;">پەشیمانبوون</button>
+            </div>
+        </div>
+    </div>
+
     <!-- پۆداڵ بۆ ڕاگەهاندنان -->
     <div id="customModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="border-color: #d4af37;">
             <h3 id="modalTitle" style="color: #d4af37;">پەیام</h3>
             <p id="modalMessage" style="font-size: 13px; color: #b0c4de;"></p>
             <button onclick="closeModal()" style="background-color: #d4af37; color: #0b0f19; border: none; border-radius: 8px; padding: 8px; font-weight: bold; cursor: pointer;">باشە (OK)</button>
@@ -409,7 +437,7 @@
         // کۆدێ پاشەکەوتکرنا داتایان
         const OLD_PREFIX_8 = 'fox_ultimate_storage_v8_' + telegramUserId + '_';
         const OLD_PREFIX_9 = 'fox_ultimate_storage_v9_' + telegramUserId + '_';
-        const REAL_PREFIX = 'fox_ultimate_storage_v12_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_ultimate_storage_v13_' + telegramUserId + '_';
 
         function getStoredData(key, defaultValue) {
             let val = localStorage.getItem(REAL_PREFIX + key);
@@ -442,7 +470,6 @@
         let expiryDateString = getStoredData('expiry_date', '');
         let lastDailyClaim = getStoredData('last_daily', '');
 
-        // Check if subscription has expired
         if (isSubscribed && expiryDateString) {
             let expiryTime = new Date(expiryDateString).getTime();
             if (new Date().getTime() > expiryTime) {
@@ -482,7 +509,15 @@
             document.getElementById('customModal').style.display = 'none';
         }
 
-        // هنارتنا ئاگاهدارییا تەلەگرام بۆت بۆ ئەدمنی
+        function openTelegramModal() {
+            document.getElementById('channelLinkInput').value = '';
+            document.getElementById('telegramModal').style.display = 'flex';
+        }
+
+        function closeTelegramModal() {
+            document.getElementById('telegramModal').style.display = 'none';
+        }
+
         function sendTelegramNotification(msgText) {
             let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
             let data = {
@@ -497,8 +532,14 @@
             }).catch(err => console.log('Telegram API Error:', err));
         }
 
-        // ڤەنکشنا کرنا 100 مێمبەرێن تەلەگرامێ
-        function buyTelegramMembers() {
+        // ڤەنکشنا ناردنا لینکێ کەناڵێ و برینا 1 کۆینی
+        function submitTelegramMembers() {
+            let channelLink = document.getElementById('channelLinkInput').value.trim();
+            if (!channelLink) {
+                alert('هیڤیدە لینکێ کەناڵێ خۆ بنوڤیسە!');
+                return;
+            }
+
             let cost = 1.0;
             if (coins >= cost) {
                 coins -= cost;
@@ -506,18 +547,21 @@
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
 
                 let purchaseDate = new Date().toLocaleString();
+                closeTelegramModal();
 
-                // هنارتنا ئاگاهداری بۆ ئەدمنی
+                // هنارتنا ئاگاهداری بۆ ئەدمنی ب لینکێ کەناڵیڤە
                 let notifMessage = `👥 *تەلەبییا 100 مێمبەرێن تەلەگرامێ هاتە کرن!* 👥\n\n` +
                                    `👤 ناڤ: ${telegramName}\n` +
                                    `🔗 یۆزەرمەید: ${telegramUsername}\n` +
                                    `🆔 ئایدی: \`${telegramUserId}\`\n` +
+                                   `📢 لینکێ کەناڵێ: ${channelLink}\n` +
                                    `📅 دەم: ${purchaseDate}`;
                 sendTelegramNotification(notifMessage);
 
-                showModal('پیرۆزە تەلەبییا مێمبەرا! ✨', 'تە 100 مێمبەرێن تەلەگرامێ ب سەرکەفتنەک کر و داخوازا تە گەهشتە ڕێڤەبەریێ.');
+                showModal('پیرۆزە تەلەبییا مێمبەرا! ✨', 'لینکێ کەناڵێ تە ب سەرکەفتن هاتە هنارتن و 1 FOX هاتە کێمکرن.');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
+                closeTelegramModal();
                 showModal('کێمیا کۆینان 🟡', 'پێدڤی ب 1 FOX هەیە بۆ ئەنجامدانا ڤێ تەلەبیێ.');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
