@@ -387,7 +387,7 @@
                 </div>
                 <div class="info-row" style="color: #8b9bb4; font-size: 12px;">
                     <span>پەکیتا داهاتی</span>
-                    <span id="timerText" style="direction: ltr;">04:48:00</span>
+                    <span id="timerText" style="direction: ltr;">02:00:00</span>
                 </div>
                 <hr style="border: 0; border-top: 1px solid #2a3447;">
                 <div class="info-row">
@@ -487,7 +487,9 @@
         let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level')) || 1;
         let totalTaps = parseInt(localStorage.getItem(REAL_PREFIX + 'total_taps')) || 0;
         let packets = localStorage.getItem(REAL_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'packets')) : 4;
-        let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (4 * 3600 + 48 * 60);
+        
+        // ڤەگۆڕینا دەمی بۆ 2 دەمژمێر (2 * 3600 چرکە = 7200 چرکە)
+        let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (2 * 3600);
         let isTimerRunning = false;
         
         let isTasksDone = localStorage.getItem(REAL_PREFIX + 'tasks_done') === 'true';
@@ -720,7 +722,7 @@
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
 
                 if (!isTimerRunning) {
-                    totalSeconds = (4 * 3600 + 48 * 60);
+                    totalSeconds = (2 * 3600); // 2 دەمژمێر (7200 چرکە)
                     startTimer();
                 }
             } else {
