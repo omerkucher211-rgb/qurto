@@ -224,7 +224,7 @@
             <div class="user-level">
                 <div style="text-align: right;">
                     <div style="font-size: 12px; font-weight: bold;">MALAGA 🇪🇸</div>
-                    <div style="font-size: 10px; color: #d4af37;">Lvl 1</div>
+                    <div style="font-size: 10px; color: #d4af37;" id="levelText">Lvl 1</div>
                 </div>
                 <span>🦊</span>
             </div>
@@ -294,14 +294,11 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // وەرگرتنا ID یا تێلیگرامێ، یان چێکرنا IDـەکا ڕێککەفتی بۆ پشتڕاستکرنا وێ چەندێ کو هەر کەسەک تنێ کۆینێن خۆ هەبن
         let telegramUserId = (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) ? tg.initDataUnsafe.user.id : null;
-        
         if (!telegramUserId) {
-            // ئەگەر ل دەرڤەی تێلێگرامێ بیت، پشتڕاست بە کو ناسنامەکا جیاواز هەیە
             telegramUserId = localStorage.getItem('fox_random_device_id');
             if (!telegramUserId) {
-                telegramUserId = 'dev_' + Math.random().toString(36.substring(2));
+                telegramUserId = 'dev_' + Math.random().toString(36).substring(2);
                 localStorage.setItem('fox_random_device_id', telegramUserId);
             }
         }
@@ -310,12 +307,15 @@
 
         let coins = parseFloat(localStorage.getItem(STORAGE_PREFIX + 'coins') || 0);
         let energy = parseInt(localStorage.getItem(STORAGE_PREFIX + 'energy') ?? 500);
+        let level = parseInt(localStorage.getItem(STORAGE_PREFIX + 'level') || 1);
+        let totalTaps = parseInt(localStorage.getItem(STORAGE_PREFIX + 'total_taps') || 0);
         let packets = localStorage.getItem(STORAGE_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(STORAGE_PREFIX + 'packets')) : 4;
         let totalSeconds = localStorage.getItem(STORAGE_PREFIX + 'timer') ? parseInt(localStorage.getItem(STORAGE_PREFIX + 'timer')) : (4 * 3600 + 48 * 60);
         let isTimerRunning = false;
         let taskState = localStorage.getItem(STORAGE_PREFIX + 'task_state') || 'join';
 
         const scoreElement = document.getElementById('score');
+        const levelText = document.getElementById('levelText');
         const tapBtn = document.getElementById('tapBtn');
         const taskBtn = document.getElementById('taskBtn');
         const energyText = document.getElementById('energyText');
@@ -323,6 +323,7 @@
         const packetText = document.getElementById('packetText');
 
         scoreElement.innerText = coins.toFixed(4);
+        levelText.innerText = "Lvl " + level;
         energyText.innerText = energy + " / 500";
         packetText.innerText = packets + " / 5";
 
@@ -366,17 +367,30 @@
             startTimer();
         }
 
-        // Tap لیدان (ب تنێ کۆینێن وی یاریکەری زێدە دبن)
+        // Tap لیدان + سیستمێ لیڤەلا بلند و دوبل بوونا پوینتێن هەر تەپەکێ
         tapBtn.addEventListener('click', function() {
             if (energy > 0) {
                 energy -= 1;
-                coins += 0.0001;
+                totalTaps += 1;
+
+                // هەژمارتنا پوینتا هەر تەپەکێ (ب پێی لیڤەلی دوبل دبە: Lvl 1 = 0.0001, Lvl 2 = 0.0002, Lvl 3 = 0.0004 ...)
+                let clickReward = 0.0001 * Math.pow(2, level - 1);
+                coins += clickReward;
+
+                // پشکنینا لیڤەلی: هەر 10 تەپەک لیڤەلەک بلند دبە
+                let newLevel = Math.floor(totalTaps / 10) + 1;
+                if (newLevel !== level) {
+                    level = newLevel;
+                    levelText.innerText = "Lvl " + level;
+                    localStorage.setItem(STORAGE_PREFIX + 'level', level);
+                }
 
                 scoreElement.innerText = coins.toFixed(4);
                 energyText.innerText = energy + " / 500";
 
                 localStorage.setItem(STORAGE_PREFIX + 'coins', coins);
                 localStorage.setItem(STORAGE_PREFIX + 'energy', energy);
+                localStorage.setItem(STORAGE_PREFIX + 'total_taps', totalTaps);
 
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('medium');
