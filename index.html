@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="monetag" content="b1dd2a8a65cff59345c720f45de9d863">
     <title>FOX Coin Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -216,6 +217,7 @@
 <body>
 
     <div class="game-container">
+        <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="user-level">
                 <span>🦊</span>
@@ -229,6 +231,7 @@
             </div>
         </div>
 
+        <!-- 1. پەڕەیا تاپ (Tap Screen) -->
         <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
                 <img src="coin.jpg" alt="FOX Coin" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
@@ -252,14 +255,22 @@
             </div>
         </div>
 
+        <!-- 2. پەڕەیا شوپ -->
         <div id="shopScreen" class="screen" style="justify-content: center; align-items: center;">
             <h3 style="color: #d4af37;">🛒 دووکان</h3>
         </div>
 
-        <div id="adsScreen" class="screen" style="justify-content: center; align-items: center;">
-            <h3 style="color: #d4af37;">🎬 ڕیکلام</h3>
+        <!-- 3. پەڕەیا ڕیکلام (Ads Screen) -->
+        <div id="adsScreen" class="screen" style="justify-content: center; align-items: center; gap: 20px;">
+            <h3 style="color: #d4af37;">🎬 ڕیکلامێن ڤیدیویی</h3>
+            <p style="color: #8b9bb4; font-size: 13px; text-align: center;">تەماشەی ڕیکلامێ بکە دا پەکێتەکێ ب دەست ڤە بی!</p>
+            
+            <button class="action-btn" onclick="watchAdForPacket()" style="background-color: #3498db; width: 100%; max-width: 250px;">
+                تەماشەکرنا ڕیکلامێ 📺
+            </button>
         </div>
 
+        <!-- 4. پەڕەیا ئەرکان -->
         <div id="tasksScreen" class="screen">
             <h3 style="margin-bottom: 15px; color: #d4af37;">ئەرکێن ڕۆژانە (Tasks)</h3>
             
@@ -272,6 +283,7 @@
             </div>
         </div>
 
+        <!-- لژنا خوارێ -->
         <div class="nav-bar">
             <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">📋</span>
@@ -297,11 +309,8 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // وەرگرتنی داتایان؛ ئەگەر یەکەم جار بوو یان گۆڕکاری هەبوو
         let coins = parseFloat(localStorage.getItem('fox_coins') || 0);
         let energy = parseInt(localStorage.getItem('fox_energy') ?? 500);
-        
-        // ڕێکخستنا سەرەتایی بۆ پەکێتان (دڵنیابوون ژ ژمارە ڕاستەقینە)
         let packets = localStorage.getItem('fox_packets') !== null ? parseInt(localStorage.getItem('fox_packets')) : 4;
         let totalSeconds = localStorage.getItem('fox_timer') ? parseInt(localStorage.getItem('fox_timer')) : (4 * 3600 + 48 * 60);
         let isTimerRunning = false;
@@ -355,7 +364,7 @@
             startTimer();
         }
 
-        // لێدانا کۆینێ (Tap) و کێمکرنا ئینرجیی
+        // Tap لیدان و کێمکرنا ئینرجیی
         tapBtn.addEventListener('click', function() {
             if (energy > 0) {
                 energy -= 1;
@@ -377,10 +386,10 @@
             }
         });
 
-        // ڤەکرنا پەکێتی و کێمکرنا ڕەقەمی (Use)
+        // ڤەکرنا پەکێتی (Use)
         function usePacket() {
             if (packets > 0) {
-                packets -= 1; // لێرە ڕەقەم دکەوێتە خوار (بۆ نموونە 4 دبتە 3)
+                packets -= 1; 
                 packetText.innerText = packets + " / 5";
                 localStorage.setItem('fox_packets', packets);
 
@@ -400,6 +409,28 @@
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.notificationOccurred('error');
                 }
+            }
+        }
+
+        // زێدەکرنا پەکێتی ل ڕێکا تەماشەکرنا ڕیکلامێ
+        function watchAdForPacket() {
+            // ئەگەر لینکی مۆنێتاگ یان ڕیکلامەکا دی هەبیت، دکاری لێرە بکەی:
+            // window.open('LINKE_MONETAG', '_blank');
+
+            if (packets < 5) {
+                packets += 1;
+                packetText.innerText = packets + " / 5";
+                localStorage.setItem('fox_packets', packets);
+
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+                alert("پیرۆزە! پەکێتەک بۆ تە هاتە زێدەکرن 📦");
+            } else {
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
+                alert("پەکێتێن تە پڕن! (5 / 5)");
             }
         }
 
