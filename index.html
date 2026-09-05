@@ -337,8 +337,8 @@
 
         const STORAGE_PREFIX = 'fox_unique_game_' + telegramUserId + '_';
 
-        // گوهڕینا ڤێرژنێ دا هەموو داتایێن کەڤن ژناو بچن و هەموی ببنە سفر
-        const RESET_VERSION = 'v2_';
+        // گوهڕینا ڤێرژنێ بۆ سفربوونا تەمام یا داتایان
+        const RESET_VERSION = 'v3_';
         const REAL_PREFIX = STORAGE_PREFIX + RESET_VERSION;
 
         let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins') || 0);
@@ -403,7 +403,6 @@
             startTimer();
         }
 
-        // Tap لیدان + لیڤەلا نوو و سفربووی
         tapBtn.addEventListener('click', function(e) {
             if (energy > 0) {
                 energy -= 1;
