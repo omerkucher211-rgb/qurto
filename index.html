@@ -96,11 +96,19 @@
             max-width: 85px;
         }
 
-        /* Profile Button - Lion Border Style */
+        /* Animated Changing Lion Border (0.2s) */
+        @keyframes colorChangeBorder {
+            0% { border-color: #ff4500; box-shadow: 0 0 10px rgba(255, 69, 0, 0.8); }
+            20% { border-color: #d4af37; box-shadow: 0 0 10px rgba(212, 175, 55, 0.8); }
+            40% { border-color: #2ecc71; box-shadow: 0 0 10px rgba(46, 204, 113, 0.8); }
+            60% { border-color: #3498db; box-shadow: 0 0 10px rgba(52, 152, 219, 0.8); }
+            80% { border-color: #9b59b6; box-shadow: 0 0 10px rgba(155, 89, 182, 0.8); }
+            100% { border-color: #ff4500; box-shadow: 0 0 10px rgba(255, 69, 0, 0.8); }
+        }
+
         .user-level {
             background-color: rgba(20, 25, 35, 0.9);
-            border: 2px solid transparent;
-            border-image: linear-gradient(135deg, #d4af37, #ff4500, #d4af37) 1;
+            border: 3px solid #ff4500;
             border-radius: 12px;
             padding: 4px 8px;
             display: flex;
@@ -109,7 +117,7 @@
             cursor: pointer;
             transition: 0.2s;
             position: relative;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+            animation: colorChangeBorder 0.2s infinite steps(1);
         }
         .user-level:active {
             transform: scale(0.95);
@@ -120,14 +128,13 @@
             height: 30px;
             border-radius: 50%;
             overflow: hidden;
-            border: 1.5px solid #ff4500;
+            border: 2px solid #fff;
             background: #111;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
             flex-shrink: 0;
-            box-shadow: 0 0 6px rgba(255, 69, 0, 0.6);
         }
 
         .screen {
@@ -281,7 +288,7 @@
             justify-content: center;
             align-items: center;
             flex-shrink: 0;
-            box-shadow: 0 0 5px rgba(255, 69, 0, 0.5);
+            animation: colorChangeBorder 0.2s infinite steps(1);
         }
 
         .nav-bar {
@@ -389,7 +396,7 @@
                 </select>
             </div>
 
-            <!-- Lion Border Profile Header -->
+            <!-- Animated Color-Changing Lion Border Header -->
             <div class="user-level" id="profileHeaderBtn" onclick="openProfileSettings()">
                 <div style="text-align: right;">
                     <div style="font-size: 10px; font-weight: bold; color: #ffae42;" id="userNameText">FOX Player</div>
@@ -922,7 +929,7 @@
                     packetText.innerText = packets + " / 5";
                     localStorage.setItem(REAL_PREFIX + 'packets', packets);
                     localStorage.removeItem(REAL_PREFIX + 'timer');
-                    isTimerRunning, isTimerRunning = false;
+                    isTimerRunning = false;
                     clearInterval(timerInterval);
                 }
             }, 1000);
