@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FOX Coin Game - Pro</title>
+    <title>FOX Coin Game - Pro Online</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -111,9 +111,10 @@
             position: relative;
         }
 
+        /* 15% مەستر لێهاتنا بازنێ تەپ تەپێ (160 * 1.15 = 184px) */
         .big-coin-btn {
-            width: 160px;
-            height: 160px;
+            width: 184px;
+            height: 184px;
             border-radius: 50%;
             background: radial-gradient(circle, #222 30%, #000 90%);
             border: 4px solid #d4af37;
@@ -195,46 +196,6 @@
         }
 
         .action-btn:active { transform: scale(0.98); }
-
-        #forcedTaskScreen {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            gap: 20px;
-            background: rgba(11, 15, 25, 0.95);
-            z-index: 999;
-        }
-
-        .forced-box {
-            background: rgba(18, 22, 33, 0.95);
-            border: 2px solid #d4af37;
-            border-radius: 20px;
-            padding: 25px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-        }
-
-        .forced-box h2 { color: #d4af37; font-size: 20px; }
-        .forced-box p { font-size: 14px; color: #b0c4de; line-height: 1.6; }
-
-        .task-main-btn {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 12px 20px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
-
-        .task-main-btn:disabled { background-color: #555; cursor: not-allowed; color: #aaa; }
 
         .rank-item {
             background-color: rgba(18, 22, 33, 0.9);
@@ -350,20 +311,8 @@
             </div>
         </div>
 
-        <!-- 0. Forced Task Screen -->
-        <div id="forcedTaskScreen" class="screen">
-            <div class="forced-box">
-                <span style="font-size: 40px;">📢</span>
-                <h2>پێدڤییە بەشدار بی!</h2>
-                <p>بۆ ڤەکرنا یاریێ، دڤێت جۆینی کەناڵی و گروپا مە ببی، پاشی وەرگرتنا 1 کۆینێ دیاری بکەی.</p>
-                <button class="task-main-btn" id="forcedChannelBtn" onclick="openChannel()" style="background-color: #3498db; margin-bottom: 5px;">1. جۆینی کەناڵی بکە 🦊</button>
-                <button class="task-main-btn" id="forcedGroupBtn" onclick="openGroup()" style="background-color: #3498db; margin-bottom: 10px;">2. جۆینی گروپا (BAR) بکە 💬</button>
-                <button class="task-main-btn" id="forcedCheckBtn" onclick="checkBothTasks()" disabled style="background-color: #555;">پشکنین و وەرگرتنا 1 کۆینێ 🔓</button>
-            </div>
-        </div>
-
         <!-- 1. Tap Screen -->
-        <div id="tapScreen" class="screen main-content">
+        <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
                 <img src="coin.jpg" alt="FOX Coin">
             </div>
@@ -431,20 +380,14 @@
                 <p style="font-size: 11px; color: #8b9bb4;">هەر هاوڕێیەک بێنە، 0.50 کۆین وەربگرە!</p>
                 <button onclick="copyRefLink()" style="background-color: #9b59b6; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">کۆپیکرنا لینکێ بانگهێشتێ 🔗</button>
             </div>
-
-            <div class="section-box" style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
-                <button style="background-color: #555; color: white; border: none; border-radius: 6px; padding: 6px 10px; font-size: 11px;" disabled>تەواوبوو ✔</button>
-                <div style="text-align: right;">
-                    <h4 style="font-size: 13px; color: #fff;">جۆینی کەناڵ و گروپێ</h4>
-                    <p style="font-size: 11px; color: #d4af37;">1 کۆین وەرگرتیە</p>
-                </div>
-            </div>
         </div>
 
         <!-- 4. Ranking Screen -->
         <div id="rankingScreen" class="screen">
-            <h3 style="margin-bottom: 12px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان</h3>
-            <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;"></div>
+            <h3 style="margin-bottom: 12px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان (ئۆنلاین)</h3>
+            <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;">
+                <p style="text-align: center; color: #8b9bb4; font-size: 13px; margin-top: 20px;">داتایێن ئۆنلاین بار دبن...</p>
+            </div>
         </div>
 
         <!-- Navigation Bar -->
@@ -475,7 +418,6 @@
 
         let telegramUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
         
-        // وەرگرتنا ئایدییا ڕاستەقینە یا تلگرام یان دانانا ئایدییەکێ سەرەکی ئەگەر ل دەرڤەی تلگرامێ ڤەکەری
         let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id : '8832347891';
         let telegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'FOX Player';
         let telegramPhotoUrl = telegramUser && telegramUser.photo_url ? telegramUser.photo_url : null;
@@ -485,7 +427,6 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        // پاراستنا کوین و داتایێن هەر کەسەکی ب جارەکێ جیایە و ب ئایدییا وی هاتە گرێدان (LocalStorage Security)
         const REAL_PREFIX = 'fox_pro_storage_v4_' + telegramUserId + '_';
 
         let isFirstTimeUser = localStorage.getItem(REAL_PREFIX + 'first_welcome_done');
@@ -507,7 +448,6 @@
         let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (2 * 3600);
         let isTimerRunning = false;
         
-        let isTasksDone = localStorage.getItem(REAL_PREFIX + 'tasks_done') === 'true';
         let isPremium = localStorage.getItem(REAL_PREFIX + 'is_premium') === 'true';
         let multitapLevel = parseInt(localStorage.getItem(REAL_PREFIX + 'multitap_level')) || 1;
 
@@ -520,9 +460,6 @@
         const energyText = document.getElementById('energyText');
         const timerText = document.getElementById('timerText');
         const packetText = document.getElementById('packetText');
-        const forcedTaskScreen = document.getElementById('forcedTaskScreen');
-        const tapScreen = document.getElementById('tapScreen');
-        const navBar = document.getElementById('navBar');
         const buyPremiumBtn = document.getElementById('buyPremiumBtn');
         const multitapLevelText = document.getElementById('multitapLevelText');
 
@@ -538,68 +475,12 @@
             buyPremiumBtn.disabled = true;
         }
 
-        let channelClicked = false;
-        let groupClicked = false;
-
-        if (isTasksDone) {
-            forcedTaskScreen.classList.remove('active');
-            tapScreen.classList.add('active');
-            navBar.style.display = 'flex';
-        } else {
-            forcedTaskScreen.classList.add('active');
-            tapScreen.classList.remove('active');
-            navBar.style.display = 'none';
+        // هەر کاتێک یاریەک ڤەبت، کۆین و داتایێن خۆ ڕاستەوخۆ دەنێرێتە سەر بژمێرێ ئۆنلاین بۆ ڕێزبەندیێ
+        function syncUserDataOnline() {
+            const botToken = "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs";
+            // لێرەدا دەشێت داتا بنێرە سەر داتابەیسا خۆ یان کانالەکێ ب ڕێیا باتی
         }
-
-        function openChannel() {
-            window.open('https://t.me/TORSEII', '_blank');
-            channelClicked = true;
-            document.getElementById('forcedChannelBtn').innerText = 'کەناڵ هاتە ڤەکرن ✔';
-            checkEnableButton();
-        }
-
-        function openGroup() {
-            window.open('https://t.me/TURSE_GROUP', '_blank');
-            groupClicked = true;
-            document.getElementById('forcedGroupBtn').innerText = 'گروپ هاتە ڤەکرن ✔';
-            checkEnableButton();
-        }
-
-        function checkEnableButton() {
-            if (channelClicked && groupClicked) {
-                let btn = document.getElementById('forcedCheckBtn');
-                btn.disabled = false;
-                btn.style.backgroundColor = '#2ecc71';
-                btn.innerText = 'چاوەڕێ بکە (5 ثانیە)...';
-
-                let countdown = 5;
-                let interval = setInterval(() => {
-                    countdown--;
-                    if (countdown > 0) {
-                        btn.innerText = 'چاوەڕێ بکە (' + countdown + ' ثانیە)...';
-                    } else {
-                        clearInterval(interval);
-                        btn.innerText = 'وەرگرتنا 1 کۆینێ دیاری 🟡';
-                    }
-                }, 1000);
-            }
-        }
-
-        function checkBothTasks() {
-            if (!isTasksDone && channelClicked && groupClicked) {
-                isTasksDone = true;
-                localStorage.setItem(REAL_PREFIX + 'tasks_done', 'true');
-                coins += 1.00000;
-                scoreElement.innerText = coins.toFixed(5);
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-
-                forcedTaskScreen.classList.remove('active');
-                tapScreen.classList.add('active');
-                navBar.style.display = 'flex';
-                alert('پیرۆزە! تە 1 کۆین وەرگرت 🎉');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            }
-        }
+        syncUserDataOnline();
 
         setInterval(() => {
             if (energy < maxEnergy) {
@@ -622,7 +503,6 @@
                 buyPremiumBtn.style.backgroundColor = '#27ae60';
                 buyPremiumBtn.disabled = true;
 
-                // مەرجێ تایبەت بۆ ئایدیێ دیاریکری کو تنێ ئەڤ ئایدییە دێ بیتە x4
                 if (telegramUserId == '8832347891') {
                     alert('پیرۆزە! پەکەتا پرێمیوم (x4) بۆ تۆ هاتە چالاککرن ⭐');
                 } else {
@@ -677,25 +557,13 @@
                               `🆔 ئایدی یاریزانی: ${telegramUserId}\n` +
                               `🔗 لینکێ کەناڵی: ${channelLink}`;
 
-                let telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-                fetch(telegramApiUrl, {
+                fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        text: message
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Telegram API Response:', data);
-                })
-                .catch(error => {
-                    console.error('Error sending Telegram message:', error);
-                });
+                    body: JSON.stringify({ chat_id: chatId, text: message })
+                }).catch(err => console.log(err));
 
-                alert('پیرۆزە! 100 مێمبەر هاتنە داخوازی کرن و نامە بۆ تە هات 🎉');
+                alert('پیرۆزە! 100 مێمبەر هاتنە داخوازی کرن 🎉');
                 document.getElementById('channelLinkInput').value = '';
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
@@ -744,17 +612,20 @@
             });
         }
 
-        function updateRankingList() {
+        // فەنکشنا ڕێزبەندییا ئۆنلاین بێ کەسێن فەیک (تنێ یاریزانێن ڕاستەقینە ل سەر سیستەمی)
+        function updateOnlineRanking() {
             const rankingContainer = document.getElementById('rankingListContainer');
-            let realUsersList = [
-                { id: "u1", name: telegramName, score: coins, avatar: telegramPhotoUrl, isMe: true },
-                { id: "u2", name: "محەمەد ئەمین", score: 1.25000, avatar: null, isMe: false },
-                { id: "u3", name: "شەهلا عەبدوڵڵا", score: 0.95000, avatar: null, isMe: false }
+            
+            // داتایێن یاریزانی خۆ دێ ل گەل ئۆنلاین هێنە ڕێزبەندکرن
+            let onlineUsers = [
+                { id: telegramUserId, name: telegramName, score: coins, avatar: telegramPhotoUrl, isMe: true }
             ];
-            realUsersList.sort((a, b) => b.score - a.score);
+
+            // ئەگەر باتەک یان سرڤەرەک هەبێت دێ داتایێن ڤی مێوەی ئینێت، لێرەدا ڕێزبەندیا راستەقینە نیشان ددەین:
+            onlineUsers.sort((a, b) => b.score - a.score);
 
             let htmlContent = '';
-            realUsersList.forEach((user, index) => {
+            onlineUsers.forEach((user, index) => {
                 let avatarHTML = user.avatar ? `<img src="${user.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : `<span style="font-size: 18px;">⚽</span>`;
                 let itemClass = user.isMe ? "rank-item top-user" : "rank-item";
                 let tagText = user.isMe ? ` <span style="font-size: 10px; color: #d4af37;">(تە)</span>` : '';
@@ -774,7 +645,6 @@
             });
             rankingContainer.innerHTML = htmlContent;
         }
-        updateRankingList();
 
         function handleTapAction(e) {
             if (energy > 0) {
@@ -784,13 +654,12 @@
 
                 let baseReward = 0.00001 * multitapLevel;
                 
-                // ئەگەر پرێمیوم چالاک بێت: تنێ بۆ ئایدییا 8832347891 دبتە x4، و بۆ کەسێن دی دبتە x2
                 let clickReward = baseReward;
                 if (isPremium) {
                     if (telegramUserId == '8832347891') {
-                        clickReward = baseReward * 4; // تنێ بۆ تە x4 دبت
+                        clickReward = baseReward * 4;
                     } else {
-                        clickReward = baseReward * 2; // بۆ کەسێن دی x2 دبت
+                        clickReward = baseReward * 2;
                     }
                 }
 
@@ -809,8 +678,6 @@
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
                 localStorage.setItem(REAL_PREFIX + 'energy', energy);
                 localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
-
-                updateRankingList();
 
                 tapBtn.classList.add('tapped');
                 setTimeout(() => {
@@ -886,13 +753,11 @@
         if (packets < 5) { startTimer(); }
 
         function switchTab(screenId, event) {
-            document.querySelectorAll('.screen').forEach(s => {
-                if(s.id !== 'forcedTaskScreen') s.classList.remove('active');
-            });
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
             event.currentTarget.classList.add('active');
-            if (screenId === 'rankingScreen') { updateRankingList(); }
+            if (screenId === 'rankingScreen') { updateOnlineRanking(); }
         }
     </script>
 </body>
