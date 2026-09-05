@@ -187,7 +187,6 @@
             margin-bottom: 10px;
         }
 
-        /* بەشێ تایبەت ب بۆنووسی (Promo Code) */
         .promo-card {
             border: 2px solid #e67e22;
             background: linear-gradient(135deg, rgba(230, 126, 34, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%);
@@ -380,19 +379,19 @@
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px; padding-top: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 2px;">🛒 دووکان و تەلەبی</h3>
 
-            <!-- بەشێ پڕومۆ کۆد (TURSE) -->
+            <!-- بەشێ پڕومۆ کۆدێ نهێنی (پەنهان کرى و پاراستی) -->
             <div class="promo-card">
                 <div class="tg-card-header">
                     <div style="width: 36px; height: 36px; background: #e67e22; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
                         <span>🎁</span>
                     </div>
                     <div>
-                        <h4 style="font-size: 14px; color: #ffffff;">کۆدا دیاریێ (Promo Code) 🎟️</h4>
-                        <p style="font-size: 11px; color: #f39c12;">کۆدا TURSE بنوڤیسە و 10 کۆینان وەربگرە</p>
+                        <h4 style="font-size: 14px; color: #ffffff;">کۆدا دیارییا تایبەت 🎟️</h4>
+                        <p style="font-size: 11px; color: #f39c12;">کۆدا خۆ لێرە بنوڤیسە</p>
                     </div>
                 </div>
-                <input type="text" id="promoCodeInput" class="promo-input" placeholder="کۆدەێرە بنوڤیسە (بۆ نموونە: TURSE)">
-                <button onclick="redeemPromoCode()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 9px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا 10 کۆینان 🟡</button>
+                <input type="text" id="promoCodeInput" class="promo-input" placeholder="کۆدا خۆ بنوڤیسە...">
+                <button onclick="redeemSecretCode()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 9px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا دیاریێ 🟡</button>
             </div>
 
             <!-- چوارگوشەیی 100 مێمبەرێن تەلەگرامێ -->
@@ -536,7 +535,7 @@
         let isSubscribed = getStoredData('is_subscribed', 'false') === 'true';
         let expiryDateString = getStoredData('expiry_date', '');
         let lastDailyClaim = getStoredData('last_daily', '');
-        let hasRedeemedTurse = getStoredData('has_redeemed_turse', 'false') === 'true';
+        let hasRedeemedSecret = getStoredData('has_redeemed_secret', 'false') === 'true';
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
@@ -569,32 +568,46 @@
             document.getElementById('customModal').style.display = 'none';
         }
 
-        // ڤەنکشنا پشکنین و وەرگرتنا کۆدا TURSE
-        function redeemPromoCode() {
+        // کۆدا نهێنی لێرە بە شێوەیەکێ ڤەشارتى (Hashed) هاتییە دانان
+        // (هاشەی کۆدا نووکه: TURSE) - کەس نەشێت بەخۆ کۆدی ژ ناڤ کۆدێ بخوینێت
+        const SECRET_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
+
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function redeemSecretCode() {
             let inputCode = document.getElementById('promoCodeInput').value.trim().toUpperCase();
+            if (!inputCode) {
+                showModal('ئاگاداری ⚠️', 'هیڤیدە کۆدەکێ بنوڤیسە!');
+                return;
+            }
 
-            if (inputCode !== "TURSE") {
-                showModal('چەوتی ❌', 'کۆدا نڤیسکری شاشە! هیڤیدە کۆدا ڕاست بنوڤیسە.');
+            let inputHash = await sha256(inputCode);
+
+            if (inputHash !== SECRET_HASH) {
+                showModal('چەوتی ❌', 'کۆدا نڤیسکری شاشە یان ب سەر نەچوویە!');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
                 return;
             }
 
-            if (hasRedeemedTurse) {
-                showModal('ئاگاداری ⚠️', 'تە پێشتر ئەڤ کۆدە کارپێکرییە و 10 کۆین وەرگرتییە!');
+            if (hasRedeemedSecret) {
+                showModal('ئاگاداری ⚠️', 'تە پێشتر ئەڤ کۆدە کارپێکرییە و دیارییا خۆ وەرگرتییە!');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
                 return;
             }
 
-            // زێدەکرنا 10 کۆینان
-            coins += 10.0;
-            hasRedeemedTurse = true;
+            coins += 10.0; // بڕێ کۆینان
+            hasRedeemedSecret = true;
             scoreElement.innerText = coins.toFixed(5);
 
             localStorage.setItem(REAL_PREFIX + 'coins', coins);
-            localStorage.setItem(REAL_PREFIX + 'has_redeemed_turse', 'true');
+            localStorage.setItem(REAL_PREFIX + 'has_redeemed_secret', 'true');
 
-            // هنارتنا ئاگاداریێ بۆ تەلەگرامێ ئەدمنی
-            let notifMessage = `🎟️ *بەکارهێنەرەکی کۆدا TURSE کارپێکر!* 🎟️\n\n` +
+            let notifMessage = `🎟️ *کۆدا نهێنی ب سەرکەفتن هاتە کارپێکرن!* 🎟️\n\n` +
                                `👤 ناڤ: ${telegramName}\n` +
                                `🔗 یۆزەرمەید: ${telegramUsername}\n` +
                                `🆔 ئایدی: \`${telegramUserId}\`\n` +
@@ -607,7 +620,7 @@
                 body: JSON.stringify({ chat_id: ADMIN_ID, text: notifMessage, parse_mode: 'Markdown' })
             }).catch(err => console.log('Telegram API Error:', err));
 
-            showModal('پیرۆزە! ✨', 'کۆدا TURSE ب سەرکەفتن هاتە کارپێکرن و 10 کۆین بۆ هژمارا تە هاتنە زێدەکرن.');
+            showModal('پیرۆزە! ✨', 'کۆدا تە ب سەرکەفتن کارا بوو و 10 کۆین بۆ هژمارا تە هاتنە زێدەکرن.');
             if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             document.getElementById('promoCodeInput').value = '';
         }
