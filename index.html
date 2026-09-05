@@ -316,7 +316,7 @@
             </div>
         </div>
 
-        <!-- 2. پەڕەیا شوپ (دووکان ب وێنەیێ پروفایلێ و لوگویا تێلێگرامێ) -->
+        <!-- 2. پەڕەیا شوپ (دووکان دگەل بۆشایەکێ بۆ لینکێ کەناڵی) -->
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 15px; padding-top: 20px;">
             <h3 style="color: #d4af37; margin-bottom: 5px;">🛒 دووکانێ</h3>
 
@@ -334,6 +334,9 @@
                 </div>
 
                 <p style="font-size: 13px; color: #d4af37; font-weight: bold; margin-top: -4px;">بهایێ: 1 FOX 🟡</p>
+
+                <!-- بۆشاییا نڤیسینا لینکێ کەناڵی یا بەکارهێنەری -->
+                <input type="text" id="channelLinkInput" placeholder="لینکێ کەناڵ یان گروپێ خۆ لێرە بنڤیسە..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #d4af37; background-color: rgba(11, 15, 25, 0.9); color: #fff; font-size: 13px; text-align: right; outline: none;">
 
                 <button onclick="buyMembers()" style="background-color: #2ecc71; color: white; border: none; border-radius: 10px; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
                     <span>🚀</span> کڕین (Buy)
@@ -479,17 +482,27 @@
             }
         }
 
-        // کارا کرینێ و هنارتنا نامەیێ بۆ تێلێگرامێ تە (Bot API)
+        // کارا کڕینێ و وەرگرتنا لینکێ کەناڵی و هنارتنا نامەیێ بۆ تێلێگرامێ تە
         function buyMembers() {
+            let channelLink = document.getElementById('channelLinkInput').value.trim();
+
+            if (!channelLink) {
+                alert('لطفاً لینکێ کەناڵ یان گروپێ خۆ بنڤیسە! 🔗');
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
+                return;
+            }
+
             if (coins >= 1) {
                 coins -= 1;
                 scoreElement.innerText = coins.toFixed(4);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
 
-                // زانیاریێن بۆتا خۆ ل ڤێرێ بنڤیسە (گەر تە بڤێت نامە بۆتە بێت)
-                let botToken = "BOTE_TOKEN_E_XVE"; // ل ڤێرێ تۆکنا بۆتێ خۆ بنڤیسە
-                let myChatId = "CHAT_ID_E_XVE";   // ل ڤێرێ چات ئایدیێ خۆ بنڤیسە
-                let message = `🔔 کڕینەکا نوی!\n👤 ناڤ: ${telegramName}\n🆔 ئایدی: ${telegramUserId}\n📦 مەتریا: 100 مێمبەر`;
+                // زانیاریێن بۆتا خۆ ل ڤێرێ بنڤیسە
+                let botToken = "BOTE_TOKEN_E_XVE"; // تۆکنا بۆتێ خۆ ل ڤێرێ بنڤیسە
+                let myChatId = "CHAT_ID_E_XVE";   // چات ئایدیێ خۆ ل ڤێرێ بنڤیسە
+                let message = `🔔 کڕینەکا نوی!\n👤 ناڤ: ${telegramName}\n🆔 ئایدی: ${telegramUserId}\n🔗 لینکێ کەناڵی: ${channelLink}\n📦 مەتریا: 100 مێمبەر`;
 
                 if(botToken !== "BOTE_TOKEN_E_XVE" && myChatId !== "CHAT_ID_E_XVE") {
                     fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${myChatId}&text=${encodeURIComponent(message)}`)
@@ -497,6 +510,7 @@
                 }
 
                 alert('پیرۆزە! تە 100 مێمبەر کڕین 🎉');
+                document.getElementById('channelLinkInput').value = ''; // پاقژکرنا بۆشایێ پاشی
 
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.notificationOccurred('success');
