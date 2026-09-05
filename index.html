@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FOX Coin Game - Ultimate Edition</title>
     
-    <!-- کۆدێ فەرمی یێ مۆنێتەگ (Monetag Meta Tag) -->
     <meta name="monetag" content="b1dd2a8a65cff59345c720f45de9d863">
-
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -189,7 +187,33 @@
             margin-bottom: 10px;
         }
 
-        /* چوارگوشێ 100 مێمبەران */
+        /* بەشێ تایبەت ب بۆنووسی (Promo Code) */
+        .promo-card {
+            border: 2px solid #e67e22;
+            background: linear-gradient(135deg, rgba(230, 126, 34, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%);
+            border-radius: 15px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+        }
+
+        .promo-input {
+            width: 100%;
+            background: #0b0f19;
+            border: 1px solid #e67e22;
+            border-radius: 8px;
+            padding: 9px;
+            color: #ffffff;
+            font-size: 13px;
+            outline: none;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
         .telegram-members-card {
             border: 2px solid #2481cc;
             background: linear-gradient(135deg, rgba(36, 129, 204, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%);
@@ -203,7 +227,6 @@
             box-shadow: 0 4px 15px rgba(36, 129, 204, 0.3);
         }
 
-        /* چوارگوشێ 1000 مێمبەران */
         .telegram-1000-card {
             border: 2px solid #9b59b6;
             background: linear-gradient(135deg, rgba(155, 89, 182, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%);
@@ -357,6 +380,21 @@
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px; padding-top: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 2px;">🛒 دووکان و تەلەبی</h3>
 
+            <!-- بەشێ پڕومۆ کۆد (TURSE) -->
+            <div class="promo-card">
+                <div class="tg-card-header">
+                    <div style="width: 36px; height: 36px; background: #e67e22; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
+                        <span>🎁</span>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 14px; color: #ffffff;">کۆدا دیاریێ (Promo Code) 🎟️</h4>
+                        <p style="font-size: 11px; color: #f39c12;">کۆدا TURSE بنوڤیسە و 10 کۆینان وەربگرە</p>
+                    </div>
+                </div>
+                <input type="text" id="promoCodeInput" class="promo-input" placeholder="کۆدەێرە بنوڤیسە (بۆ نموونە: TURSE)">
+                <button onclick="redeemPromoCode()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 9px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا 10 کۆینان 🟡</button>
+            </div>
+
             <!-- چوارگوشەیی 100 مێمبەرێن تەلەگرامێ -->
             <div class="telegram-members-card">
                 <div class="tg-card-header">
@@ -373,7 +411,7 @@
                 <button onclick="openTelegramModal(100, 1.0)" style="background-color: #2481cc; color: white; border: none; border-radius: 8px; padding: 9px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">دانانا لینکێ کەناڵێ (1 FOX) 🎯</button>
             </div>
 
-            <!-- چوارگوشەیی 1000 مێمبەرێن تەلەگرامێ (8 کۆین) -->
+            <!-- چوارگوشەیی 1000 مێمبەرێن تەلەگرامێ -->
             <div class="telegram-1000-card">
                 <div class="tg-card-header">
                     <div class="tg-logo-purple">
@@ -476,20 +514,10 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        // سیستەمێ پاراستنا کۆینان و ڤەگوهاستنا داتایان ژ وێرژنێن بەرێ بۆ وێرژنا نوی بێ کو تشتەک ژ دەست بچیت
-        const OLD_PREFIX_8 = 'fox_ultimate_storage_v8_' + telegramUserId + '_';
-        const OLD_PREFIX_9 = 'fox_ultimate_storage_v9_' + telegramUserId + '_';
-        const OLD_PREFIX_14 = 'fox_ultimate_storage_v14_' + telegramUserId + '_';
-        const REAL_PREFIX = 'fox_ultimate_storage_v15_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_ultimate_storage_v16_' + telegramUserId + '_';
 
         function getStoredData(key, defaultValue) {
             let val = localStorage.getItem(REAL_PREFIX + key);
-            if (val !== null) return val;
-            val = localStorage.getItem(OLD_PREFIX_14 + key);
-            if (val !== null) return val;
-            val = localStorage.getItem(OLD_PREFIX_9 + key);
-            if (val !== null) return val;
-            val = localStorage.getItem(OLD_PREFIX_8 + key);
             if (val !== null) return val;
             return defaultValue;
         }
@@ -508,14 +536,7 @@
         let isSubscribed = getStoredData('is_subscribed', 'false') === 'true';
         let expiryDateString = getStoredData('expiry_date', '');
         let lastDailyClaim = getStoredData('last_daily', '');
-
-        if (isSubscribed && expiryDateString) {
-            let expiryTime = new Date(expiryDateString).getTime();
-            if (new Date().getTime() > expiryTime) {
-                isSubscribed = false;
-                localStorage.setItem(REAL_PREFIX + 'is_subscribed', 'false');
-            }
-        }
+        let hasRedeemedTurse = getStoredData('has_redeemed_turse', 'false') === 'true';
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
@@ -548,6 +569,49 @@
             document.getElementById('customModal').style.display = 'none';
         }
 
+        // ڤەنکشنا پشکنین و وەرگرتنا کۆدا TURSE
+        function redeemPromoCode() {
+            let inputCode = document.getElementById('promoCodeInput').value.trim().toUpperCase();
+
+            if (inputCode !== "TURSE") {
+                showModal('چەوتی ❌', 'کۆدا نڤیسکری شاشە! هیڤیدە کۆدا ڕاست بنوڤیسە.');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
+            }
+
+            if (hasRedeemedTurse) {
+                showModal('ئاگاداری ⚠️', 'تە پێشتر ئەڤ کۆدە کارپێکرییە و 10 کۆین وەرگرتییە!');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
+            }
+
+            // زێدەکرنا 10 کۆینان
+            coins += 10.0;
+            hasRedeemedTurse = true;
+            scoreElement.innerText = coins.toFixed(5);
+
+            localStorage.setItem(REAL_PREFIX + 'coins', coins);
+            localStorage.setItem(REAL_PREFIX + 'has_redeemed_turse', 'true');
+
+            // هنارتنا ئاگاداریێ بۆ تەلەگرامێ ئەدمنی
+            let notifMessage = `🎟️ *بەکارهێنەرەکی کۆدا TURSE کارپێکر!* 🎟️\n\n` +
+                               `👤 ناڤ: ${telegramName}\n` +
+                               `🔗 یۆزەرمەید: ${telegramUsername}\n` +
+                               `🆔 ئایدی: \`${telegramUserId}\`\n` +
+                               `💰 بڕێ دیاریێ: 10 FOX`;
+            
+            let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: ADMIN_ID, text: notifMessage, parse_mode: 'Markdown' })
+            }).catch(err => console.log('Telegram API Error:', err));
+
+            showModal('پیرۆزە! ✨', 'کۆدا TURSE ب سەرکەفتن هاتە کارپێکرن و 10 کۆین بۆ هژمارا تە هاتنە زێدەکرن.');
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            document.getElementById('promoCodeInput').value = '';
+        }
+
         let selectedPackageCount = 100;
         let selectedPackageCost = 1.0;
 
@@ -564,20 +628,6 @@
 
         function closeTelegramModal() {
             document.getElementById('telegramModal').style.display = 'none';
-        }
-
-        function sendTelegramNotification(msgText) {
-            let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-            let data = {
-                chat_id: ADMIN_ID,
-                text: msgText,
-                parse_mode: 'Markdown'
-            };
-            fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            }).catch(err => console.log('Telegram API Error:', err));
         }
 
         function submitTelegramMembers() {
@@ -602,7 +652,13 @@
                                    `📢 لینکێ کەناڵێ: ${channelLink}\n` +
                                    `💰 بڕێ خەرجکری: ${selectedPackageCost} FOX\n` +
                                    `📅 دەم: ${purchaseDate}`;
-                sendTelegramNotification(notifMessage);
+                
+                let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: ADMIN_ID, text: notifMessage, parse_mode: 'Markdown' })
+                }).catch(err => console.log('Telegram API Error:', err));
 
                 showModal('پیرۆزە تەلەبییا مێمبەرا! ✨', `${selectedPackageCount} مێمبەر ب سەرکەفتن هاتنە داخوازکرن و ${selectedPackageCost} FOX هاتە کێمکرن.`);
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -630,7 +686,6 @@
 
                 buySubscriptionBtn.innerText = 'تەلەبییا 7 ڕۆژی چالاکە ✔';
                 buySubscriptionBtn.style.backgroundColor = '#27ae60';
-                
                 subscriptionInfo.style.display = 'block';
                 expiryDateText.innerText = formattedExpiry;
 
@@ -639,7 +694,13 @@
                                    `🔗 یۆزەرمەید: ${telegramUsername}\n` +
                                    `🆔 ئایدی: \`${telegramUserId}\`\n` +
                                    `📅 بسەرڤەچوون: ${formattedExpiry}`;
-                sendTelegramNotification(notifMessage);
+                
+                let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: ADMIN_ID, text: notifMessage, parse_mode: 'Markdown' })
+                }).catch(err => console.log('Telegram API Error:', err));
 
                 showModal('پیرۆزە تەلەبییا 7 ڕۆژی! ✨', 'تە تەلەبییا 7 ڕۆژی سەرکەفتنەک کر و بۆ ماوەیێ حەفت ڕۆژان هاتە فعالکرن هەتا ڕێکەفتا: ' + formattedExpiry);
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
