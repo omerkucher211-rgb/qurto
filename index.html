@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FOX Coin Game - Ultimate Edition</title>
     
-    <!-- کۆدێ فەرمی یێ مۆنێتەگ (Monetag Meta Tag) -->
     <meta name="monetag" content="b1dd2a8a65cff59345c720f45de9d863">
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -242,7 +241,6 @@
 <body>
 
     <div class="game-container">
-        <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="coin-balance">
                 🟡 <span id="score">0.00000</span>
@@ -258,7 +256,6 @@
             </div>
         </div>
 
-        <!-- 1. پەڕەیا تاپ (Tap) - ڕاستەوخۆ ڤەدبیت -->
         <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
                 <span style="font-size: 55px;">🟡</span>
@@ -282,7 +279,6 @@
             </div>
         </div>
 
-        <!-- 2. پەڕەیا شوپ (دووکان) -->
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px; padding-top: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 2px;">🛒 دووکان و تەلەبی</h3>
 
@@ -302,7 +298,6 @@
             </div>
         </div>
 
-        <!-- 3. پەڕەیا ئەرکان -->
         <div id="tasksScreen" class="screen" style="gap: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 2px;">🌟 ئەرک</h3>
             <div class="shop-section">
@@ -312,7 +307,6 @@
             </div>
         </div>
 
-        <!-- لژنا خوارێ -->
         <div class="nav-bar" id="navBar">
             <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">🌟</span>
@@ -329,7 +323,6 @@
         </div>
     </div>
 
-    <!-- پۆداڵ بۆ ڕاگەهاندنان -->
     <div id="customModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitle" style="color: #d4af37;">پەیام</h3>
@@ -349,6 +342,7 @@
         let telegramUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
         let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id : ADMIN_ID;
         let telegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'FOX Player';
+        let telegramUsername = telegramUser && telegramUser.username ? '@' + telegramUser.username : 'نەدیار';
         let telegramPhotoUrl = telegramUser && telegramUser.photo_url ? telegramUser.photo_url : null;
 
         document.getElementById('userNameText').innerText = telegramName;
@@ -426,6 +420,21 @@
             document.getElementById('customModal').style.display = 'none';
         }
 
+        // ڤەنکشنا هنارتنا ئاگاهدارییا تەلەگرام بۆت بۆ ئەدمنی
+        function sendTelegramNotification(msgText) {
+            let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            let data = {
+                chat_id: ADMIN_ID,
+                text: msgText,
+                parse_mode: 'Markdown'
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).catch(err => console.log('Telegram API Error:', err));
+        }
+
         function buySubscription() {
             let subCost = 0.2;
             if (coins >= subCost) {
@@ -434,7 +443,6 @@
                 
                 let purchaseDate = new Date();
                 let expiryDate = new Date(purchaseDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-                
                 let formattedExpiry = expiryDate.toLocaleString();
 
                 scoreElement.innerText = coins.toFixed(5);
@@ -447,6 +455,14 @@
                 
                 subscriptionInfo.style.display = 'block';
                 expiryDateText.innerText = formattedExpiry;
+
+                // هنارتنا ئاگاهدارییا تەلەگرامێ بۆ ئەدمنی
+                let notifMessage = `✨ *بەکارهێنەرەکی تەلەبییا 7 ڕۆژی کرڕی!* ✨\n\n` +
+                                   `👤 ناڤ: ${telegramName}\n` +
+                                   `🔗 یۆزەرمەید: ${telegramUsername}\n` +
+                                   `🆔 ئایدی: \`${telegramUserId}\`\n` +
+                                   `📅 بسەرڤەچوون: ${formattedExpiry}`;
+                sendTelegramNotification(notifMessage);
 
                 showModal('پیرۆزە تەلەبییا 7 ڕۆژی! ✨', 'تە تەلەبییا 7 ڕۆژی سەرکەفتنەک کر و بۆ ماوەیێ حەفت ڕۆژان هاتە فعالکرن هەتا ڕێکەفتا: ' + formattedExpiry);
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
