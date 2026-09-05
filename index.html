@@ -267,7 +267,7 @@
             </div>
         </div>
 
-        <!-- لژنا خوارێ -->
+        <!-- لژنا خوارێ (جهێ Tasks ل چەپێ و Tap ل ڕاستێ) -->
         <div class="nav-bar">
             <a onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">📋</span>
@@ -314,7 +314,7 @@
             taskBtn.disabled = true;
         }
 
-        // کلیککرنا ل سەر کۆینی (Tap)
+        // کلیککرنا ل سەر کۆینی (Tap) - ئینرجی دکێم بکە هەتا دبیتە 0
         tapBtn.addEventListener('click', function() {
             if (energy > 0) {
                 energy -= 1;
@@ -337,7 +337,7 @@
             }
         });
 
-        // ڤەگەراندنا ئینرجیی دەما دوگمەیا (Use) بەکارئینانێ دگۆژی
+        // ڤەگەراندنا ئینرجیی بۆ 500 دەما دوگمەیا (Use) دگۆژی
         function refillEnergy() {
             energy = 500;
             energyText.innerText = energy + " / 500";
