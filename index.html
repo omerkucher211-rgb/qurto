@@ -2,7 +2,7 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FOX Coin Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -11,6 +11,9 @@
             margin: 0;
             padding: 0;
             font-family: sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -21,6 +24,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
         }
 
         .game-container {
@@ -95,7 +99,6 @@
             cursor: pointer;
             box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
             transition: transform 0.1s;
-            user-select: none;
             overflow: hidden;
         }
 
@@ -131,6 +134,7 @@
             cursor: pointer;
             text-align: center;
             outline: none;
+            -webkit-appearance: none;
         }
 
         .action-btn:active {
@@ -169,6 +173,7 @@
             font-size: 13px;
             cursor: pointer;
             font-weight: bold;
+            outline: none;
         }
 
         .claim-btn:disabled {
@@ -195,6 +200,8 @@
             cursor: pointer;
             flex: 1;
             outline: none;
+            background: none;
+            border: none;
         }
 
         .nav-item.active {
@@ -224,7 +231,7 @@
 
         <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
-                <img src="coin.jpg" alt="FOX Coin" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="coin.jpg" alt="FOX Coin" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
             </div>
 
             <div class="info-card">
@@ -266,22 +273,22 @@
         </div>
 
         <div class="nav-bar">
-            <a onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
+            <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">📋</span>
                 <span>Tasks</span>
-            </a>
-            <a onclick="switchTab('adsScreen', event)" class="nav-item" id="navAds">
+            </button>
+            <button onclick="switchTab('adsScreen', event)" class="nav-item" id="navAds">
                 <span class="icon">🎬</span>
                 <span>Ads</span>
-            </a>
-            <a onclick="switchTab('shopScreen', event)" class="nav-item" id="navShop">
+            </button>
+            <button onclick="switchTab('shopScreen', event)" class="nav-item" id="navShop">
                 <span class="icon">🛒</span>
                 <span>Shop</span>
-            </a>
-            <a onclick="switchTab('tapScreen', event)" class="nav-item active" id="navTap">
+            </button>
+            <button onclick="switchTab('tapScreen', event)" class="nav-item active" id="navTap">
                 <span class="icon">👆</span>
                 <span>Tap</span>
-            </a>
+            </button>
         </div>
     </div>
 
@@ -290,20 +297,12 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const getStorage = () => (typeof(Storage) !== "undefined" ? localStorage : sessionStorage);
-        const foxStorage = getStorage();
-
-        let savedCoins = foxStorage.getItem('fox_coins');
-        let coins = savedCoins !== null ? parseFloat(savedCoins) : 0.0000;
-        
-        let savedEnergy = foxStorage.getItem('fox_energy');
-        let energy = savedEnergy !== null ? parseInt(savedEnergy) : 500;
-
-        let packets = foxStorage.getItem('fox_packets') ? parseInt(foxStorage.getItem('fox_packets')) : 4;
-        let totalSeconds = foxStorage.getItem('fox_timer') ? parseInt(foxStorage.getItem('fox_timer')) : (4 * 3600 + 48 * 60);
+        let coins = parseFloat(localStorage.getItem('fox_coins') || 0);
+        let energy = parseInt(localStorage.getItem('fox_energy') ?? 500);
+        let packets = parseInt(localStorage.getItem('fox_packets') ?? 4);
+        let totalSeconds = parseInt(localStorage.getItem('fox_timer') || (4 * 3600 + 48 * 60));
         let isTimerRunning = false;
-
-        let taskDone = (foxStorage.getItem('fox_task_done') === 'true');
+        let taskDone = (localStorage.getItem('fox_task_done') === 'true');
 
         const scoreElement = document.getElementById('score');
         const tapBtn = document.getElementById('tapBtn');
@@ -321,6 +320,7 @@
             taskBtn.disabled = true;
         }
 
+        // کارپێکرنا دەمژمێرێ
         function startTimer() {
             if (isTimerRunning) return;
             isTimerRunning = true;
@@ -337,12 +337,12 @@
                         String(minutes).padStart(2, '0') + ":" + 
                         String(seconds).padStart(2, '0');
 
-                    foxStorage.setItem('fox_timer', totalSeconds);
+                    localStorage.setItem('fox_timer', totalSeconds);
                 } else {
                     packets = 5;
                     packetText.innerText = packets + " / 5";
-                    foxStorage.setItem('fox_packets', packets);
-                    foxStorage.removeItem('fox_timer');
+                    localStorage.setItem('fox_packets', packets);
+                    localStorage.removeItem('fox_timer');
                     isTimerRunning = false;
                     clearInterval(timerInterval);
                 }
@@ -353,7 +353,7 @@
             startTimer();
         }
 
-        // Tap کێمکرنا ئینرجیی و زێدەکرنا کۆینان
+        // Tap لیدان و کێمکرنا ئینرجیی و پەکێتان ب دروستی
         tapBtn.addEventListener('click', function() {
             if (energy > 0) {
                 energy -= 1;
@@ -362,10 +362,10 @@
                 scoreElement.innerText = coins.toFixed(4);
                 energyText.innerText = energy + " / 500";
 
-                foxStorage.setItem('fox_coins', coins);
-                foxStorage.setItem('fox_energy', energy);
+                localStorage.setItem('fox_coins', coins);
+                localStorage.setItem('fox_energy', energy);
 
-                // ئەگەر ئینرجی بوو 0 و پەکێت مابوون، پەکێتەک ب خۆدکار خەرج دەبێت و ئینرجی دگەڕێتڤە
+                // ئەگەر ئینرجی بوو 0 و پەکێت مابوون، پەکێتەک دکەوێتە خوار
                 if (energy === 0 && packets > 0) {
                     usePacket();
                 }
@@ -384,16 +384,16 @@
             }
         });
 
-        // Use Packet پەکێتی کێم دکەت و ئینرجیی دکەتە 500
+        // Use Packet پەکێتی کێم دکەت (بۆ نموونە ژ 4 دبتە 3) و ئینرجی دکەتە 500
         function usePacket() {
             if (packets > 0) {
                 packets -= 1; 
                 packetText.innerText = packets + " / 5";
-                foxStorage.setItem('fox_packets', packets);
+                localStorage.setItem('fox_packets', packets);
 
                 energy = 500; 
                 energyText.innerText = energy + " / 500";
-                foxStorage.setItem('fox_energy', energy);
+                localStorage.setItem('fox_energy', energy);
 
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.notificationOccurred('success');
@@ -425,10 +425,10 @@
                 coins += 0.0010;
                 scoreElement.innerText = coins.toFixed(4);
                 
-                foxStorage.setItem('fox_coins', coins);
+                localStorage.setItem('fox_coins', coins);
                 
                 taskDone = true;
-                foxStorage.setItem('fox_task_done', 'true');
+                localStorage.setItem('fox_task_done', 'true');
 
                 taskBtn.innerText = 'وەرگرتن ✔';
                 taskBtn.disabled = true;
