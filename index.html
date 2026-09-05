@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FOX Coin Game - Pro</title>
+    <title>FOX Coin Game - Ultimate Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -36,7 +36,7 @@
             height: 100%;
             max-height: 800px;
             background-color: rgba(11, 15, 25, 0.92);
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(6px);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -125,6 +125,7 @@
             transition: transform 0.05s ease;
             overflow: hidden;
             position: relative;
+            -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
 
@@ -176,7 +177,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 13px;
             direction: rtl;
         }
 
@@ -193,14 +194,16 @@
             outline: none;
         }
 
-        .action-btn:active { transform: scale(0.98); }
+        .action-btn:active {
+            transform: scale(0.98);
+        }
 
         #forcedTaskScreen {
             justify-content: center;
             align-items: center;
             text-align: center;
             gap: 20px;
-            background: rgba(11, 15, 25, 0.95);
+            background: rgba(11, 15, 25, 0.98);
             z-index: 999;
         }
 
@@ -208,32 +211,43 @@
             background: rgba(18, 22, 33, 0.95);
             border: 2px solid #d4af37;
             border-radius: 20px;
-            padding: 25px;
+            padding: 20px;
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
         }
 
-        .forced-box h2 { color: #d4af37; font-size: 20px; }
-        .forced-box p { font-size: 14px; color: #b0c4de; line-height: 1.6; }
+        .forced-box h2 { color: #d4af37; font-size: 19px; }
+        .forced-box p { font-size: 13px; color: #b0c4de; line-height: 1.5; }
 
         .task-main-btn {
             background-color: #3498db;
             color: white;
             border: none;
             border-radius: 12px;
-            padding: 12px 20px;
-            font-size: 15px;
+            padding: 10px 15px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
             transition: 0.2s;
         }
-
         .task-main-btn:disabled { background-color: #555; cursor: not-allowed; color: #aaa; }
+
+        .shop-section {
+            background-color: rgba(18, 22, 33, 0.95);
+            border: 1px solid #2a3447;
+            border-radius: 15px;
+            width: 100%;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
 
         .rank-item {
             background-color: rgba(18, 22, 33, 0.9);
@@ -244,13 +258,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
-        .rank-item.top-user { border: 1.5px solid #d4af37; background-color: rgba(212, 175, 55, 0.1); }
+        .rank-item.top-user {
+            border: 1.5px solid #d4af37;
+            background-color: rgba(212, 175, 55, 0.1);
+        }
 
         .rank-avatar {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             overflow: hidden;
             border: 1px solid #d4af37;
@@ -259,6 +276,7 @@
             justify-content: center;
             align-items: center;
             flex-shrink: 0;
+            font-size: 16px;
         }
 
         .nav-bar {
@@ -266,7 +284,7 @@
             justify-content: space-around;
             background-color: #121621;
             border-top: 1px solid #2a3447;
-            padding: 10px 0;
+            padding: 8px 0;
             z-index: 10;
         }
 
@@ -277,27 +295,38 @@
             color: #8b9bb4;
             font-size: 11px;
             text-decoration: none;
-            gap: 4px;
+            gap: 3px;
             cursor: pointer;
             flex: 1;
             outline: none;
             background: none;
             border: none;
         }
-
         .nav-item.active { color: #d4af37; }
         .nav-item span.icon { font-size: 16px; }
 
-        .section-box {
-            background-color: rgba(18, 22, 33, 0.95);
-            border: 1px solid #2a3447;
-            border-radius: 15px;
+        /* پۆداڵ / پەنجەرەیێن جیاواز */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-content {
+            background: #121621;
+            border: 2px solid #d4af37;
+            border-radius: 20px;
+            padding: 20px;
             width: 100%;
-            padding: 15px;
-            margin-bottom: 12px;
+            max-width: 320px;
+            text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
     </style>
 </head>
@@ -316,21 +345,19 @@
                 music.pause();
                 isMusicPlaying = false;
                 btn.innerHTML = '🔇 OFF';
-                btn.style.borderColor = '#d4af37';
                 btn.style.color = '#d4af37';
             } else {
                 music.play().then(() => {
                     isMusicPlaying = true;
                     btn.innerHTML = '🎵 ON';
-                    btn.style.borderColor = '#2ecc71';
                     btn.style.color = '#2ecc71';
-                }).catch(e => console.log("Audio play blocked:", e));
+                }).catch(e => console.log("Audio blocked:", e));
             }
         }
     </script>
 
     <div class="game-container">
-        <!-- Header -->
+        <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="coin-balance">
                 🟡 <span id="score">0.00000</span>
@@ -343,25 +370,25 @@
                     <div style="font-size: 11px; font-weight: bold;" id="userNameText">MALAGA 🇪🇸</div>
                     <div style="font-size: 9px; color: #d4af37;" id="levelText">Lvl 1</div>
                 </div>
-                <div id="userAvatarHeader" style="width: 28px; height: 28px; border-radius: 50%; overflow: hidden; border: 1px solid #d4af37; background: #222; display: flex; justify-content: center; align-items: center;">
-                    <span id="fallbackAvatarHeader" style="font-size: 14px;">⚽</span>
+                <div id="userAvatarHeader" style="width: 26px; height: 26px; border-radius: 50%; overflow: hidden; border: 1px solid #d4af37; background: #222; display: flex; justify-content: center; align-items: center;">
+                    <span id="fallbackAvatarHeader" style="font-size: 12px;">⚽</span>
                 </div>
             </div>
         </div>
 
-        <!-- 0. Forced Task Screen -->
+        <!-- 0. ئەرکێ یجباری -->
         <div id="forcedTaskScreen" class="screen">
             <div class="forced-box">
-                <span style="font-size: 40px;">📢</span>
+                <span style="font-size: 35px;">📢</span>
                 <h2>پێدڤییە بەشدار بی!</h2>
                 <p>بۆ ڤەکرنا یاریێ، دڤێت جۆینی کەناڵی و گروپا مە ببی، پاشی وەرگرتنا 1 کۆینێ دیاری بکەی.</p>
-                <button class="task-main-btn" id="forcedChannelBtn" onclick="openChannel()" style="background-color: #3498db; margin-bottom: 5px;">1. جۆینی کەناڵی بکە 🦊</button>
-                <button class="task-main-btn" id="forcedGroupBtn" onclick="openGroup()" style="background-color: #3498db; margin-bottom: 10px;">2. جۆینی گروپا (BAR) بکە 💬</button>
+                <button class="task-main-btn" id="forcedChannelBtn" onclick="openChannel()">1. جۆینی کەناڵی بکە 🦊</button>
+                <button class="task-main-btn" id="forcedGroupBtn" onclick="openGroup()">2. جۆینی گروپا (BAR) بکە 💬</button>
                 <button class="task-main-btn" id="forcedCheckBtn" onclick="checkBothTasks()" disabled style="background-color: #555;">پشکنین و وەرگرتنا 1 کۆینێ 🔓</button>
             </div>
         </div>
 
-        <!-- 1. Tap Screen -->
+        <!-- 1. پەڕەیا تاپ (Tap) -->
         <div id="tapScreen" class="screen main-content">
             <div class="big-coin-btn" id="tapBtn">
                 <img src="coin.jpg" alt="FOX Coin">
@@ -372,7 +399,7 @@
                     <span>پەکێت 📦</span>
                     <span id="packetText" style="font-weight: bold; direction: ltr;">4 / 5</span>
                 </div>
-                <div class="info-row" style="color: #8b9bb4; font-size: 12px;">
+                <div class="info-row" style="color: #8b9bb4; font-size: 11px;">
                     <span>پەکیتا داهاتی</span>
                     <span id="timerText" style="direction: ltr;">02:00:00</span>
                 </div>
@@ -385,75 +412,72 @@
             </div>
         </div>
 
-        <!-- 2. Shop & Boosters Screen -->
-        <div id="shopScreen" class="screen" style="align-items: center; justify-content: flex-start; gap: 12px;">
-            <h3 style="color: #d4af37;">🛒 دووکانێ و بۆوێستەر</h3>
+        <!-- 2. پەڕەیا شوپ (دووکان و بەشێن نوی) -->
+        <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px; padding-top: 10px;">
+            <h3 style="color: #d4af37; margin-bottom: 2px;">🛒 دووکان و پەرەپێدان</h3>
 
-            <!-- Premium -->
-            <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%); border: 2px solid #d4af37; border-radius: 15px; width: 100%; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                <h4 style="font-size: 15px; color: #d4af37;">پەکەتا پرێمیوم (2x Tap)</h4>
-                <p style="font-size: 11px; color: #b0c4de; text-align: center;">تەپ تەپای تە دکەتە دوو هێندە!</p>
-                <p style="font-size: 12px; color: #d4af37; font-weight: bold;">بهایێ: 1.00 FOX 🟡</p>
-                <button id="buyPremiumBtn" onclick="buyPremium()" style="background-color: #f39c12; color: white; border: none; border-radius: 8px; padding: 8px 15px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">کڕین ✨</button>
+            <!-- کڕینا پرێمیوم -->
+            <div class="shop-section" style="border: 2px solid #d4af37; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(18, 22, 33, 0.95) 100%);">
+                <h4 style="font-size: 14px; color: #d4af37;">پەکەتا پرێمیوم (2x Tap) ✨</h4>
+                <p style="font-size: 11px; color: #b0c4de;">تەپ تەپا تە دێ بیتە دوو هێندە بۆ هەمیشە.</p>
+                <button id="buyPremiumBtn" onclick="buyPremium()" style="background-color: #f39c12; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">کڕین (1 FOX 🟡)</button>
             </div>
 
-            <!-- Multitap Upgrade Booster -->
-            <div class="section-box">
-                <h4 style="font-size: 14px; color: #fff;">بەرزکرنا ئاستێ کلیکی (Multitap)</h4>
-                <p style="font-size: 11px; color: #8b9bb4;">ئاستی هەنووکەیی: <span id="multitapLevelText">1</span> (+0.00001)</p>
-                <button onclick="upgradeMultitap()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">بهایێ بەرزکرنێ: 0.50 FOX 🟡</button>
+            <!-- پێشڤەبرنا ئینرجییێ -->
+            <div class="shop-section">
+                <h4 style="font-size: 14px; color: #fff;">بەرفرهکرنا ئینرجییێ ⚡ (+500 کاپاسیتى)</h4>
+                <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: <span id="energyUpgradeCost">0.50000</span> FOX</p>
+                <button onclick="upgradeEnergyCapacity()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">پێشڤەبرن (Upgrade)</button>
             </div>
 
-            <!-- Buy Members -->
-            <div class="section-box">
-                <h4 style="font-size: 14px; color: #fff;">100 مێمبەر بۆ کەناڵی</h4>
-                <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: 1.00 FOX 🟡</p>
-                <input type="text" id="channelLinkInput" placeholder="لینکێ کەناڵی لێرە بنڤیسە..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d4af37; background-color: rgba(11, 15, 25, 0.9); color: #fff; font-size: 12px; text-align: right; outline: none;">
-                <button onclick="buyMembers()" style="background-color: #2ecc71; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">کڕین 🚀</button>
+            <!-- مێمبەر بۆ کەناڵی -->
+            <div class="shop-section">
+                <h4 style="font-size: 14px; color: #fff;">100 مێمبەر بۆ کەناڵی 🚀</h4>
+                <input type="text" id="channelLinkInput" placeholder="لینکێ کەناڵی لێرە بنڤیسە..." style="width: 100%; padding: 7px; border-radius: 6px; border: 1px solid #d4af37; background-color: #0b0f19; color: #fff; font-size: 12px; text-align: right; outline: none;">
+                <button onclick="buyMembers()" style="background-color: #2ecc71; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">کڕین (1 FOX)</button>
             </div>
         </div>
 
-        <!-- 3. Tasks & Daily Streak Screen -->
-        <div id="tasksScreen" class="screen" style="align-items: center; justify-content: flex-start; gap: 12px;">
-            <h3 style="color: #d4af37;">📋 ئەرک و ڕۆژژمێرا ڕۆژانە</h3>
+        <!-- 3. پەڕەیا ئەرکان و بانگکرنا هەڤالان و چرخی -->
+        <div id="tasksScreen" class="screen" style="gap: 10px;">
+            <h3 style="color: #d4af37; margin-bottom: 5px;">🌟 ئەرک و دیاری</h3>
 
-            <!-- Daily Check-in Box -->
-            <div class="section-box" style="border: 1.5px solid #d4af37;">
-                <h4 style="font-size: 14px; color: #d4af37;">📅 پاداشتێ سەردانا ڕۆژانە (Streak)</h4>
-                <p style="font-size: 11px; color: #b0c4de;" id="streakStatusText">ڕۆژی هەنووکەیی: ڕۆژی 1</p>
-                <button id="claimStreakBtn" onclick="claimDailyStreak()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">وەرگرتنا پاداشتێ ڕۆژانە 🎁</button>
+            <!-- دیارییا ڕۆژانە -->
+            <div class="shop-section">
+                <h4 style="font-size: 14px; color: #d4af37;">📅 دیارییا ڕۆژانە (Daily Streak)</h4>
+                <p style="font-size: 11px; color: #b0c4de;">هەموو ڕۆژەکێ وەرگرتنا 0.20000 FOX!</p>
+                <button id="claimDailyBtn" onclick="claimDailyBonus()" style="background-color: #27ae60; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا دیارییا ڕۆژانە 🎁</button>
             </div>
 
-            <!-- Referral System Box -->
-            <div class="section-box">
-                <h4 style="font-size: 14px; color: #fff;">👥 بانگهێشتکرنا هاوڕێیان (Referral)</h4>
-                <p style="font-size: 11px; color: #8b9bb4;">هەر هاوڕێیەک بێنە، 0.50 کۆین وەربگرە!</p>
-                <button onclick="copyRefLink()" style="background-color: #9b59b6; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">کۆپیکرنا لینکێ بانگهێشتێ 🔗</button>
+            <!-- بانگکرنا هەڤالان (Referral) -->
+            <div class="shop-section">
+                <h4 style="font-size: 14px; color: #d4af37;">👥 بانگکرنا هەڤالان (Referral System)</h4>
+                <p style="font-size: 11px; color: #b0c4de;">لینکێ خۆ پشکدار بکە و 0.50000 کۆین بۆ هەر هەڤالەکی وەربگرە!</p>
+                <button onclick="shareReferralLink()" style="background-color: #9b59b6; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">هنارتنا لینکێ بانگکرنێ 🔗</button>
             </div>
 
-            <div class="section-box" style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
-                <button style="background-color: #555; color: white; border: none; border-radius: 6px; padding: 6px 10px; font-size: 11px;" disabled>تەواوبوو ✔</button>
-                <div style="text-align: right;">
-                    <h4 style="font-size: 13px; color: #fff;">جۆینی کەناڵ و گروپێ</h4>
-                    <p style="font-size: 11px; color: #d4af37;">1 کۆین وەرگرتیە</p>
-                </div>
+            <!-- چرخی بەختەوەرێ -->
+            <div class="shop-section">
+                <h4 style="font-size: 14px; color: #d4af37;">🎡 چرخی بەختەوەرێ (Spin Wheel)</h4>
+                <p style="font-size: 11px; color: #b0c4de;">ڕۆژانە جارەکێ ب بەخت کۆینێن بێ بەرانبەر بابهێنە!</p>
+                <button onclick="spinTheWheel()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">خولاندنا چرخێ 🎯</button>
             </div>
         </div>
 
-        <!-- 4. Ranking Screen -->
+        <!-- 4. پەڕەیا ڕێزبەندیێ (Ranking) -->
         <div id="rankingScreen" class="screen">
-            <h3 style="margin-bottom: 12px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان</h3>
+            <h3 style="margin-bottom: 10px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان (Live)</h3>
             <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;"></div>
         </div>
 
-        <!-- Navigation Bar -->
+        <!-- لژنا خوارێ (Navigation Bar) -->
         <div class="nav-bar" id="navBar">
             <button onclick="switchTab('rankingScreen', event)" class="nav-item" id="navRanking">
                 <span class="icon">🏆</span>
                 <span>Rank</span>
             </button>
             <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
-                <span class="icon">📋</span>
+                <span class="icon">🌟</span>
                 <span>Tasks</span>
             </button>
             <button onclick="switchTab('shopScreen', event)" class="nav-item" id="navShop">
@@ -464,6 +488,15 @@
                 <span class="icon">👆</span>
                 <span>Tap</span>
             </button>
+        </div>
+    </div>
+
+    <!-- پۆداڵ بۆ ڕاگەهاندنان -->
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle" style="color: #d4af37;">پەیام</h3>
+            <p id="modalMessage" style="font-size: 13px; color: #b0c4de;"></p>
+            <button onclick="closeModal()" style="background-color: #d4af37; color: #0b0f19; border: none; border-radius: 8px; padding: 8px; font-weight: bold; cursor: pointer;">باشە (OK)</button>
         </div>
     </div>
 
@@ -482,11 +515,11 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        const REAL_PREFIX = 'fox_pro_storage_v3_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_ultimate_storage_v3_' + telegramUserId + '_';
 
         let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins')) || 0;
-        let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : 500;
         let maxEnergy = parseInt(localStorage.getItem(REAL_PREFIX + 'max_energy')) || 500;
+        let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : maxEnergy;
         let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level')) || 1;
         let totalTaps = parseInt(localStorage.getItem(REAL_PREFIX + 'total_taps')) || 0;
         let packets = localStorage.getItem(REAL_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'packets')) : 4;
@@ -495,11 +528,8 @@
         
         let isTasksDone = localStorage.getItem(REAL_PREFIX + 'tasks_done') === 'true';
         let isPremium = localStorage.getItem(REAL_PREFIX + 'is_premium') === 'true';
-        let multitapLevel = parseInt(localStorage.getItem(REAL_PREFIX + 'multitap_level')) || 1;
-
-        // Daily Streak Data
-        let lastStreakDate = localStorage.getItem(REAL_PREFIX + 'last_streak_date') || '';
-        let streakDay = parseInt(localStorage.getItem(REAL_PREFIX + 'streak_day')) || 1;
+        let lastDailyClaim = localStorage.getItem(REAL_PREFIX + 'last_daily') || '';
+        let lastSpinDay = localStorage.getItem(REAL_PREFIX + 'last_spin') || '';
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
@@ -511,18 +541,25 @@
         const tapScreen = document.getElementById('tapScreen');
         const navBar = document.getElementById('navBar');
         const buyPremiumBtn = document.getElementById('buyPremiumBtn');
-        const multitapLevelText = document.getElementById('multitapLevelText');
 
         scoreElement.innerText = coins.toFixed(5);
         levelText.innerText = "Lvl " + level;
         energyText.innerText = energy + " / " + maxEnergy;
         packetText.innerText = packets + " / 5";
-        multitapLevelText.innerText = multitapLevel;
 
         if (isPremium) {
             buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔ (2x)';
             buyPremiumBtn.style.backgroundColor = '#27ae60';
             buyPremiumBtn.disabled = true;
+        }
+
+        function showModal(title, msg) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = msg;
+            document.getElementById('customModal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
         }
 
         let channelClicked = false;
@@ -557,18 +594,7 @@
                 let btn = document.getElementById('forcedCheckBtn');
                 btn.disabled = false;
                 btn.style.backgroundColor = '#2ecc71';
-                btn.innerText = 'چاوەڕێ بکە (5 ثانیە)...';
-
-                let countdown = 5;
-                let interval = setInterval(() => {
-                    countdown--;
-                    if (countdown > 0) {
-                        btn.innerText = 'چاوەڕێ بکە (' + countdown + ' ثانیە)...';
-                    } else {
-                        clearInterval(interval);
-                        btn.innerText = 'وەرگرتنا 1 کۆینێ دیاری 🟡';
-                    }
-                }, 1000);
+                btn.innerText = 'وەرگرتنا 1 کۆینێ دیاری 🟡';
             }
         }
 
@@ -583,19 +609,76 @@
                 forcedTaskScreen.classList.remove('active');
                 tapScreen.classList.add('active');
                 navBar.style.display = 'flex';
-                alert('پیرۆزە! تە 1 کۆین وەرگرت 🎉');
+                showModal('پیرۆزە! 🎉', 'تە هەردو ئەرک تەواو کرن و 1 کۆین وەرگرت.');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             }
         }
 
-        // Passive Energy Regen (هر 3 چرکەیەک 1 ئینرجی زێدە دکەت تا گەیشتن ب ماکس)
-        setInterval(() => {
-            if (energy < maxEnergy) {
-                energy = Math.min(maxEnergy, energy + 1);
-                energyText.innerText = energy + " / " + maxEnergy;
-                localStorage.setItem(REAL_PREFIX + 'energy', energy);
+        // دیارییا ڕۆژانە
+        function claimDailyBonus() {
+            let today = new Date().toDateString();
+            if (lastDailyClaim === today) {
+                showModal('ئاگاداری 📅', 'تە دیارییا ئەڤرۆ ڕوە ڕۆژانە وەرگرتییە! سبە وەرەڤە.');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
             }
-        }, 3000);
+            lastDailyClaim = today;
+            localStorage.setItem(REAL_PREFIX + 'last_daily', today);
+            coins += 0.20000;
+            scoreElement.innerText = coins.toFixed(5);
+            localStorage.setItem(REAL_PREFIX + 'coins', coins);
+            showModal('دیارییا ڕۆژانە 🎁', 'پیرۆزە! 0.20000 FOX هاتە زێدەکرن بۆ کۆینێن تە.');
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        // سیستمێ بانگکرنا هەڤالان (Referral)
+        function shareReferralLink() {
+            let refLink = `https://t.me/share/url?url=https://t.me/YourBotName?start=ref_${telegramUserId}&text=ڤێ یارییا خۆش بکە و پێکڤە کۆینان کۆم بکەین! 🦊🔥`;
+            window.open(refLink, '_blank');
+        }
+
+        // چرخی بەختەوەرێ
+        function spinTheWheel() {
+            let today = new Date().toDateString();
+            if (lastSpinDay === today) {
+                showModal('چرخی بەختەوەرێ 🎡', 'تە ئەڤرۆ چرخ ڤەگوهاست، سبە دێ سەرلەنوێ ڤەکەت!');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
+            }
+            lastSpinDay = today;
+            localStorage.setItem(REAL_PREFIX + 'last_spin', today);
+
+            let rewards = [0.1, 0.3, 0.5, 1.0, 0.05, 0.2];
+            let won = rewards[Math.floor(Math.random() * rewards.length)];
+            coins += won;
+            scoreElement.innerText = coins.toFixed(5);
+            localStorage.setItem(REAL_PREFIX + 'coins', coins);
+
+            showModal('چرخی بەختەوەرێ 🎯', `پیرۆزە! ب بەخت تە (${won.toFixed(5)} FOX) وەرگرت!`);
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        // پێشڤەبرنا ئینرجییێ
+        function upgradeEnergyCapacity() {
+            let upgradeCost = 0.50000;
+            if (coins >= upgradeCost) {
+                coins -= upgradeCost;
+                maxEnergy += 500;
+                energy = maxEnergy;
+                scoreElement.innerText = coins.toFixed(5);
+                energyText.innerText = energy + " / " + maxEnergy;
+
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                localStorage.setItem(REAL_PREFIX + 'max_energy', maxEnergy);
+                localStorage.setItem(REAL_PREFIX + 'energy', energy);
+
+                showModal('پێشڤەبرن ⚡', 'کاپاسیتیا ئینرجییێ بوو ب ' + maxEnergy + '!');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                showModal('کێمیا کۆینان 🟡', 'پێدڤی ب 0.50000 FOX هەیە بۆ بلندکرنا ئینرجییێ.');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
 
         function buyPremium() {
             if (isPremium) return;
@@ -609,32 +692,10 @@
                 buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔ (2x)';
                 buyPremiumBtn.style.backgroundColor = '#27ae60';
                 buyPremiumBtn.disabled = true;
-                alert('پیرۆزە! پەکەتا پرێمیوم هاتە چالاککرن ⭐');
+                showModal('پیرۆزە! ✨', 'تە پەکەتا پرێمیوم کڕی و تەپ تەپا تە بوو ب 2x.');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
-                alert('کوینێن تە بەس نینن! 🟡');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-            }
-        }
-
-        function upgradeMultitap() {
-            let cost = 0.50;
-            if (coins >= cost) {
-                coins -= cost;
-                multitapLevel++;
-                maxEnergy += 100; // هەر ئاستەکێ پتر قەبارەی ئینرجی ژی مەزنتر دبت
-                scoreElement.innerText = coins.toFixed(5);
-                energyText.innerText = energy + " / " + maxEnergy;
-                multitapLevelText.innerText = multitapLevel;
-
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-                localStorage.setItem(REAL_PREFIX + 'multitap_level', multitapLevel);
-                localStorage.setItem(REAL_PREFIX + 'max_energy', maxEnergy);
-
-                alert('پیرۆزە! ئاستێ کلیکی بلندا بوو بۆ لڤل ' + multitapLevel);
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                alert('کوینێن تە بەس نینن بۆ ڤی بووستەری! 🟡');
+                showModal('کێمیا کۆینان 🟡', 'پێدڤی ب 1 کۆینێ یە.');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
         }
@@ -642,82 +703,42 @@
         function buyMembers() {
             let channelLink = document.getElementById('channelLinkInput').value.trim();
             if (!channelLink) {
-                alert('لینکێ کەناڵی لێرە بنڤیسە! 🔗');
+                showModal('خطأ 🔗', 'لطفاً لینکێ کەناڵ یان گروپێ خۆ لێرە بنڤیسە.');
                 return;
             }
             if (coins >= 1.00000) {
                 coins -= 1.00000;
                 scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
-                alert('پیرۆزە! 100 مێمبەر هاتنە داخوازی کرن 🎉');
+                showModal('سەرکەفتن 🚀', 'تە 100 مێمبەر کڕین.');
                 document.getElementById('channelLinkInput').value = '';
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
-                alert('کوینێن تە بەس نینن! 🟡');
+                showModal('کێمیا کۆینان 🟡', 'کوینێن تە بس نینن.');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
-        }
-
-        // Daily Streak Claim Logic
-        function checkStreakDisplay() {
-            let today = new Date().toISOString().slice(0, 10);
-            let claimBtn = document.getElementById('claimStreakBtn');
-            let statusText = document.getElementById('streakStatusText');
-
-            if (lastStreakDate === today) {
-                claimBtn.innerText = 'وەرگرتیە ئەڤرۆ ✔';
-                claimBtn.style.backgroundColor = '#555';
-                claimBtn.disabled = true;
-            }
-            statusText.innerText = 'ڕۆژی هەنووکەیی زنجیرێ: ڕۆژی ' + streakDay;
-        }
-
-        function claimDailyStreak() {
-            let today = new Date().toISOString().slice(0, 10);
-            if (lastStreakDate === today) return;
-
-            let reward = streakDay * 0.05; // هەر ڕۆژەک پاداشت پتر دبت
-            coins += reward;
-            scoreElement.innerText = coins.toFixed(5);
-            localStorage.setItem(REAL_PREFIX + 'coins', coins);
-
-            lastStreakDate = today;
-            streakDay++;
-            localStorage.setItem(REAL_PREFIX + 'last_streak_date', lastStreakDate);
-            localStorage.setItem(REAL_PREFIX + 'streak_day', streakDay);
-
-            checkStreakDisplay();
-            alert('پیرۆزە! تە ' + reward.toFixed(2) + ' کۆین وەرگرت وەک پاداشتێ ڕۆژانە 🎉');
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        }
-        checkStreakDisplay();
-
-        function copyRefLink() {
-            let refLink = 'http://t.me/FOX_KRD_COIN_bot?start=ref_' + telegramUserId;
-            navigator.clipboard.writeText(refLink).then(() => {
-                alert('لینکێ بانگهێشتێ هاتە کۆپیکرن! 📋 بۆ هاوڕێیێن خۆ بنێرە.');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            });
         }
 
         function updateRankingList() {
             const rankingContainer = document.getElementById('rankingListContainer');
             let realUsersList = [
                 { id: "u1", name: telegramName, score: coins, avatar: telegramPhotoUrl, isMe: true },
-                { id: "u2", name: "محەمەد ئەمین", score: 1.25000, avatar: null, isMe: false },
-                { id: "u3", name: "شەهلا عەبدوڵڵا", score: 0.95000, avatar: null, isMe: false },
-                { id: "u4", name: "دیار حەسەن", score: 0.40000, avatar: null, isMe: false }
+                { id: "u2", name: "محەمەد ئەمین", score: 0.00000, avatar: null, isMe: false },
+                { id: "u3", name: "شەهلا عەبدوڵڵا", score: 0.00000, avatar: null, isMe: false },
+                { id: "u4", name: "دیار حەسەن", score: 0.00000, avatar: null, isMe: false },
+                { id: "u5", name: "ڕۆژین ئاکۆ", score: 0.00000, avatar: null, isMe: false }
             ];
             realUsersList.sort((a, b) => b.score - a.score);
 
             let htmlContent = '';
             realUsersList.forEach((user, index) => {
-                let avatarHTML = user.avatar ? `<img src="${user.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : `<span style="font-size: 18px;">⚽</span>`;
+                let avatarHTML = user.avatar ? `<img src="${user.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : `<span style="font-size: 16px;">⚽</span>`;
                 let itemClass = user.isMe ? "rank-item top-user" : "rank-item";
                 let tagText = user.isMe ? ` <span style="font-size: 10px; color: #d4af37;">(تە)</span>` : '';
 
                 htmlContent += `
                     <div class="${itemClass}">
-                        <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
                             <div class="rank-avatar">${avatarHTML}</div>
                             <div>
                                 <div style="font-size: 13px; font-weight: bold;">${user.name}${tagText}</div>
@@ -730,16 +751,39 @@
             });
             rankingContainer.innerHTML = htmlContent;
         }
+
+        setInterval(updateRankingList, 60000);
         updateRankingList();
+
+        function startTimer() {
+            if (isTimerRunning) return;
+            isTimerRunning = true;
+            let timerInterval = setInterval(function() {
+                if (totalSeconds > 0) {
+                    totalSeconds--;
+                    let hours = Math.floor(totalSeconds / 3600);
+                    let minutes = Math.floor((totalSeconds % 3600) / 60);
+                    let seconds = totalSeconds % 60;
+                    timerText.innerText = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+                    localStorage.setItem(REAL_PREFIX + 'timer', totalSeconds);
+                } else {
+                    packets = 5;
+                    packetText.innerText = packets + " / 5";
+                    localStorage.setItem(REAL_PREFIX + 'packets', packets);
+                    localStorage.removeItem(REAL_PREFIX + 'timer');
+                    isTimerRunning = false;
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+
+        if (packets < 5) startTimer();
 
         function handleTapAction(e) {
             if (energy > 0) {
-                let consumeEnergy = Math.min(energy, multitapLevel);
-                energy -= consumeEnergy;
-                totalTaps += consumeEnergy;
-
-                let baseReward = 0.00001 * multitapLevel;
-                let clickReward = isPremium ? baseReward * 2 : baseReward;
+                energy -= 1;
+                totalTaps += 1;
+                let clickReward = isPremium ? 0.00002 : 0.00001;
                 coins += clickReward;
 
                 let newLevel = Math.floor(totalTaps / 1000) + 1;
@@ -762,11 +806,14 @@
                 let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width / 2);
                 let clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : rect.top + rect.height / 2);
 
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+
                 const floatingEl = document.createElement('div');
                 floatingEl.className = 'floating-score';
                 floatingEl.innerText = "+" + clickReward.toFixed(5);
-                floatingEl.style.left = (clientX - rect.left - 20) + 'px';
-                floatingEl.style.top = (clientY - rect.top - 20) + 'px';
+                floatingEl.style.left = (x - 30) + 'px';
+                floatingEl.style.top = (y - 20) + 'px';
 
                 tapBtn.appendChild(floatingEl);
                 setTimeout(() => floatingEl.remove(), 800);
@@ -803,37 +850,18 @@
             }
         }
 
-        function startTimer() {
-            if (isTimerRunning) return;
-            isTimerRunning = true;
-            let timerInterval = setInterval(function() {
-                if (totalSeconds > 0) {
-                    totalSeconds--;
-                    let hours = Math.floor(totalSeconds / 3600);
-                    let minutes = Math.floor((totalSeconds % 3600) / 60);
-                    let seconds = totalSeconds % 60;
-                    timerText.innerText = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
-                    localStorage.setItem(REAL_PREFIX + 'timer', totalSeconds);
-                } else {
-                    packets = 5;
-                    packetText.innerText = packets + " / 5";
-                    localStorage.setItem(REAL_PREFIX + 'packets', packets);
-                    localStorage.removeItem(REAL_PREFIX + 'timer');
-                    isTimerRunning = false;
-                    clearInterval(timerInterval);
-                }
-            }, 1000);
-        }
-        if (packets < 5) { startTimer(); }
-
         function switchTab(screenId, event) {
             document.querySelectorAll('.screen').forEach(s => {
-                if(s.id !== 'forcedTaskScreen') s.classList.remove('active');
+                if (s.id !== 'forcedTaskScreen') s.classList.remove('active');
             });
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
             document.getElementById(screenId).classList.add('active');
             event.currentTarget.classList.add('active');
-            if (screenId === 'rankingScreen') { updateRankingList(); }
+
+            if (screenId === 'rankingScreen') {
+                updateRankingList();
+            }
         }
     </script>
 </body>
