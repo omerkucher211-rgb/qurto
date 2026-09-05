@@ -230,7 +230,6 @@
             color: #aaa;
         }
 
-        /* ستایلێن ڕێزبەندیێ */
         .rank-item {
             background-color: rgba(18, 22, 33, 0.9);
             border: 1px solid #2a3447;
@@ -299,7 +298,7 @@
         <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="coin-balance">
-                🟡 FOX <span id="score">0.0000</span>
+                🟡 FOX <span id="score">0.00000</span>
             </div>
             <div class="user-level">
                 <div style="text-align: right;">
@@ -358,7 +357,7 @@
 
                 <div style="text-align: center;">
                     <h4 style="font-size: 16px; color: #fff; margin-bottom: 4px;">100 مێمبەر</h4>
-                    <p style="font-size: 13px; color: #d4af37; font-weight: bold;">بهایێ: 1 FOX 🟡</p>
+                    <p style="font-size: 13px; color: #d4af37; font-weight: bold;">بهایێ: 1.00000 FOX 🟡</p>
                 </div>
 
                 <input type="text" id="channelLinkInput" placeholder="لینکێ کەناڵ یان گروپێ خۆ لێرە بنڤیسە..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #d4af37; background-color: rgba(11, 15, 25, 0.9); color: #fff; font-size: 13px; text-align: right; outline: none;">
@@ -385,7 +384,7 @@
 
                 <!-- ئەرکێ دووەم: گروپ (BAR) -->
                 <div class="task-item" style="background-color: rgba(18, 22, 33, 0.9); border: 1px solid #2a3447; border-radius: 12px; width: 100%; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
-                    <button class="claim-btn" id="taskGroupBtn" onclick="handleTaskGroup()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer;">جۆین بکە (+1 🟡)</button>
+                    <button class="claim-btn" id="taskGroupBtn" onclick="handleTaskGroup()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer;">جۆین بکە (+1.00000 🟡)</button>
                     <div class="task-info" style="text-align: right;">
                         <h4 style="font-size: 14px; margin-bottom: 4px; color: #fff;">جۆینی گروپا تێلێگرامێ (BAR)</h4>
                         <p style="font-size: 12px; color: #d4af37;">وەرگرتنا 1 کۆینێ دیاری</p>
@@ -397,9 +396,7 @@
         <!-- 4. پەڕەیا ڕێزبەندیێ (Ranking) -->
         <div id="rankingScreen" class="screen">
             <h3 style="margin-bottom: 15px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان</h3>
-            <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;">
-                <!-- لیستا بەکارهێنەرێن ڕاستەقینە دێ ل ڤێرە هێتە نیشاندان -->
-            </div>
+            <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;"></div>
         </div>
 
         <!-- لژنا خوارێ (Navigation Bar) -->
@@ -452,7 +449,7 @@
             shopAvatarContainer.innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        const REAL_PREFIX = 'fox_permanent_save_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_permanent_save_v2_' + telegramUserId + '_';
 
         let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins') || 0);
         let energy = parseInt(localStorage.getItem(REAL_PREFIX + 'energy') ?? 500);
@@ -477,7 +474,7 @@
         const navBar = document.getElementById('navBar');
         const taskGroupBtn = document.getElementById('taskGroupBtn');
 
-        scoreElement.innerText = coins.toFixed(4);
+        scoreElement.innerText = coins.toFixed(5);
         levelText.innerText = "Lvl " + level;
         energyText.innerText = energy + " / 500";
         packetText.innerText = packets + " / 5";
@@ -525,8 +522,8 @@
                 isForcedJoined = true;
                 localStorage.setItem(REAL_PREFIX + 'forced_joined', 'true');
 
-                coins += 0.0010;
-                scoreElement.innerText = coins.toFixed(4);
+                coins += 0.00100;
+                scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
 
                 forcedTaskScreen.classList.remove('active');
@@ -539,7 +536,6 @@
             }
         }
 
-        // کۆنترۆلا ئەرکێ گروپا BAR
         let groupState = 'join';
         function handleTaskGroup() {
             if (isGroupJoined) return;
@@ -558,7 +554,7 @@
                     } else {
                         clearInterval(interval);
                         groupState = 'ready';
-                        taskGroupBtn.innerText = 'وەرگرتنا 1 کۆینێ 🟡';
+                        taskGroupBtn.innerText = 'وەرگرتنا 1.00000 کۆینێ 🟡';
                         taskGroupBtn.disabled = false;
                         taskGroupBtn.style.backgroundColor = '#2ecc71';
                     }
@@ -568,8 +564,8 @@
                 isGroupJoined = true;
                 localStorage.setItem(REAL_PREFIX + 'group_joined', 'true');
 
-                coins += 1;
-                scoreElement.innerText = coins.toFixed(4);
+                coins += 1.00000;
+                scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
 
                 taskGroupBtn.innerText = "تەواوبوو ✔";
@@ -593,26 +589,10 @@
                 return;
             }
 
-            if (coins >= 1) {
-                coins -= 1;
-                scoreElement.innerText = coins.toFixed(4);
+            if (coins >= 1.00000) {
+                coins -= 1.00000;
+                scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
-
-                let botToken = "BOTE_TOKEN_E_XVE"; 
-                let myChatId = "CHAT_ID_E_XVE";   
-
-                let message = `🔔 کڕینەکا نوی ل یاریێ هاتە کرن!\n\n` +
-                              `👤 ناڤێ بکارهێنەری: ${telegramName}\n` +
-                              `🆔 ئایدیێ تەلەگرامی: ${telegramUserId}\n` +
-                              `🔗 لینکێ کەناڵی: ${channelLink}\n` +
-                              `📦 مەتریا کڕی: 100 مێمبەر`;
-
-                if (botToken !== "BOTE_TOKEN_E_XVE" && myChatId !== "CHAT_ID_E_XVE") {
-                    fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${myChatId}&text=${encodeURIComponent(message)}`)
-                    .then(response => response.json())
-                    .then(data => console.log("نامە هات هنارتن:", data))
-                    .catch(err => console.log("هەڵە د هنارتنێ دا:", err));
-                }
 
                 alert('پیرۆزە! تە 100 مێمبەر کڕین 🎉');
                 document.getElementById('channelLinkInput').value = '';
@@ -633,10 +613,10 @@
             
             let realUsersList = [
                 { id: "u1", name: telegramName, score: coins, avatar: telegramPhotoUrl, isMe: true },
-                { id: "u2", name: "محەمەد ئەمین", score: 35.2000, avatar: null, isMe: false },
-                { id: "u3", name: "شەهلا عەبدوڵڵا", score: 28.1500, avatar: null, isMe: false },
-                { id: "u4", name: "دیار حەسەن", score: 19.4000, avatar: null, isMe: false },
-                { id: "u5", name: "ڕۆژین ئاکۆ", score: 12.0000, avatar: null, isMe: false }
+                { id: "u2", name: "محەمەد ئەمین", score: 35.20000, avatar: null, isMe: false },
+                { id: "u3", name: "شەهلا عەبدوڵڵا", score: 28.15000, avatar: null, isMe: false },
+                { id: "u4", name: "دیار حەسەن", score: 19.40000, avatar: null, isMe: false },
+                { id: "u5", name: "ڕۆژین ئاکۆ", score: 12.00000, avatar: null, isMe: false }
             ];
 
             realUsersList.sort((a, b) => b.score - a.score);
@@ -659,7 +639,7 @@
                                 <div style="font-size: 10px; color: #8b9bb4;">#${index + 1}</div>
                             </div>
                         </div>
-                        <span style="color: #d4af37; font-weight: bold; direction: ltr;">${typeof user.score === 'number' ? user.score.toFixed(4) : user.score} 🟡</span>
+                        <span style="color: #d4af37; font-weight: bold; direction: ltr;">${typeof user.score === 'number' ? user.score.toFixed(5) : user.score} 🟡</span>
                     </div>
                 `;
             });
@@ -704,17 +684,18 @@
                 energy -= 1;
                 totalTaps += 1;
 
-                let clickReward = 0.0001 * Math.pow(2, level - 1);
+                // گۆڕینا ڕێژا تاپ-تاپێ: هەر 1000 تاپ = 1.2 کۆین
+                let clickReward = 1.2 / 1000;
                 coins += clickReward;
 
-                let newLevel = Math.floor(totalTaps / 10) + 1;
+                let newLevel = Math.floor(totalTaps / 1000) + 1;
                 if (newLevel !== level) {
                     level = newLevel;
                     levelText.innerText = "Lvl " + level;
                     localStorage.setItem(REAL_PREFIX + 'level', level);
                 }
 
-                scoreElement.innerText = coins.toFixed(4);
+                scoreElement.innerText = coins.toFixed(5);
                 energyText.innerText = energy + " / 500";
 
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
@@ -728,10 +709,7 @@
                 const floatingEl = document.createElement('div');
                 floatingEl.className = 'floating-score';
                 
-                let displayReward = "+" + clickReward.toFixed(4);
-                if (clickReward < 0.0001) {
-                    displayReward = "+" + clickReward.toFixed(6);
-                }
+                let displayReward = "+" + clickReward.toFixed(5);
                 floatingEl.innerText = displayReward;
                 
                 floatingEl.style.left = (x - 30) + 'px';
