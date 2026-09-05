@@ -63,14 +63,24 @@
             font-weight: bold;
         }
 
-        .main-content {
-            display: flex;
+        /* بەشێن سکرینان (Screens) */
+        .screen {
+            display: none;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             flex-grow: 1;
-            gap: 20px;
             padding: 20px;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .main-content {
+            justify-content: center;
+            gap: 20px;
         }
 
         .big-coin-btn {
@@ -120,8 +130,49 @@
             font-weight: bold;
             cursor: pointer;
             text-align: center;
+            text-decoration: none;
         }
 
+        /* تەسکی چەناڵێ */
+        .task-item {
+            background-color: rgba(18, 22, 33, 0.9);
+            border: 1px solid #2a3447;
+            border-radius: 12px;
+            width: 100%;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .task-info h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .task-info p {
+            font-size: 12px;
+            color: #d4af37;
+        }
+
+        .claim-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .claim-btn:disabled {
+            background-color: #7f8c8d;
+            cursor: not-allowed;
+        }
+
+        /* لژنا خوارێ (Navigation Bar) */
         .nav-bar {
             display: flex;
             justify-content: space-around;
@@ -138,6 +189,7 @@
             font-size: 12px;
             text-decoration: none;
             gap: 4px;
+            cursor: pointer;
         }
 
         .nav-item.active {
@@ -152,6 +204,7 @@
 <body>
 
     <div class="game-container">
+        <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="user-level">
                 <span>🦊</span>
@@ -165,8 +218,8 @@
             </div>
         </div>
 
-        <div class="main-content">
-            <!-- لێرە وێنەیێ خۆ ددانێ (ناڤێ وێنەی یان لینکێ وێ) -->
+        <!-- 1. پەڕەیا تاپ (Tap Screen) -->
+        <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
                 <img src="coin.png" alt="FOX Coin" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
@@ -189,20 +242,42 @@
             </div>
         </div>
 
+        <!-- 2. پەڕەیا تاڕکان (Tasks Screen) -->
+        <div id="tasksScreen" class="screen">
+            <h3 style="margin-bottom: 15px; color: #d4af37;">ئەرکێن ڕۆژانە (Tasks)</h3>
+            
+            <div class="task-item">
+                <div class="task-info">
+                    <h4>جۆینی چەناڵا تێلێگرامێ بکه</h4>
+                    <p>+0.001 FOX</p>
+                </div>
+                <button class="claim-btn" id="taskBtn" onclick="completeTask()">جۆین بکە</button>
+            </div>
+        </div>
+
+        <!-- پەڕەیێن دی (Shop و Ads - بۆ نموونە) -->
+        <div id="shopScreen" class="screen" style="justify-content: center; align-items: center;">
+            <h3>🛒 دووکان (بزحف زوو دێ هێت)</h3>
+        </div>
+        <div id="adsScreen" class="screen" style="justify-content: center; align-items: center;">
+            <h3>🎬 ڕیکلام (بزحف زوو دێ هێت)</h3>
+        </div>
+
+        <!-- لژنا خوارێ (Navigation Bar) -->
         <div class="nav-bar">
-            <a href="#" class="nav-item active">
+            <a onclick="switchTab('tapScreen', event)" class="nav-item active" id="navTap">
                 <span class="icon">👆</span>
                 <span>Tap</span>
             </a>
-            <a href="#" class="nav-item">
+            <a onclick="switchTab('shopScreen', event)" class="nav-item" id="navShop">
                 <span class="icon">🛒</span>
                 <span>Shop</span>
             </a>
-            <a href="#" class="nav-item">
+            <a onclick="switchTab('adsScreen', event)" class="nav-item" id="navAds">
                 <span class="icon">🎬</span>
                 <span>Ads</span>
             </a>
-            <a href="#" class="nav-item">
+            <a onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">📋</span>
                 <span>Tasks</span>
             </a>
@@ -217,7 +292,9 @@
         let coins = 0.0000;
         const scoreElement = document.getElementById('score');
         const tapBtn = document.getElementById('tapBtn');
+        let taskDone = false;
 
+        // لێدانا کۆینان ب کلیککرنێ
         tapBtn.addEventListener('click', function() {
             coins += 0.0001;
             scoreElement.innerText = coins.toFixed(4);
@@ -226,6 +303,36 @@
                 tg.HapticFeedback.impactOccurred('medium');
             }
         });
+
+        // گوهۆڕینا پەڕەیان (Tabs)
+        function switchTab(screenId, event) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            document.getElementById(screenId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // جێبەجێکرنا تەسکی چەناڵێ
+        function completeTask() {
+            if (!taskDone) {
+                // ڤەکردنا چەناڵا تە ل تێلێگرامێ یان براوزەری
+                window.open('https://t.me/TORSEII', '_blank');
+
+                // زێدەکرنا 0.001 بۆ سەر کۆینان
+                coins += 0.0010;
+                scoreElement.innerText = coins.toFixed(4);
+                
+                taskDone = true;
+                const btn = document.getElementById('taskBtn');
+                btn.innerText = 'وەرگرتن ✔';
+                btn.disabled = true;
+
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+            }
+        }
     </script>
 </body>
 </html>
