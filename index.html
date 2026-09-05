@@ -272,10 +272,13 @@
             </div>
             <div class="user-level">
                 <div style="text-align: right;">
-                    <div style="font-size: 12px; font-weight: bold;">MALAGA 🇪🇸</div>
+                    <div style="font-size: 12px; font-weight: bold;" id="userNameText">User</div>
                     <div style="font-size: 10px; color: #d4af37;" id="levelText">Lvl 1</div>
                 </div>
-                <span>🦊</span>
+                <!-- وێنەیێ پروفایلا تێلێگرامێ یا بەکارهێنەری ل سەرێ یاریێ -->
+                <div id="userAvatarHeader" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 1px solid #d4af37; background: #222; display: flex; justify-content: center; align-items: center;">
+                    <span id="fallbackAvatarHeader" style="font-size: 18px;">🦊</span>
+                </div>
             </div>
         </div>
 
@@ -313,15 +316,15 @@
             </div>
         </div>
 
-        <!-- 2. پەڕەیا شوپ (دووکان ب سەرێ ڕێڤیا / 🦊) -->
+        <!-- 2. پەڕەیا شوپ (وێنەیێ فەرمی یێ پروفایلا تێلێگرامێ یا بەکارهێنەری ل دووکانێ) -->
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 15px; padding-top: 20px;">
             <h3 style="color: #d4af37; margin-bottom: 5px;">🛒 دووکانێ</h3>
 
             <div style="background-color: rgba(18, 22, 33, 0.95); border: 2px solid #d4af37; border-radius: 18px; width: 100%; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);">
                 
-                <!-- سەرێ ڕێڤیا (واتە: وێنەیێ تە x / 🦊) -->
-                <div style="width: 55px; height: 55px; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.3); border: 1.5px solid #d4af37;">
-                    <span style="font-size: 34px; line-height: 1;">🦊</span>
+                <!-- وێنەیێ پروفایلا تێلێگرامێ ل دووکانێ -->
+                <div id="userAvatarShop" style="width: 55px; height: 55px; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.3); border: 1.5px solid #d4af37;">
+                    <span id="fallbackAvatarShop" style="font-size: 34px; line-height: 1;">🦊</span>
                 </div>
 
                 <div style="text-align: center;">
@@ -369,13 +372,31 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let telegramUserId = (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) ? tg.initDataUnsafe.user.id : null;
+        // وەرگرتنا زانیاریێن ڕەسەن یێن تێلێگرامێ (ID, Name, Photo)
+        let telegramUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
+        let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id : null;
+        let telegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'Player';
+        let telegramPhotoUrl = telegramUser && telegramUser.photo_url ? telegramUser.photo_url : null;
+
         if (!telegramUserId) {
             telegramUserId = localStorage.getItem('fox_random_device_id');
             if (!telegramUserId) {
                 telegramUserId = 'dev_' + Math.random().toString(36).substring(2);
                 localStorage.setItem('fox_random_device_id', telegramUserId);
             }
+            telegramName = "MALAGA 🇪🇸";
+        }
+
+        // نیشاندانا ناڤێ بەکارهێنەری
+        document.getElementById('userNameText').innerText = telegramName;
+
+        // دانانا وێنەیێ پروفایلا تێلێگرامێ ل جهێن خۆ ئەگەر هەبێت
+        if (telegramPhotoUrl) {
+            const headerAvatarContainer = document.getElementById('userAvatarHeader');
+            headerAvatarContainer.innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
+
+            const shopAvatarContainer = document.getElementById('userAvatarShop');
+            shopAvatarContainer.innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
         const REAL_PREFIX = 'fox_permanent_save_' + telegramUserId + '_';
