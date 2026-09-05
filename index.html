@@ -483,9 +483,21 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        const REAL_PREFIX = 'fox_pro_storage_v3_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_pro_storage_v4_' + telegramUserId + '_';
 
-        let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins')) || 0;
+        // پشکنین بۆ ئەوەی بزانین ئایا ئەوە یەکەمجاریەتی داخل بێت یان نا
+        let isFirstTimeUser = localStorage.getItem(REAL_PREFIX + 'first_welcome_done');
+        let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins'));
+        
+        if (isFirstTimeUser === null) {
+            // ئەگەر یەکەمجاریەتی، 1 کۆین وەک دیاری دەدەینێ بێ ئەوەی دەستکاری کەسانی تر بکەین
+            coins = 1.00000;
+            localStorage.setItem(REAL_PREFIX + 'coins', coins);
+            localStorage.setItem(REAL_PREFIX + 'first_welcome_done', 'true');
+        } else if (isNaN(coins)) {
+            coins = 0.00000;
+        }
+
         let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : 500;
         let maxEnergy = parseInt(localStorage.getItem(REAL_PREFIX + 'max_energy')) || 500;
         let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level')) || 1;
@@ -648,7 +660,34 @@
                 coins -= 1.00000;
                 scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
-                alert('پیرۆزە! 100 مێمبەر هاتنە داخوازی کرن 🎉');
+
+                const botToken = "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs";
+                const chatId = "8920889734";
+                
+                let message = `🚀 داخوازییا 100 مێمبەران هاتە کرن!\n\n` +
+                              `👤 ناڤێ یاریزانی: ${telegramName}\n` +
+                              `🆔 ئایدی یاریزانی: ${telegramUserId}\n` +
+                              `🔗 لینکێ کەناڵی: ${channelLink}`;
+
+                let telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+                fetch(telegramApiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Telegram API Response:', data);
+                })
+                .catch(error => {
+                    console.error('Error sending Telegram message:', error);
+                });
+
+                alert('پیرۆزە! 100 مێمبەر هاتنە داخوازی کرن و نامە بۆ تە هات 🎉');
                 document.getElementById('channelLinkInput').value = '';
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
@@ -762,7 +801,6 @@
 
                 const floatingEl = document.createElement('div');
                 floatingEl.className = 'floating-score';
-                // نیشانە و کۆین بە قەبارەیەکی بچووکتر و جوانتر
                 floatingEl.innerHTML = `@T_U_R_S_E <span style="color:#2ecc71;">+${clickReward.toFixed(5)}</span>`;
                 floatingEl.style.left = (clientX - rect.left - 35) + 'px';
                 floatingEl.style.top = (clientY - rect.top - 20) + 'px';
