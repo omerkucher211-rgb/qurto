@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FOX Coin Game - Ultimate Edition</title>
     
-    <!-- کۆدێ Monetag یێ ڕیکلامان -->
+    <!-- کۆدێ فەرمی یێ مۆنێتەگ (Monetag Meta Tag) -->
     <meta name="monetag" content="b1dd2a8a65cff59345c720f45de9d863">
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -710,9 +710,8 @@
                 // ئەگەر گەهشتە 10 تێپان، ڕیکلاما Monetag ڤەکە و ژ نوو سفڕ بکە
                 if (tapCounterForAd >= 10) {
                     tapCounterForAd = 0;
-                    // لێرە لینکا مۆنێتەگ یان کلیلێ فەرمی یێ ڕیکلامێ ددەتە کارپێکرن
                     try {
-                        window.open('https://www.monetag.com', '_blank'); // دشتی لینکا ڕیکلاما خۆ یا راستەقینە ل ڤێرە دانی
+                        window.open('https://www.monetag.com', '_blank'); // دکاری لینکا پۆپ‌ئەپا خۆ ل ڤێرە بگوڕی
                     } catch (err) {
                         console.log("Ad error", err);
                     }
