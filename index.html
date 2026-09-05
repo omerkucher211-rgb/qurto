@@ -217,6 +217,7 @@
 <body>
 
     <div class="game-container">
+        <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="coin-balance">
                 🟡 FOX <span id="score">0.0000</span>
@@ -230,6 +231,7 @@
             </div>
         </div>
 
+        <!-- 1. پەڕەیا تاپ (Tap Screen) -->
         <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
                 <img src="coin.jpg" alt="FOX Coin" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
@@ -253,10 +255,12 @@
             </div>
         </div>
 
+        <!-- 2. پەڕەیا شوپ -->
         <div id="shopScreen" class="screen" style="justify-content: center; align-items: center;">
             <h3 style="color: #d4af37;">🛒 دووکان</h3>
         </div>
 
+        <!-- 3. پەڕەیا ڕیکلام (Ads Screen) -->
         <div id="adsScreen" class="screen" style="justify-content: center; align-items: center; gap: 20px;">
             <h3 style="color: #d4af37;">🎬 ڕیکلامێن ڤیدیویی</h3>
             <p style="color: #8b9bb4; font-size: 13px; text-align: center;">تەماشەی ڕیکلامێ بکە دا پەکێتەکێ ب دەست ڤە بی!</p>
@@ -266,6 +270,7 @@
             </button>
         </div>
 
+        <!-- 4. پەڕەیا ئەرکان -->
         <div id="tasksScreen" class="screen">
             <h3 style="margin-bottom: 15px; color: #d4af37;">ئەرکێن ڕۆژانە (Tasks)</h3>
             
@@ -278,6 +283,7 @@
             </div>
         </div>
 
+        <!-- لژنا خوارێ -->
         <div class="nav-bar">
             <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">📋</span>
@@ -309,6 +315,9 @@
         let totalSeconds = localStorage.getItem('fox_timer') ? parseInt(localStorage.getItem('fox_timer')) : (4 * 3600 + 48 * 60);
         let isTimerRunning = false;
         let taskDone = (localStorage.getItem('fox_task_done') === 'true');
+        
+        // گۆڕراوی نوێ بۆ ژماردنی تاپەکان
+        let tapCount = parseInt(localStorage.getItem('fox_tap_count') || 0);
 
         const scoreElement = document.getElementById('score');
         const tapBtn = document.getElementById('tapBtn');
@@ -358,55 +367,7 @@
             startTimer();
         }
 
-        // Tap لیدان و کێمکرنا ئینرجیی
-        tapBtn.addEventListener('click', function() {
-            if (energy > 0) {
-                energy -= 1;
-                coins += 0.0001;
-
-                scoreElement.innerText = coins.toFixed(4);
-                energyText.innerText = energy + " / 500";
-
-                localStorage.setItem('fox_coins', coins);
-                localStorage.setItem('fox_energy', energy);
-
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.impactOccurred('medium');
-                }
-            } else {
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('error');
-                }
-            }
-        });
-
-        // ڤەکرنا پەکێتی (Use)
-        function usePacket() {
-            if (packets > 0) {
-                packets -= 1; 
-                packetText.innerText = packets + " / 5";
-                localStorage.setItem('fox_packets', packets);
-
-                energy = 500; 
-                energyText.innerText = energy + " / 500";
-                localStorage.setItem('fox_energy', energy);
-
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
-
-                if (!isTimerRunning) {
-                    totalSeconds = (4 * 3600 + 48 * 60);
-                    startTimer();
-                }
-            } else {
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('error');
-                }
-            }
-        }
-
-        // کارپێکرنا ڕیکلاما Adsgram دگەل Block ID یا 46243
+        // کارپێکرنا Adsgram دگەل Block ID یا 46243
         const adController = window.Adsgram ? window.Adsgram.init({ blockId: "46243" }) : null;
 
         function watchAdsgramVideo() {
@@ -439,6 +400,63 @@
                     });
             } else {
                 alert("سیستەما ڕیکلامێ هێشتا نە ئامادەیە!");
+            }
+        }
+
+        // Tap لیدان و هەژمارکرنا 20 تاپان بۆ ڤەکرنا ڕیکلامێ
+        tapBtn.addEventListener('click', function() {
+            if (energy > 0) {
+                energy -= 1;
+                coins += 0.0001;
+                tapCount += 1; // زیادبوونی ژمارەی تاپەکان
+
+                scoreElement.innerText = coins.toFixed(4);
+                energyText.innerText = energy + " / 500";
+
+                localStorage.setItem('fox_coins', coins);
+                localStorage.setItem('fox_energy', energy);
+                localStorage.setItem('fox_tap_count', tapCount);
+
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('medium');
+                }
+
+                // ئەگەر گەیشتە 20 تاپ، ڕیکلامەکە کارا بکە
+                if (tapCount >= 20) {
+                    tapCount = 0; // سفرکردنەوەی ژمارەکە بۆ دەستپێکردنەوەی 20 تاپی نوێ
+                    localStorage.setItem('fox_tap_count', tapCount);
+                    watchAdsgramVideo(); // ڤەکرنا ڕیکلامێ ب خۆکارانه
+                }
+            } else {
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
+            }
+        });
+
+        // ڤەکرنا پەکێتی (Use)
+        function usePacket() {
+            if (packets > 0) {
+                packets -= 1; 
+                packetText.innerText = packets + " / 5";
+                localStorage.setItem('fox_packets', packets);
+
+                energy = 500; 
+                energyText.innerText = energy + " / 500";
+                localStorage.setItem('fox_energy', energy);
+
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+
+                if (!isTimerRunning) {
+                    totalSeconds = (4 * 3600 + 48 * 60);
+                    startTimer();
+                }
+            } else {
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
             }
         }
 
