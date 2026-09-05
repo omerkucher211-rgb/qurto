@@ -52,6 +52,7 @@
             align-items: center;
             padding: 12px 15px;
             gap: 8px;
+            z-index: 10;
         }
 
         .coin-balance {
@@ -105,13 +106,14 @@
 
         .main-content {
             justify-content: center;
+            align-items: center;
             gap: 20px;
             position: relative;
         }
 
         .big-coin-btn {
-            width: 160px;
-            height: 160px;
+            width: 170px;
+            height: 170px;
             border-radius: 50%;
             background: radial-gradient(circle, #222 30%, #000 90%);
             border: 4px solid #d4af37;
@@ -120,13 +122,22 @@
             align-items: center;
             cursor: pointer;
             box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
-            transition: transform 0.1s;
+            transition: transform 0.05s ease;
             overflow: hidden;
             position: relative;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .big-coin-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.93);
+        }
+
+        .big-coin-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none; /* ئەڤە پشتراست دکەت کو کلیک راستەوخۆ سەر دوگمەیێ بکەڤیت و نە وێنەی */
         }
 
         .floating-score {
@@ -281,6 +292,7 @@
             background-color: #121621;
             border-top: 1px solid #2a3447;
             padding: 10px 0;
+            z-index: 10;
         }
 
         .nav-item {
@@ -376,7 +388,7 @@
         <!-- 1. پەڕەیا تاپ -->
         <div id="tapScreen" class="screen main-content">
             <div class="big-coin-btn" id="tapBtn">
-                <img src="coin.jpg" alt="FOX Coin" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+                <img src="coin.jpg" alt="FOX Coin">
             </div>
 
             <div class="info-card">
@@ -629,7 +641,6 @@
             }
         }
 
-        // نووکرنا ڕێزبەندیێ (Rank)
         function updateRankingList() {
             const rankingContainer = document.getElementById('rankingListContainer');
             
@@ -669,12 +680,11 @@
             rankingContainer.innerHTML = htmlContent;
         }
 
-        // دەستپێکرنا نووکرنا ئۆتۆماتیکی یا ڕێزبەندیێ هەر خولەکەکێ (60000 ms = 1 Minute)
+        // نووکرنا ڕێزبەندیێ هەر خولەکەکێ (60000 ms)
         setInterval(function() {
             updateRankingList();
         }, 60000);
 
-        // بانگکرنا ئێکسەر د دەما ڤەکرنێ دا
         updateRankingList();
 
         function startTimer() {
@@ -709,7 +719,8 @@
             startTimer();
         }
 
-        tapBtn.addEventListener('click', function(e) {
+        // فۆنگشنا تاپکرنێ (هەم بۆ پەنەلا مۆبایلی touchstart و هەم click)
+        function handleTapAction(e) {
             if (energy > 0) {
                 energy -= 1;
                 totalTaps += 1;
@@ -731,12 +742,16 @@
                 localStorage.setItem(REAL_PREFIX + 'energy', energy);
                 localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
 
-                // هەر دەما تاپ دکەت، ڕێزبەندی ژی ئێکسەر خۆ نوو دکەت دا کۆینێن تە ل ڕانکێ دیار بن
                 updateRankingList();
 
                 const rect = tapBtn.getBoundingClientRect();
-                const x = e.clientX ? e.clientX - rect.left : rect.width / 2;
-                const y = e.clientY ? e.clientY - rect.top : rect.height / 2;
+                
+                // پشکنین بۆ دەستکاریکرنا جهێ نیشاندانا کۆینێ زێدەبووی (هەم تاچا مۆبایلی و هەم موسێ کۆمپیووتەری)
+                let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width / 2);
+                let clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : rect.top + rect.height / 2);
+
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
 
                 const floatingEl = document.createElement('div');
                 floatingEl.className = 'floating-score';
@@ -751,7 +766,14 @@
             } else {
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
-        });
+        }
+
+        // زێدەکرنا هەردوو ڕوودانێن (touchstart و click) دا ل سەر هەموو جۆرێن مۆبایلان بێ کێشە کار بکەت
+        tapBtn.addEventListener('click', handleTapAction);
+        tapBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // ڕێگری ل دوبارەبوونا کلیکێ دکەت ل سەر هەندەک مۆبایلان
+            handleTapAction(e);
+        }, { passive: false });
 
         function usePacket() {
             if (packets > 0) {
