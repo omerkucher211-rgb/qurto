@@ -11,6 +11,7 @@
             margin: 0;
             padding: 0;
             font-family: sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -129,15 +130,11 @@
             font-weight: bold;
             cursor: pointer;
             text-align: center;
+            outline: none;
         }
 
         .action-btn:active {
             transform: scale(0.98);
-        }
-
-        .action-btn:disabled {
-            background-color: #7f8c8d;
-            cursor: not-allowed;
         }
 
         .task-item {
@@ -197,6 +194,7 @@
             gap: 4px;
             cursor: pointer;
             flex: 1;
+            outline: none;
         }
 
         .nav-item.active {
@@ -211,7 +209,6 @@
 <body>
 
     <div class="game-container">
-        <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="user-level">
                 <span>🦊</span>
@@ -225,7 +222,6 @@
             </div>
         </div>
 
-        <!-- 1. پەڕەیا تاپ (Tap Screen) -->
         <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
                 <img src="coin.jpg" alt="FOX Coin" style="width: 100%; height: 100%; object-fit: cover;">
@@ -245,22 +241,18 @@
                     <span style="font-weight: bold;" id="energyText">500 / 500</span>
                     <span>:ئینرجی ⚡</span>
                 </div>
-                <!-- دوگمەیا Use کو ب تنێ کرتەکرن تێبسە و پەکێتی کێم دکەت -->
                 <button class="action-btn" id="useEnergyBtn" onclick="usePacket()">بەکاربینە (Use) ⚡</button>
             </div>
         </div>
 
-        <!-- 2. پەڕەیا شوپ -->
         <div id="shopScreen" class="screen" style="justify-content: center; align-items: center;">
             <h3 style="color: #d4af37;">🛒 دووکان</h3>
         </div>
 
-        <!-- 3. پەڕەیا ڕیکلام -->
         <div id="adsScreen" class="screen" style="justify-content: center; align-items: center;">
             <h3 style="color: #d4af37;">🎬 ڕیکلام</h3>
         </div>
 
-        <!-- 4. پەڕەیا ئەرکان -->
         <div id="tasksScreen" class="screen">
             <h3 style="margin-bottom: 15px; color: #d4af37;">ئەرکێن ڕۆژانە (Tasks)</h3>
             
@@ -273,7 +265,6 @@
             </div>
         </div>
 
-        <!-- لژنا خوارێ -->
         <div class="nav-bar">
             <a onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">📋</span>
@@ -330,7 +321,6 @@
             taskBtn.disabled = true;
         }
 
-        // کارپێکرنا دەمژمێرێ بەردەوام
         function startTimer() {
             if (isTimerRunning) return;
             isTimerRunning = true;
@@ -363,7 +353,7 @@
             startTimer();
         }
 
-        // کلیککرنا ل سەر کۆینی (Tap) و کێمکرنا ئینرجیی
+        // Tap کێمکرنا ئینرجیی و زێدەکرنا کۆینان
         tapBtn.addEventListener('click', function() {
             if (energy > 0) {
                 energy -= 1;
@@ -375,24 +365,33 @@
                 foxStorage.setItem('fox_coins', coins);
                 foxStorage.setItem('fox_energy', energy);
 
+                // ئەگەر ئینرجی بوو 0 و پەکێت مابوون، پەکێتەک ب خۆدکار خەرج دەبێت و ئینرجی دگەڕێتڤە
+                if (energy === 0 && packets > 0) {
+                    usePacket();
+                }
+
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('medium');
                 }
             } else {
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('error');
+                if (packets > 0) {
+                    usePacket();
+                } else {
+                    if (tg.HapticFeedback) {
+                        tg.HapticFeedback.notificationOccurred('error');
+                    }
                 }
             }
         });
 
-        // خەرجکرنا پەکێتی (Use Packet) بە دەستپێکرنا دەمژمێرێ
+        // Use Packet پەکێتی کێم دکەت و ئینرجیی دکەتە 500
         function usePacket() {
             if (packets > 0) {
-                packets -= 1; // پەکێت دکەوێتە خوار (بۆ نموونە ژ 4 دبتە 3)
+                packets -= 1; 
                 packetText.innerText = packets + " / 5";
                 foxStorage.setItem('fox_packets', packets);
 
-                energy = 500; // ئینرجی دگەڕێتڤە بۆ 500
+                energy = 500; 
                 energyText.innerText = energy + " / 500";
                 foxStorage.setItem('fox_energy', energy);
 
@@ -400,7 +399,6 @@
                     tg.HapticFeedback.notificationOccurred('success');
                 }
 
-                // دەستپێکرنا دەمژمێرا پەکێتان ئەگەر دەم نەبوو
                 if (!isTimerRunning) {
                     totalSeconds = (4 * 3600 + 48 * 60);
                     startTimer();
