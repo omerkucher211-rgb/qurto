@@ -230,13 +230,13 @@
             color: #aaa;
         }
 
-        /* ستایلێن تایبەت بۆ ڕێزبەندیێ (Ranking) */
+        /* ستایلێن ڕێزبەندیێ و وێنەیێن پروفایلی د ناڤ ڕانکێ دا */
         .rank-item {
             background-color: rgba(18, 22, 33, 0.9);
             border: 1px solid #2a3447;
             border-radius: 12px;
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -245,6 +245,19 @@
         .rank-item.top-user {
             border: 1.5px solid #d4af37;
             background-color: rgba(212, 175, 55, 0.1);
+        }
+
+        .rank-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1px solid #d4af37;
+            background: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
         }
 
         .nav-bar {
@@ -372,7 +385,7 @@
         <div id="rankingScreen" class="screen">
             <h3 style="margin-bottom: 15px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان</h3>
             <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;">
-                <!-- لیستا ڕێزبەندیێ ب ڕێکا جاڤاسکریتێ ل ڤێرە دێ هاتە پڕکرن -->
+                <!-- لیستا ڕێزبەندیێ ب ڕێکا جاڤاسکریتێ دێ ل ڤێرە حەقیقی هێتە پڕکرن -->
             </div>
         </div>
 
@@ -523,7 +536,7 @@
                 let myChatId = "CHAT_ID_E_XVE";   
 
                 let message = `🔔 کڕینەکا نوی ل یاریێ هاتە کرن!\n\n` +
-                              `👤 ناڤێ بەکارهێنەری: ${telegramName}\n` +
+                              `👤 ناڤێ بکارهێنەری: ${telegramName}\n` +
                               `🆔 ئایدیێ تەلەگرامی: ${telegramUserId}\n` +
                               `🔗 لینکێ کەناڵی: ${channelLink}\n` +
                               `📦 مەتریا کڕی: 100 مێمبەر`;
@@ -549,28 +562,35 @@
             }
         }
 
-        // دروستکرنا ڕێزبەندییا یاریزانان (Ranking System)
+        // دروستکرنا ڕێزبەندیێ دگەل وێنەیێ تایبەت بۆ هەر یاریزانەکی
         function updateRankingList() {
             const rankingContainer = document.getElementById('rankingListContainer');
             
-            // نموونەیێن یاریزانێن پێشەنگ (Top Players)
+            // لیستا یاریزانێن پێشەنگ دگەل ئایکۆن یان ئەمزڵیێن وێنەیێن وان
             let dummyRanks = [
-                { name: "👑 Ahmad Fox", score: "45.2000" },
-                { name: "🥈 Dlshad_99", score: "32.1500" },
-                { name: "🥉 Hawre VIP", score: "28.9000" },
-                { name: "4. Zyad Kurdi", score: "19.4000" },
-                { name: "5. Rebwar King", score: "15.0000" },
-                { name: "6. Shilan 🌟", score: "12.8500" },
-                { name: "7. Dlawer Pro", score: "9.3300" },
-                { name: "8. Aryan 🦊", score: "7.1200" }
+                { name: "👑 Ahmad Fox", score: "45.2000", avatar: "🦊" },
+                { name: "🥈 Dlshad_99", score: "32.1500", avatar: "💎" },
+                { name: "🥉 Hawre VIP", score: "28.9000", avatar: "🦁" },
+                { name: "4. Zyad Kurdi", score: "19.4000", avatar: "🦅" },
+                { name: "5. Rebwar King", score: "15.0000", avatar: "⚡" },
+                { name: "6. Shilan 🌟", score: "12.8500", avatar: "🌸" },
+                { name: "7. Dlawer Pro", score: "9.3300", avatar: "🔥" },
+                { name: "8. Aryan 🦊", score: "7.1200", avatar: "🎯" }
             ];
 
-            // زێدەکرنا یاریزانێ نوکە د ڕێزبەندیێ دا ل سەر بنەمایێ کۆینێن وی خۆ
+            // بەشێ یاریزانێ خۆ (ب وێنەیێ ڕەسەن یێ تێلێگرامی ئەگەر هەبێت یان نیشانا فۆکس)
+            let userAvatarHTML = telegramPhotoUrl ? 
+                `<img src="${telegramPhotoUrl}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : 
+                `<span style="font-size: 18px;">🦊</span>`;
+
             let htmlContent = `
                 <div class="rank-item top-user">
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-weight: bold; color: #d4af37;">📍 (تە)</span>
-                        <span style="font-size: 14px; font-weight: bold;">${telegramName}</span>
+                        <div class="rank-avatar">${userAvatarHTML}</div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: bold;">${telegramName}</div>
+                            <div style="font-size: 10px; color: #d4af37;">📍 (تە)</div>
+                        </div>
                     </div>
                     <span style="color: #d4af37; font-weight: bold; direction: ltr;">${coins.toFixed(4)} 🟡</span>
                 </div>
@@ -580,8 +600,13 @@
                 htmlContent += `
                     <div class="rank-item">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="font-weight: bold; color: #8b9bb4;">#${index + 1}</span>
-                            <span style="font-size: 14px;">${item.name}</span>
+                            <div class="rank-avatar">
+                                <span style="font-size: 18px;">${item.avatar}</span>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; font-weight: bold;">${item.name}</div>
+                                <div style="font-size: 10px; color: #8b9bb4;">#${index + 1}</div>
+                            </div>
                         </div>
                         <span style="color: #d4af37; font-weight: bold; direction: ltr;">${item.score} 🟡</span>
                     </div>
@@ -711,7 +736,6 @@
             document.getElementById(screenId).classList.add('active');
             event.currentTarget.classList.add('active');
 
-            // ئەگەر پەڕەیا ڕێزبەندیێ هاتە ڤەکرن، لیستی نوو بکە
             if (screenId === 'rankingScreen') {
                 updateRankingList();
             }
