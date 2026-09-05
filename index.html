@@ -113,15 +113,17 @@
             position: absolute;
             color: #d4af37;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 18px;
             pointer-events: none;
             animation: floatUp 0.8s ease-out forwards;
             text-shadow: 0 2px 4px rgba(0,0,0,0.7);
-            background: rgba(11, 15, 25, 0.85);
+            background: rgba(11, 15, 25, 0.9);
             border: 2px solid #d4af37;
             padding: 4px 10px;
             border-radius: 10px;
             z-index: 100;
+            direction: ltr;
+            white-space: nowrap;
         }
 
         @keyframes floatUp {
@@ -398,15 +400,17 @@
             startTimer();
         }
 
-        // Tap لیدان + نیشاندانا ژمارەی بلندا دەمێ تاپکرنێ (+ پوینت)
+        // Tap لیدان + لیڤەل (هەر 10 تەپ) + دوبل بوونا پوینتێن لیڤەلی + نیشاندانا ژمارەی بلندا دەمێ تاپکرنێ
         tapBtn.addEventListener('click', function(e) {
             if (energy > 0) {
                 energy -= 1;
                 totalTaps += 1;
 
+                // هەژمارتنا پوینتا هەر تەپەکێ (ب پێی لیڤەلی دوبل دبە: Lvl 1 = 0.0001, Lvl 2 = 0.0002, Lvl 3 = 0.0004 ...)
                 let clickReward = 0.0001 * Math.pow(2, level - 1);
                 coins += clickReward;
 
+                // پشکنینا لیڤەلی: هەر 10 تەپەک لیڤەلەک بلند دبە
                 let newLevel = Math.floor(totalTaps / 10) + 1;
                 if (newLevel !== level) {
                     level = newLevel;
@@ -428,11 +432,16 @@
 
                 const floatingEl = document.createElement('div');
                 floatingEl.className = 'floating-score';
-                // نیشاندانا کوینا زێدەبووی ب فرماتا دروست
-                let displayReward = clickReward < 0.0001 ? "+" + clickReward.toFixed(6) : "+" + clickReward.toFixed(4);
+                
+                // نیشاندانا بڕێ ب داتا و دروستی
+                let displayReward = "+" + clickReward.toFixed(4);
+                if (clickReward < 0.0001) {
+                    displayReward = "+" + clickReward.toFixed(6);
+                }
                 floatingEl.innerText = displayReward;
-                floatingEl.style.left = (x - 25) + 'px';
-                floatingEl.style.top = (y - 25) + 'px';
+                
+                floatingEl.style.left = (x - 30) + 'px';
+                floatingEl.style.top = (y - 20) + 'px';
 
                 tapBtn.appendChild(floatingEl);
 
