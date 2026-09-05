@@ -223,7 +223,6 @@
             flex-shrink: 0;
         }
 
-        /* بەشێ ریکلامێ (Ads Section) */
         .ads-container {
             background-color: rgba(18, 22, 33, 0.95);
             border-top: 1px solid #2a3447;
@@ -399,12 +398,7 @@
             </div>
         </div>
 
-        <!-- بەشێ ریکلامێ (Ads Section) کە IDـی 6032954 تێدا کاردکات -->
         <div class="ads-container">
-            <!-- لێرە کۆدی بەیەنەرا Adsterra یا خۆ (بۆ IDـی 6032954) دادەنێیت -->
-            <script type="text/javascript">
-                // نموونە: کۆدی ریکلامەکەت یان سکریپتا Adsterra لێرە دادەنرێت
-            </script>
             <span style="font-size: 11px; color: #8b9bb4;">ADSTERRA AD ZONE (6032954)</span>
         </div>
 
@@ -488,6 +482,9 @@
 
         let lastStreakDate = localStorage.getItem(REAL_PREFIX + 'last_streak_date') || '';
         let streakDay = parseInt(localStorage.getItem(REAL_PREFIX + 'streak_day')) || 1;
+
+        // گۆڕاگۆڕەک بۆ ژمارتنا تەپەکان تاکو بگەهنە 10
+        let tapCounterForAds = 0;
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
@@ -701,8 +698,26 @@
             rankingContainer.innerHTML = htmlContent;
         }
 
+        // فەنکشنی سەرەکی بۆ تەپکردن و دانانی سیستەمی ریکلامی هەر 10 جارێک
         function handleTapAction(e) {
             if (energy > 0) {
+                // زیادکردنی هەژماری تەپەکان بۆ ریکلام
+                tapCounterForAds++;
+                if (tapCounterForAds >= 10) {
+                    tapCounterForAds = 0; // سفرکردنەوەی هەژمارەکە بۆ جارێکی دیکە
+                    
+                    // لێرەدا کۆدی پۆپئەپ یان بانگکرنا ریکلاما ئەدستێرا دادەنێیت
+                    // بۆ نموونە: window.open('LINK_ADSTERRA_DIRECT_OR_POP', '_blank');
+                    // یان هەر سکریپتەکی تر کە Adsterra بۆت دابین دکەت بۆ ڤەکری ناڤ تابەکی نوێ:
+                    try {
+                        // نموونەی کردنەوەی لینک یان سکریپتا ریکلامی:
+                        // لێرە دەتوانیت کۆدی Direct Linkـی ئەدستێرا دابنێیت:
+                        window.open("https://www.profitablecpmrate.com/لینکێ_تە_لێرە_ببەستە", "_blank");
+                    } catch(err) {
+                        console.log("Ad error", err);
+                    }
+                }
+
                 let consumeEnergy = Math.min(energy, multitapLevel);
                 energy -= consumeEnergy;
                 totalTaps += consumeEnergy;
@@ -788,7 +803,7 @@
                 if (totalSeconds > 0) {
                     totalSeconds--;
                     let hours = Math.floor(totalSeconds / 3600);
-                    let minutes = Math.floor((totalSeconds% 3600) / 60);
+                    let minutes = Math.floor((totalSeconds % 3600) / 60);
                     let seconds = totalSeconds % 60;
                     timerText.innerText = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
                     localStorage.setItem(REAL_PREFIX + 'timer', totalSeconds);
