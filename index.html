@@ -106,6 +106,13 @@
             100% { border-color: #ff4500; box-shadow: 0 0 10px rgba(255, 69, 0, 0.8); }
         }
 
+        /* Rush Hour Active Border Animation (Supercharged Neon) */
+        @keyframes rushHourGlow {
+            0% { border-color: #ff0055; box-shadow: 0 0 20px rgba(255, 0, 85, 1); }
+            50% { border-color: #00ffff; box-shadow: 0 0 20px rgba(0, 255, 255, 1); }
+            100% { border-color: #ff0055; box-shadow: 0 0 20px rgba(255, 0, 85, 1); }
+        }
+
         .user-level {
             background-color: rgba(20, 25, 35, 0.9);
             border: 3px solid #ff4500;
@@ -119,6 +126,12 @@
             position: relative;
             animation: colorChangeBorder 0.2s infinite steps(1);
         }
+        
+        .user-level.rush-active {
+            animation: rushHourGlow 0.5s infinite alternate !important;
+            border-color: #ff0055 !important;
+        }
+
         .user-level:active {
             transform: scale(0.95);
         }
@@ -156,6 +169,26 @@
             align-items: center;
             gap: 15px;
             position: relative;
+        }
+
+        /* Rush Hour Notification Banner */
+        .rush-banner {
+            background: linear-gradient(135deg, #ff0055, #ffae42);
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+            display: none;
+            animation: pulseBanner 0.8s infinite alternate;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes pulseBanner {
+            0% { transform: scale(1); opacity: 0.9; }
+            100% { transform: scale(1.05); opacity: 1; }
         }
 
         .big-coin-btn {
@@ -410,6 +443,9 @@
 
         <!-- 1. Tap Screen -->
         <div id="tapScreen" class="screen main-content active">
+            <!-- Rush Hour Status Notification Banner -->
+            <div id="rushBanner" class="rush-banner">🔥 RUSH HOUR 3X ACTIVE! (1 dəقە ما) 🔥</div>
+
             <div class="big-coin-btn" id="tapBtn">
                 <img src="coin.jpg" alt="FOX Coin">
             </div>
@@ -584,6 +620,11 @@
         let lastStreakDate = localStorage.getItem(REAL_PREFIX + 'last_streak_date') || '';
         let streakDay = parseInt(localStorage.getItem(REAL_PREFIX + 'streak_day')) || 1;
 
+        // Rush Hour Timers Control
+        let isRushHourActive = false;
+        let rushHourTimer = 0; // Tracks seconds for the 10-minute interval (600 seconds)
+        let rushActiveDuration = 0; // Tracks the 1-minute active duration (60 seconds)
+
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
         const tapBtn = document.getElementById('tapBtn');
@@ -661,13 +702,40 @@
         syncUserToGlobalStorage();
         checkSocialTasksUI();
 
+        // Global Game Loop (Every 1 Second)
         setInterval(() => {
+            // Energy Refill
             if (energy < maxEnergy) {
                 energy = Math.min(maxEnergy, energy + 1);
                 energyText.innerText = energy + " / " + maxEnergy;
                 localStorage.setItem(REAL_PREFIX + 'energy', energy);
             }
-        }, 3000);
+
+            // Rush Hour Timer Logic (Every 10 mins, active for 1 min)
+            if (isRushHourActive) {
+                rushActiveDuration--;
+                let banner = document.getElementById('rushBanner');
+                banner.innerText = `🔥 RUSH HOUR 3X ACTIVE! (${rushActiveDuration}s ما) 🔥`;
+                
+                if (rushActiveDuration <= 0) {
+                    isRushHourActive = false;
+                    banner.style.display = 'none';
+                    document.getElementById('profileHeaderBtn').classList.remove('rush-active');
+                    rushHourTimer = 0; // Reset counter for the next 10 minutes
+                }
+            } else {
+                rushHourTimer++;
+                // 10 minutes = 600 seconds
+                if (rushHourTimer >= 600) {
+                    isRushHourActive = true;
+                    rushActiveDuration = 60; // 1 minute active
+                    let banner = document.getElementById('rushBanner');
+                    banner.style.display = 'block';
+                    document.getElementById('profileHeaderBtn').classList.add('rush-active');
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                }
+            }
+        }, 1000);
 
         function buyPremium() {
             if (isPremium) return;
@@ -850,6 +918,11 @@
                     }
                 }
 
+                // If Rush Hour (3x) is currently active, multiply the click reward by 3!
+                if (isRushHourActive) {
+                    clickReward *= 3;
+                }
+
                 coins += clickReward;
 
                 let newLevel = Math.floor(totalTaps / 1000) + 1;
@@ -874,7 +947,8 @@
 
                 const floatingEl = document.createElement('div');
                 floatingEl.className = 'floating-score';
-                floatingEl.innerHTML = `@T_U_R_S_E <span style="color:#2ecc71;">+${clickReward.toFixed(5)}</span>`;
+                let tagLabel = isRushHourActive ? '@RUSH3X ' : '@T_U_R_S_E ';
+                floatingEl.innerHTML = `${tagLabel}<span style="color:#2ecc71;">+${clickReward.toFixed(5)}</span>`;
                 floatingEl.style.left = (clientX - rect.left - 40) + 'px';
                 floatingEl.style.top = (clientY - rect.top - 25) + 'px';
 
