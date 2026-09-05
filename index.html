@@ -289,35 +289,39 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // وەرگرتنا کۆینێن پێشتر ژ مۆبایلی (داکو نەهێنە ژناڤبرن)
-        let coins = parseFloat(localStorage.getItem('fox_coins')) || 0.0000;
-        let taskDone = localStorage.getItem('fox_task_done') === 'true';
+        // وەرگرتنا کۆینان ب رێکا پاراستنا دوو قاتی (دکۆمپیوتەری یان مۆبایلی دا ون نەبن)
+        let savedCoins = localStorage.getItem('fox_coins') || sessionStorage.getItem('fox_coins');
+        let coins = savedCoins !== null ? parseFloat(savedCoins) : 0.0000;
+        
+        let taskDone = (localStorage.getItem('fox_task_done') === 'true' || sessionStorage.getItem('fox_task_done') === 'true');
 
         const scoreElement = document.getElementById('score');
         const tapBtn = document.getElementById('tapBtn');
         const taskBtn = document.getElementById('taskBtn');
 
-        // نیشاندانا کۆینێن هەیی ل دەستپێکێ
+        // نیشاندانا کۆینان ل سەرێ ڕەشمەیێ ب دروستی
         scoreElement.innerText = coins.toFixed(4);
 
-        // ئەگەر تەسک پێشتر هاتیە کرن، دوگمەی بگۆڕە
         if (taskDone) {
             taskBtn.innerText = 'وەرگرتن ✔';
             taskBtn.disabled = true;
         }
 
-        // زێدەکرنا 0.0001 ل هەر کلیکەکێ و پاشەکەفتکرن
+        // هەر کلیکەک 0.0001 سەرێ پێڤە دکەت و راستەوخۆ د سەیڤێ دا تۆمار دکەت
         tapBtn.addEventListener('click', function() {
             coins += 0.0001;
             scoreElement.innerText = coins.toFixed(4);
+            
+            // سەیڤکرنا دوو قاتی داکو ل دەمێ رێفرێشکرنێ نەهێنە ژناڤبرن
             localStorage.setItem('fox_coins', coins);
+            sessionStorage.setItem('fox_coins', coins);
 
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('medium');
             }
         });
 
-        // گوهۆڕینا پەڕەیان
+        // گوهۆڕینا پەڕەیان (Tabs) بێ ئەوەی ئاریشە دگەل سکرینان هەبت
         function switchTab(screenId, event) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -326,17 +330,20 @@
             event.currentTarget.classList.add('active');
         }
 
-        // تەسکی چەناڵێ و زێدەکرنا 0.001 و پاشەکەفتکرن
+        // جێبەجێکرنا تەسکی چەناڵێ
         function completeTask() {
             if (!taskDone) {
                 window.open('https://t.me/TORSEII', '_blank');
 
                 coins += 0.0010;
                 scoreElement.innerText = coins.toFixed(4);
+                
                 localStorage.setItem('fox_coins', coins);
+                sessionStorage.setItem('fox_coins', coins);
                 
                 taskDone = true;
                 localStorage.setItem('fox_task_done', 'true');
+                sessionStorage.setItem('fox_task_done', 'true');
 
                 taskBtn.innerText = 'وەرگرتن ✔';
                 taskBtn.disabled = true;
