@@ -120,7 +120,9 @@
         .info-row {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 14px;
+            direction: rtl;
         }
 
         .action-btn {
@@ -238,17 +240,17 @@
 
             <div class="info-card">
                 <div class="info-row">
-                    <span id="packetText" style="font-weight: bold;">4 / 5</span>
-                    <span>:پەکێت 📦</span>
+                    <span>پەکێت 📦</span>
+                    <span id="packetText" style="font-weight: bold; direction: ltr;">4 / 5</span>
                 </div>
                 <div class="info-row" style="color: #8b9bb4; font-size: 12px;">
-                    <span id="timerText">04:48:00</span>
-                    <span>:پەکیتا داهاتی</span>
+                    <span>پەکیتا داهاتی</span>
+                    <span id="timerText" style="direction: ltr;">04:48:00</span>
                 </div>
                 <hr style="border: 0; border-top: 1px solid #2a3447;">
                 <div class="info-row">
-                    <span style="font-weight: bold;" id="energyText">500 / 500</span>
-                    <span>:ئینرجی ⚡</span>
+                    <span>ئینرجی ⚡</span>
+                    <span style="font-weight: bold; direction: ltr;" id="energyText">500 / 500</span>
                 </div>
                 <button class="action-btn" id="useEnergyBtn" onclick="usePacket()">بکاربینە (Use) ⚡</button>
             </div>
@@ -373,11 +375,9 @@
                 energy -= 1;
                 totalTaps += 1;
 
-                // هەژمارتنا پوینتا هەر تەپەکێ (ب پێی لیڤەلی دوبل دبە: Lvl 1 = 0.0001, Lvl 2 = 0.0002, Lvl 3 = 0.0004 ...)
                 let clickReward = 0.0001 * Math.pow(2, level - 1);
                 coins += clickReward;
 
-                // پشکنینا لیڤەلی: هەر 10 تەپەک لیڤەلەک بلند دبە
                 let newLevel = Math.floor(totalTaps / 10) + 1;
                 if (newLevel !== level) {
                     level = newLevel;
