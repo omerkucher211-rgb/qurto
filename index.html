@@ -316,23 +316,27 @@
             </div>
         </div>
 
-        <!-- 2. پەڕەیا شوپ (وێنەیێ فەرمی یێ پروفایلا تێلێگرامێ یا بەکارهێنەری ل دووکانێ) -->
+        <!-- 2. پەڕەیا شوپ (دووکان ب وێنەیێ پروفایلا تێلێگرامێ و نیشانا تێلێگرامی) -->
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 15px; padding-top: 20px;">
             <h3 style="color: #d4af37; margin-bottom: 5px;">🛒 دووکانێ</h3>
 
             <div style="background-color: rgba(18, 22, 33, 0.95); border: 2px solid #d4af37; border-radius: 18px; width: 100%; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);">
                 
-                <!-- وێنەیێ پروفایلا تێلێگرامێ ل دووکانێ -->
-                <div id="userAvatarShop" style="width: 55px; height: 55px; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.3); border: 1.5px solid #d4af37;">
-                    <span id="fallbackAvatarShop" style="font-size: 34px; line-height: 1;">🦊</span>
+                <!-- وێنەیێ پروفایلا تێلێگرامێ یا بەکارهێنەری -->
+                <div id="userAvatarShop" style="width: 65px; height: 65px; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.3); border: 2px solid #d4af37;">
+                    <span id="fallbackAvatarShop" style="font-size: 38px; line-height: 1;">🦊</span>
                 </div>
 
-                <div style="text-align: center;">
-                    <h4 style="font-size: 16px; color: #fff; margin-bottom: 4px;">100 مێمبەر</h4>
-                    <p style="font-size: 13px; color: #d4af37; font-weight: bold;">بهایێ: 1 FOX 🟡</p>
+                <!-- نڤیسار ب لوگویا تێلێگرامی (✈️ یان SVG) -->
+                <div style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <h4 style="font-size: 17px; color: #fff; margin-bottom: 0;">100 مێمبەر</h4>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#2481cc" style="display: inline-block; vertical-align: middle;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-1.99 1.27-5.62 3.73-.53.36-1.01.54-1.44.53-.47-.02-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.89.03-.25.38-.51 1.05-.78 4.11-1.79 6.85-2.97 8.22-3.54 3.91-1.63 4.72-1.92 5.25-1.93.12 0 .39.03.56.17.14.12.18.28.2.4-.02.07-.02.2-.04.33z"/></svg>
                 </div>
-                <button onclick="buyMembers()" style="background-color: #2ecc71; color: white; border: none; border-radius: 10px; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;">
-                    کڕین (Buy) 🚀
+
+                <p style="font-size: 13px; color: #d4af37; font-weight: bold; margin-top: -4px;">بهایێ: 1 FOX 🟡</p>
+
+                <button onclick="buyMembers()" style="background-color: #2ecc71; color: white; border: none; border-radius: 10px; padding: 10px 20px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span>🚀</span> کڕین (Buy)
                 </button>
             </div>
         </div>
@@ -372,7 +376,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // وەرگرتنا زانیاریێن ڕەسەن یێن تێلێگرامێ (ID, Name, Photo)
         let telegramUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
         let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id : null;
         let telegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'Player';
@@ -387,10 +390,8 @@
             telegramName = "MALAGA 🇪🇸";
         }
 
-        // نیشاندانا ناڤێ بەکارهێنەری
         document.getElementById('userNameText').innerText = telegramName;
 
-        // دانانا وێنەیێ پروفایلا تێلێگرامێ ل جهێن خۆ ئەگەر هەبێت
         if (telegramPhotoUrl) {
             const headerAvatarContainer = document.getElementById('userAvatarHeader');
             headerAvatarContainer.innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
