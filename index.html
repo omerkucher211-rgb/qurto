@@ -135,6 +135,11 @@
             transform: scale(0.98);
         }
 
+        .action-btn:disabled {
+            background-color: #7f8c8d;
+            cursor: not-allowed;
+        }
+
         .task-item {
             background-color: rgba(18, 22, 33, 0.9);
             border: 1px solid #2a3447;
@@ -228,7 +233,7 @@
 
             <div class="info-card">
                 <div class="info-row">
-                    <span id="packetText" style="font-weight: bold;">4/5</span>
+                    <span id="packetText" style="font-weight: bold;">4 / 5</span>
                     <span>:پەکێت 📦</span>
                 </div>
                 <div class="info-row" style="color: #8b9bb4; font-size: 12px;">
@@ -244,17 +249,17 @@
             </div>
         </div>
 
-        <!-- 2. پەڕەیا شوپ (Shop Screen) -->
+        <!-- 2. پەڕەیا شوپ -->
         <div id="shopScreen" class="screen" style="justify-content: center; align-items: center;">
             <h3 style="color: #d4af37;">🛒 دووکان</h3>
         </div>
 
-        <!-- 3. پەڕەیا ڕیکلام (Ads Screen) -->
+        <!-- 3. پەڕەیا ڕیکلام -->
         <div id="adsScreen" class="screen" style="justify-content: center; align-items: center;">
             <h3 style="color: #d4af37;">🎬 ڕیکلام</h3>
         </div>
 
-        <!-- 4. پەڕەیا ئەرکان (Tasks Screen) -->
+        <!-- 4. پەڕەیا ئەرکان -->
         <div id="tasksScreen" class="screen">
             <h3 style="margin-bottom: 15px; color: #d4af37;">ئەرکێن ڕۆژانە (Tasks)</h3>
             
@@ -293,49 +298,76 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let savedCoins = localStorage.getItem('fox_coins') || sessionStorage.getItem('fox_coins');
+        // سەیڤکرنا دوو قاتی (بۆ هەمی براوزەران)
+        const getStorage = () => (typeof(Storage) !== "undefined" ? localStorage : sessionStorage);
+        const foxStorage = getStorage();
+
+        let savedCoins = foxStorage.getItem('fox_coins');
         let coins = savedCoins !== null ? parseFloat(savedCoins) : 0.0000;
         
-        let savedEnergy = localStorage.getItem('fox_energy');
+        let savedEnergy = foxStorage.getItem('fox_energy');
         let energy = savedEnergy !== null ? parseInt(savedEnergy) : 500;
 
-        let taskDone = (localStorage.getItem('fox_task_done') === 'true' || sessionStorage.getItem('fox_task_done') === 'true');
+        // سیستەمێ پەکێتان (4 مایی)
+        let packets = foxStorage.getItem('fox_packets') ? parseInt(foxStorage.getItem('fox_packets')) : 4;
+        let totalSeconds = foxStorage.getItem('fox_timer') ? parseInt(foxStorage.getItem('fox_timer')) : (4 * 3600 + 48 * 60);
+        let isTimerRunning = false;
 
-        // دەمژمێرا پەکێتان (ب چرکە کێم دبیت)
-        let totalSeconds = localStorage.getItem('fox_timer') ? parseInt(localStorage.getItem('fox_timer')) : (4 * 3600 + 48 * 60);
+        let taskDone = (foxStorage.getItem('fox_task_done') === 'true');
 
         const scoreElement = document.getElementById('score');
         const tapBtn = document.getElementById('tapBtn');
         const taskBtn = document.getElementById('taskBtn');
         const energyText = document.getElementById('energyText');
         const timerText = document.getElementById('timerText');
+        const packetText = document.getElementById('packetText');
+        const useEnergyBtn = document.getElementById('useEnergyBtn');
 
         scoreElement.innerText = coins.toFixed(4);
         energyText.innerText = energy + " / 500";
+        packetText.innerText = packets + " / 5";
 
         if (taskDone) {
             taskBtn.innerText = 'وەرگرتن ✔';
             taskBtn.disabled = true;
         }
 
-        // کارپێکرنا دەمژمێرێ
-        setInterval(function() {
-            if (totalSeconds > 0) {
-                totalSeconds--;
-                let hours = Math.floor(totalSeconds / 3600);
-                let minutes = Math.floor((totalSeconds % 3600) / 60);
-                let seconds = totalSeconds % 60;
+        // 1. کارپێکرنا دەمژمێرێ بێ راوستان
+        function startTimer() {
+            if (isTimerRunning) return;
+            isTimerRunning = true;
 
-                timerText.innerText = 
-                    String(hours).padStart(2, '0') + ":" + 
-                    String(minutes).padStart(2, '0') + ":" + 
-                    String(seconds).padStart(2, '0');
+            let timerInterval = setInterval(function() {
+                if (totalSeconds > 0) {
+                    totalSeconds--;
+                    let hours = Math.floor(totalSeconds / 3600);
+                    let minutes = Math.floor((totalSeconds % 3600) / 60);
+                    let seconds = totalSeconds % 60;
 
-                localStorage.setItem('fox_timer', totalSeconds);
-            }
-        }, 1000);
+                    timerText.innerText = 
+                        String(hours).padStart(2, '0') + ":" + 
+                        String(minutes).padStart(2, '0') + ":" + 
+                        String(seconds).padStart(2, '0');
 
-        // کلیککرنا ل سەر کۆینی (Tap)
+                    foxStorage.setItem('fox_timer', totalSeconds);
+                } else {
+                    // دەما دەم ب دوماهی هات، 5 پەکێتان ڤەدگەڕینە و دەست ب هژمارتنێ ناکەین هەتا USE نەکەن
+                    packets = 5;
+                    packetText.innerText = packets + " / 5";
+                    foxStorage.setItem('fox_packets', packets);
+                    foxStorage.removeItem('fox_timer');
+                    isTimerRunning = false;
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+
+        // دەستپێکرنا دەمژمێرێ ل دەستپێکێ
+        if (packets < 5) {
+            startTimer();
+        }
+
+        // 2. کلیککرنا ل سەر کۆینی (Tap) و کێمکرنا ئینرجیی
         tapBtn.addEventListener('click', function() {
             if (energy > 0) {
                 energy -= 1;
@@ -344,9 +376,8 @@
                 scoreElement.innerText = coins.toFixed(4);
                 energyText.innerText = energy + " / 500";
 
-                localStorage.setItem('fox_coins', coins);
-                sessionStorage.setItem('fox_coins', coins);
-                localStorage.setItem('fox_energy', energy);
+                foxStorage.setItem('fox_coins', coins);
+                foxStorage.setItem('fox_energy', energy);
 
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('medium');
@@ -358,47 +389,24 @@
             }
         });
 
-        // ڤەگەراندنا ئینرجیی بۆ 500
+        // 3. ڤەگەراندنا ئینرجیی و کێمکرنا پەکێتان (USE Packet)
         function refillEnergy() {
-            energy = 500;
-            energyText.innerText = energy + " / 500";
-            localStorage.setItem('fox_energy', energy);
+            if (energy < 500 && packets > 0) {
+                // کێمکرنا پەکێتەکێ
+                packets -= 1;
+                packetText.innerText = packets + " / 5";
+                foxStorage.setItem('fox_packets', packets);
 
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-        }
-
-        function switchTab(screenId, event) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-            document.getElementById(screenId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        function completeTask() {
-            if (!taskDone) {
-                window.open('https://t.me/TORSEII', '_blank');
-
-                coins += 0.0010;
-                scoreElement.innerText = coins.toFixed(4);
-                
-                localStorage.setItem('fox_coins', coins);
-                sessionStorage.setItem('fox_coins', coins);
-                
-                taskDone = true;
-                localStorage.setItem('fox_task_done', 'true');
-                sessionStorage.setItem('fox_task_done', 'true');
-
-                taskBtn.innerText = 'وەرگرتن ✔';
-                taskBtn.disabled = true;
+                // ڤەگەراندنا ئینرجیی بۆ 500
+                energy = 500;
+                energyText.innerText = energy + " / 500";
+                foxStorage.setItem('fox_energy', energy);
 
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.notificationOccurred('success');
                 }
-            }
-        }
-    </script>
-</body>
-</html>
+
+                // ئەگەر دەمژمێر نەبوو، دەست پێ بکە
+                if (packets === 4 && !isTimerRunning) {
+                    totalSeconds = (4 * 3600 + 48 * 60); // 4h 48m
+                    startTimer();
