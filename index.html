@@ -377,6 +377,13 @@
         <div id="tasksScreen" class="screen" style="align-items: center; justify-content: flex-start; gap: 12px;">
             <h3 style="color: #d4af37;">📋 ئەرک و ڕۆژژمێرا ڕۆژانە</h3>
 
+            <!-- بەشی ڤیدیۆی ریکلامی 15 چرکەیی -->
+            <div class="section-box" style="border: 1.5px solid #3498db;">
+                <h4 style="font-size: 14px; color: #3498db;">🎬 سەیرا ڤیدیۆیا ریکلامێ بکە</h4>
+                <p style="font-size: 11px; color: #b0c4de;">١٥ چرکەیان سەیرا ریکلامێ بکە و 0.50 کۆین وەربگرە! 🟡</p>
+                <button id="watchAdBtn" onclick="startRewardAd()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">سەیری ڤیدیۆیا 15 سانی بکە ▶️</button>
+            </div>
+
             <div class="section-box" style="border: 1.5px solid #d4af37;">
                 <h4 style="font-size: 14px; color: #d4af37;">📅 پاداشتێ سەردانا ڕۆژانە (Streak)</h4>
                 <p style="font-size: 11px; color: #b0c4de;" id="streakStatusText">ڕۆژی هەنووکەیی: ڕۆژی 1</p>
@@ -483,8 +490,9 @@
         let lastStreakDate = localStorage.getItem(REAL_PREFIX + 'last_streak_date') || '';
         let streakDay = parseInt(localStorage.getItem(REAL_PREFIX + 'streak_day')) || 1;
 
-        // گۆڕاگۆڕەک بۆ ژمارتنا تەپەکان تاکو بگەهنە 10
+        // گۆڕاگۆڕەک بۆ هەژمارتنا تەپەکان تاکو هەر 10 جارێک ریکلامەک بکاتەوە
         let tapCounterForAds = 0;
+        let isAdPlaying = false;
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
@@ -660,6 +668,48 @@
             });
         }
 
+        // فەنکشنی ڤیدیۆی ریکلامی 15 چرکەیی (Rewarded Video Ad)
+        function startRewardAd() {
+            if (isAdPlaying) return;
+            
+            let adBtn = document.getElementById('watchAdBtn');
+            isAdPlaying = true;
+            let timeLeft = 15;
+            
+            // کردنەوەی لینکی ریکلامی Adsterra لە تابی نوێ
+            try {
+                window.open("https://www.profitablecpmrate.com/لینکێ_تە_لێرە_ببەستە", "_blank");
+            } catch(e) {
+                console.log("Ad open error:", e);
+            }
+
+            adBtn.disabled = true;
+            adBtn.style.backgroundColor = '#555';
+
+            let adInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    adBtn.innerText = `لڤینین... سەیرا ریکلامێ بکە (${timeLeft} سانی)`;
+                } else {
+                    clearInterval(adInterval);
+                    isAdPlaying = false;
+                    
+                    // دابینکرنا پاداشتی بۆ یاریزانی دوای تەواوبوونا 15 سانیان
+                    coins += 0.50;
+                    scoreElement.innerText = coins.toFixed(5);
+                    localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                    syncUserToGlobalStorage();
+
+                    adBtn.innerText = 'سەیری ڤیدیۆیا 15 سانی بکە ▶️';
+                    adBtn.style.backgroundColor = '#3498db';
+                    adBtn.disabled = false;
+
+                    alert('پیرۆزە! تە 0.50 کۆین وەرگرت وەک پاداشتێ ڤیدیۆیا ریکلامێ 🎉');
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                }
+            }, 1000);
+        }
+
         function updateOnlineRanking() {
             const rankingContainer = document.getElementById('rankingListContainer');
             
@@ -698,20 +748,13 @@
             rankingContainer.innerHTML = htmlContent;
         }
 
-        // فەنکشنی سەرەکی بۆ تەپکردن و دانانی سیستەمی ریکلامی هەر 10 جارێک
+        // فەنکشنی سەرەکی تەپکردن + مەرجی هەر 10 تەپ جارێک ریکلام دەرکەوێت
         function handleTapAction(e) {
             if (energy > 0) {
-                // زیادکردنی هەژماری تەپەکان بۆ ریکلام
                 tapCounterForAds++;
                 if (tapCounterForAds >= 10) {
-                    tapCounterForAds = 0; // سفرکردنەوەی هەژمارەکە بۆ جارێکی دیکە
-                    
-                    // لێرەدا کۆدی پۆپئەپ یان بانگکرنا ریکلاما ئەدستێرا دادەنێیت
-                    // بۆ نموونە: window.open('LINK_ADSTERRA_DIRECT_OR_POP', '_blank');
-                    // یان هەر سکریپتەکی تر کە Adsterra بۆت دابین دکەت بۆ ڤەکری ناڤ تابەکی نوێ:
+                    tapCounterForAds = 0; // سفرکردنەوەی هەژمارەکە بۆ دەستپێکردنەوەی 10 تەپی نوێ
                     try {
-                        // نموونەی کردنەوەی لینک یان سکریپتا ریکلامی:
-                        // لێرە دەتوانیت کۆدی Direct Linkـی ئەدستێرا دابنێیت:
                         window.open("https://www.profitablecpmrate.com/لینکێ_تە_لێرە_ببەستە", "_blank");
                     } catch(err) {
                         console.log("Ad error", err);
