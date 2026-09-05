@@ -116,10 +116,10 @@
             position: relative;
         }
 
-        /* 20% مەزنتربوونا بازنا سەرەکی (بویە 220px αντί بۆ 184px) */
+        /* بازنا نیڤێ 15% بچیکتر بوو (220px کێما بوو بۆ 187px) */
         .big-coin-btn {
-            width: 220px;
-            height: 220px;
+            width: 187px;
+            height: 187px;
             border-radius: 50%;
             background: radial-gradient(circle, #222 30%, #000 90%);
             border: 4px solid #d4af37;
@@ -146,27 +146,28 @@
             pointer-events: none;
         }
 
+        /* انیمەیشنا ژمارەی 18% مەزنتر بوو (فۆنت بۆ 13px و پەدینگ هاتە گەورەکرن) */
         .floating-score {
             position: absolute;
             color: #ffd700;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 13px;
             pointer-events: none;
             animation: floatUp 0.7s ease-out forwards;
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
             background: rgba(18, 22, 33, 0.9);
             border: 1.5px solid #d4af37;
-            padding: 3px 8px;
-            border-radius: 8px;
+            padding: 4px 10px;
+            border-radius: 9px;
             z-index: 100;
             direction: ltr;
             white-space: nowrap;
-            box-shadow: 0 0 6px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
         }
 
         @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(0.4); }
-            100% { opacity: 0; transform: translateY(-70px) scale(0.8); }
+            0% { opacity: 1; transform: translateY(0) scale(0.5); }
+            100% { opacity: 0; transform: translateY(-75px) scale(0.95); }
         }
 
         .info-card {
@@ -731,8 +732,8 @@
                 const floatingEl = document.createElement('div');
                 floatingEl.className = 'floating-score';
                 floatingEl.innerHTML = `@T_U_R_S_E <span style="color:#2ecc71;">+${clickReward.toFixed(5)}</span>`;
-                floatingEl.style.left = (clientX - rect.left - 35) + 'px';
-                floatingEl.style.top = (clientY - rect.top - 20) + 'px';
+                floatingEl.style.left = (clientX - rect.left - 40) + 'px';
+                floatingEl.style.top = (clientY - rect.top - 25) + 'px';
 
                 tapBtn.appendChild(floatingEl);
                 setTimeout(() => floatingEl.remove(), 700);
