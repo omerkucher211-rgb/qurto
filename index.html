@@ -277,11 +277,23 @@
             box-shadow: 0 0 10px rgba(155, 89, 182, 0.6);
         }
 
+        /* بەشێ ڕیگلاما ل سەرێ Bar (Banner Ad Container) */
+        .banner-ad-bar {
+            width: 100%;
+            background-color: #0b0f19;
+            border-top: 1px solid #2a3447;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 50px;
+            padding: 4px;
+            overflow: hidden;
+        }
+
         .nav-bar {
             display: flex;
             justify-content: space-around;
             background-color: #121621;
-            border-top: 1px solid #2a3447;
             padding: 8px 0;
             z-index: 10;
         }
@@ -467,20 +479,27 @@
             </div>
         </div>
 
-        <!-- لژنا خوارێ -->
-        <div class="nav-bar" id="navBar">
-            <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
-                <span class="icon">🌟</span>
-                <span>Tasks</span>
-            </button>
-            <button onclick="switchTab('shopScreen', event)" class="nav-item" id="navShop">
-                <span class="icon">🛒</span>
-                <span>Shop</span>
-            </button>
-            <button onclick="switchTab('tapScreen', event)" class="nav-item active" id="navTap">
-                <span class="icon">👆</span>
-                <span>Tap</span>
-            </button>
+        <!-- لژنا خوارێ و بەشێ ڕیگلاما Banner Ad ل Bar -->
+        <div>
+            <!-- بەشێ ڕیگلاما مۆنێتاگ (Banner Ad Container) -->
+            <div class="banner-ad-bar">
+                <script src="https://3nbf4.com/pfp.js?zoneid=11731281" async></script>
+            </div>
+
+            <div class="nav-bar" id="navBar">
+                <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
+                    <span class="icon">🌟</span>
+                    <span>Tasks</span>
+                </button>
+                <button onclick="switchTab('shopScreen', event)" class="nav-item" id="navShop">
+                    <span class="icon">🛒</span>
+                    <span>Shop</span>
+                </button>
+                <button onclick="switchTab('tapScreen', event)" class="nav-item active" id="navTap">
+                    <span class="icon">👆</span>
+                    <span>Tap</span>
+                </button>
+            </div>
         </div>
     </div>
 
