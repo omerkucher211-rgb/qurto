@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FOX Coin Game - Ultimate Edition</title>
     
+    <!-- کۆدێ فەرمی یێ مۆنێتەگ (Monetag Meta Tag) -->
     <meta name="monetag" content="b1dd2a8a65cff59345c720f45de9d863">
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -188,6 +189,38 @@
             margin-bottom: 10px;
         }
 
+        /* چوارگوشێ تایبەت بۆ 100 مێمبەرێن تەلەگرامێ */
+        .telegram-members-card {
+            border: 2px solid #2481cc;
+            background: linear-gradient(135deg, rgba(36, 129, 204, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%);
+            border-radius: 15px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(36, 129, 204, 0.3);
+        }
+
+        .tg-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tg-logo {
+            width: 36px;
+            height: 36px;
+            background: #2481cc;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(36, 129, 204, 0.6);
+        }
+
         .nav-bar {
             display: flex;
             justify-content: space-around;
@@ -241,6 +274,7 @@
 <body>
 
     <div class="game-container">
+        <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="coin-balance">
                 🟡 <span id="score">1.00000</span>
@@ -256,6 +290,7 @@
             </div>
         </div>
 
+        <!-- 1. پەڕەیا تاپ (Tap) -->
         <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
                 <span style="font-size: 55px;">🟡</span>
@@ -279,8 +314,26 @@
             </div>
         </div>
 
+        <!-- 2. پەڕەیا شوپ (دووکان) -->
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px; padding-top: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 2px;">🛒 دووکان و تەلەبی</h3>
+
+            <!-- چوارگوشەیی 100 مێمبەرێن تەلەگرامێ -->
+            <div class="telegram-members-card">
+                <div class="tg-card-header">
+                    <div class="tg-logo">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21.5 3.5C21.5 3.5 22.8 3 22.2 4.3C21.5 5.9 17.7 14.8 16 19C15.2 21 14.2 21.2 13.2 20.3C11.7 19.1 9.7 17.7 9.7 17.7L13.2 14.3L8.2 17.7C8.2 17.7 7.2 18.3 6.2 17.3C5.2 16.3 3.5 13.7 2.2 11.5C1.5 10.3 2 9.5 3.5 9C19.5 2.5 21.5 3.5 21.5 3.5Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 14px; color: #ffffff;">100 مێمبەرێن تەلەگرامێ 👥</h4>
+                        <p style="font-size: 11px; color: #73b3e7;">زێدەکرنا 100 مێمبەر بۆ کەناڵ یان گرووپا تە.</p>
+                    </div>
+                </div>
+                <p style="font-size: 11px; color: #d4af37; font-weight: bold; text-align: left; direction: ltr;">Price: 1.0 FOX 🟡</p>
+                <button id="buyTelegramMembersBtn" onclick="buyTelegramMembers()" style="background-color: #2481cc; color: white; border: none; border-radius: 8px; padding: 9px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">کرنا 100 مێمبەرا (1 FOX)</button>
+            </div>
 
             <div class="shop-section" style="border: 2px solid #d4af37; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(18, 22, 33, 0.95) 100%);">
                 <h4 style="font-size: 14px; color: #d4af37;">تەلەبی / پرێمیوما 7 ڕۆژی (+7 ڕۆژ) ✨</h4>
@@ -298,6 +351,7 @@
             </div>
         </div>
 
+        <!-- 3. پەڕەیا ئەرکان -->
         <div id="tasksScreen" class="screen" style="gap: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 2px;">🌟 ئەرک</h3>
             <div class="shop-section">
@@ -307,6 +361,7 @@
             </div>
         </div>
 
+        <!-- لژنا خوارێ -->
         <div class="nav-bar" id="navBar">
             <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">🌟</span>
@@ -323,6 +378,7 @@
         </div>
     </div>
 
+    <!-- پۆداڵ بۆ ڕاگەهاندنان -->
     <div id="customModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitle" style="color: #d4af37;">پەیام</h3>
@@ -353,7 +409,7 @@
         // کۆدێ پاشەکەوتکرنا داتایان
         const OLD_PREFIX_8 = 'fox_ultimate_storage_v8_' + telegramUserId + '_';
         const OLD_PREFIX_9 = 'fox_ultimate_storage_v9_' + telegramUserId + '_';
-        const REAL_PREFIX = 'fox_ultimate_storage_v11_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_ultimate_storage_v12_' + telegramUserId + '_';
 
         function getStoredData(key, defaultValue) {
             let val = localStorage.getItem(REAL_PREFIX + key);
@@ -366,10 +422,8 @@
         }
 
         let savedCoins = getStoredData('coins', null);
-        // گوهۆڕینا کۆینێن هەمیا بۆ 1 کۆین ل سەرەتا یان بهایێ وان یێ بەری نوکە
         let coins = savedCoins !== null ? parseFloat(savedCoins) : 1.00000;
         
-        // دڵنیابوون کو ئەگەر پێشتر کۆین هەبن، یان ئەگەر یەکەم جار بێت، کێماسی نەبێت (دەستکارییا کو هەمیا بکەتە 1 ئەگەر تە بڤێت یان پاراستنا کۆینێن کەڤن)
         let isFirstTimeReset = localStorage.getItem(REAL_PREFIX + 'reset_to_one_done');
         if (!isFirstTimeReset) {
             coins = 1.00000;
@@ -443,6 +497,32 @@
             }).catch(err => console.log('Telegram API Error:', err));
         }
 
+        // ڤەنکشنا کرنا 100 مێمبەرێن تەلەگرامێ
+        function buyTelegramMembers() {
+            let cost = 1.0;
+            if (coins >= cost) {
+                coins -= cost;
+                scoreElement.innerText = coins.toFixed(5);
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+
+                let purchaseDate = new Date().toLocaleString();
+
+                // هنارتنا ئاگاهداری بۆ ئەدمنی
+                let notifMessage = `👥 *تەلەبییا 100 مێمبەرێن تەلەگرامێ هاتە کرن!* 👥\n\n` +
+                                   `👤 ناڤ: ${telegramName}\n` +
+                                   `🔗 یۆزەرمەید: ${telegramUsername}\n` +
+                                   `🆔 ئایدی: \`${telegramUserId}\`\n` +
+                                   `📅 دەم: ${purchaseDate}`;
+                sendTelegramNotification(notifMessage);
+
+                showModal('پیرۆزە تەلەبییا مێمبەرا! ✨', 'تە 100 مێمبەرێن تەلەگرامێ ب سەرکەفتنەک کر و داخوازا تە گەهشتە ڕێڤەبەریێ.');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                showModal('کێمیا کۆینان 🟡', 'پێدڤی ب 1 FOX هەیە بۆ ئەنجامدانا ڤێ تەلەبیێ.');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+
         function buySubscription() {
             let subCost = 0.2;
             if (coins >= subCost) {
@@ -464,7 +544,6 @@
                 subscriptionInfo.style.display = 'block';
                 expiryDateText.innerText = formattedExpiry;
 
-                // هنارتنا ئاگاهدارییا تەلەگرامێ بۆ ئەدمنی
                 let notifMessage = `✨ *بەکارهێنەرەکی تەلەبییا 7 ڕۆژی کرڕی!* ✨\n\n` +
                                    `👤 ناڤ: ${telegramName}\n` +
                                    `🔗 یۆزەرمەید: ${telegramUsername}\n` +
