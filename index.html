@@ -309,7 +309,6 @@
 </head>
 <body>
 
-    <!-- پلەیەرێ دەنگی (Audio Element) بۆ سترانا عەبدولقەهار زاخویی یا ئارام -->
     <audio id="bgMusic" loop preload="auto">
         <source src="abdulqahar_zakhoee.mp3" type="audio/mpeg">
     </audio>
@@ -341,7 +340,7 @@
     </script>
 
     <div class="game-container">
-        <!-- سەرێ یاریێ دگەل دوگما مۆزیکێ -->
+        <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="coin-balance">
                 🟡 <span id="score">0.00000</span>
@@ -360,7 +359,7 @@
             </div>
         </div>
 
-        <!-- 0. پەڕەیا ئەرکێ یجباری (هەردو کەناڵ و گروپ ب پێکڤەیی) -->
+        <!-- 0. پەڕەیا ئەرکێ یجباری -->
         <div id="forcedTaskScreen" class="screen">
             <div class="forced-box">
                 <span style="font-size: 40px;">📢</span>
@@ -398,11 +397,11 @@
             </div>
         </div>
 
-        <!-- 2. پەڕەیا شوپ (دووکان و بەشێ پرێمیوم) -->
+        <!-- 2. پەڕەیا شوپ (دووکان و پرێمیوم) -->
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 15px; padding-top: 20px;">
             <h3 style="color: #d4af37; margin-bottom: 5px;">🛒 دووکانێ و پرێمیوم</h3>
 
-            <!-- بەشێ کڕینا پرێمیوم (2x Tap) -->
+            <!-- کڕینا پرێمیوم -->
             <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%); border: 2px solid #d4af37; border-radius: 18px; width: 100%; padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);">
                 <span style="font-size: 30px;">⭐</span>
                 <h4 style="font-size: 16px; color: #d4af37;">پەکەتا پرێمیوم (2x Tap)</h4>
@@ -413,7 +412,7 @@
                 </button>
             </div>
 
-            <!-- بەشێ کڕینا مێمبەرا -->
+            <!-- کڕینا مێمبەرا -->
             <div style="background-color: rgba(18, 22, 33, 0.95); border: 2px solid #2a3447; border-radius: 18px; width: 100%; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
                 <div style="text-align: center;">
                     <h4 style="font-size: 15px; color: #fff; margin-bottom: 2px;">100 مێمبەر بۆ کەناڵی</h4>
@@ -443,7 +442,7 @@
 
         <!-- 4. پەڕەیا ڕێزبەندیێ (Ranking) -->
         <div id="rankingScreen" class="screen">
-            <h3 style="margin-bottom: 15px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان</h3>
+            <h3 style="margin-bottom: 15px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان (Live)</h3>
             <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;"></div>
         </div>
 
@@ -482,7 +481,6 @@
 
         if (telegramPhotoUrl) {
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
-            document.getElementById('userAvatarShop').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
         const REAL_PREFIX = 'fox_safe_storage_' + telegramUserId + '_';
@@ -514,7 +512,6 @@
         energyText.innerText = energy + " / 500";
         packetText.innerText = packets + " / 5";
 
-        // ئەگەر پێشتر پرێمیوم کرڕی بیت
         if (isPremium) {
             buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔ (2x)';
             buyPremiumBtn.style.backgroundColor = '#27ae60';
@@ -586,7 +583,6 @@
             }
         }
 
-        // فۆنگشنا کڕینا پرێمیوم ب 1 کۆین و 2x تەپکرن
         function buyPremium() {
             if (isPremium) return;
 
@@ -633,6 +629,7 @@
             }
         }
 
+        // نووکرنا ڕێزبەندیێ (Rank)
         function updateRankingList() {
             const rankingContainer = document.getElementById('rankingListContainer');
             
@@ -672,6 +669,14 @@
             rankingContainer.innerHTML = htmlContent;
         }
 
+        // دەستپێکرنا نووکرنا ئۆتۆماتیکی یا ڕێزبەندیێ هەر خولەکەکێ (60000 ms = 1 Minute)
+        setInterval(function() {
+            updateRankingList();
+        }, 60000);
+
+        // بانگکرنا ئێکسەر د دەما ڤەکرنێ دا
+        updateRankingList();
+
         function startTimer() {
             if (isTimerRunning) return;
             isTimerRunning = true;
@@ -704,13 +709,11 @@
             startTimer();
         }
 
-        // کاتێ تاپ دکەت (ئەگەر پرێمیوم بیت 2 هێندە د دەت)
         tapBtn.addEventListener('click', function(e) {
             if (energy > 0) {
                 energy -= 1;
                 totalTaps += 1;
 
-                // ئەگەر پرێمیوم بیت خەڵات دوو هێندە دبیت (0.00002) ئەگەر نا (0.00001)
                 let clickReward = isPremium ? 0.00002 : 0.00001;
                 coins += clickReward;
 
@@ -727,6 +730,9 @@
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
                 localStorage.setItem(REAL_PREFIX + 'energy', energy);
                 localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
+
+                // هەر دەما تاپ دکەت، ڕێزبەندی ژی ئێکسەر خۆ نوو دکەت دا کۆینێن تە ل ڕانکێ دیار بن
+                updateRankingList();
 
                 const rect = tapBtn.getBoundingClientRect();
                 const x = e.clientX ? e.clientX - rect.left : rect.width / 2;
