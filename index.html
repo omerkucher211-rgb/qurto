@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FOX Coin Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -251,7 +250,7 @@
                     <span style="font-weight: bold;" id="energyText">500 / 500</span>
                     <span>:ئینرجی ⚡</span>
                 </div>
-                <button class="action-btn" id="useEnergyBtn" onclick="usePacket()">بەکاربینە (Use) ⚡</button>
+                <button class="action-btn" id="useEnergyBtn" onclick="usePacket()">بکاربینە (Use) ⚡</button>
             </div>
         </div>
 
@@ -262,12 +261,8 @@
 
         <!-- 3. پەڕەیا ڕیکلام (Ads Screen) -->
         <div id="adsScreen" class="screen" style="justify-content: center; align-items: center; gap: 20px;">
-            <h3 style="color: #d4af37;">🎬 ڕیکلامێن ڤیدیویی</h3>
-            <p style="color: #8b9bb4; font-size: 13px; text-align: center;">تەماشەی ڕیکلامێ بکە دا پەکێتەکێ ب دەست ڤە بی!</p>
-            
-            <button class="action-btn" onclick="watchAdsgramVideo()" style="background: linear-gradient(135deg, #f39c12, #d4af37); color: #000; width: 100%; max-width: 280px; padding: 15px; font-size: 16px; border-radius: 12px; box-shadow: 0 4px 15px rgba(212,175,55,0.3);">
-                📺 تەماشەکرنا ڕیکلامێ (وەرگرتنا پەکێتی)
-            </button>
+            <h3 style="color: #d4af37;">🎬 بەشێ ڕیکلامان</h3>
+            <p style="color: #8b9bb4; font-size: 13px; text-align: center;">هیچ ڕیکلامەک ل ڤێرە نینە.</p>
         </div>
 
         <!-- 4. پەڕەیا ئەرکان -->
@@ -277,7 +272,7 @@
             <div class="task-item">
                 <button class="claim-btn" id="taskBtn" onclick="completeTask()">جۆین بکە</button>
                 <div class="task-info" style="text-align: right;">
-                    <h4>جۆینی چەناڵا تێلێگرامێ بکە</h4>
+                    <h4>جۆینی کەناڵێ تێلێگرامێ بکە</h4>
                     <p>+0.001 FOX</p>
                 </div>
             </div>
@@ -315,9 +310,6 @@
         let totalSeconds = localStorage.getItem('fox_timer') ? parseInt(localStorage.getItem('fox_timer')) : (4 * 3600 + 48 * 60);
         let isTimerRunning = false;
         let taskDone = (localStorage.getItem('fox_task_done') === 'true');
-        
-        // گۆڕراوی نوێ بۆ ژماردنی تاپەکان
-        let tapCount = parseInt(localStorage.getItem('fox_tap_count') || 0);
 
         const scoreElement = document.getElementById('score');
         const tapBtn = document.getElementById('tapBtn');
@@ -367,65 +359,20 @@
             startTimer();
         }
 
-        // کارپێکرنا Adsgram دگەل Block ID یا 46243
-        const adController = window.Adsgram ? window.Adsgram.init({ blockId: "46243" }) : null;
-
-        function watchAdsgramVideo() {
-            if (packets >= 5) {
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('error');
-                }
-                alert("پەکێتێن تە پڕن! (5 / 5)");
-                return;
-            }
-
-            if (adController) {
-                adController.show()
-                    .then(() => {
-                        // ئەگەر یاریکەری ڕیکلام تەماشە کر و ب دووماهی ئینا:
-                        packets += 1;
-                        packetText.innerText = packets + " / 5";
-                        localStorage.setItem('fox_packets', packets);
-
-                        if (tg.HapticFeedback) {
-                            tg.HapticFeedback.notificationOccurred('success');
-                        }
-                        alert("پیرۆزە! پەکێتەک بۆ تە هاتە زێدەکرن 📦");
-                    })
-                    .catch((result) => {
-                        if (tg.HapticFeedback) {
-                            tg.HapticFeedback.notificationOccurred('error');
-                        }
-                        alert("ڕیکلام نەهاتە تەماشەکرن یان هاتە پاشگەزکرن!");
-                    });
-            } else {
-                alert("سیستەما ڕیکلامێ هێشتا نە ئامادەیە!");
-            }
-        }
-
-        // Tap لیدان و هەژمارکرنا 20 تاپان بۆ ڤەکرنا ڕیکلامێ
+        // Tap لیدان بێ هیچ ڕیکلامەکێ
         tapBtn.addEventListener('click', function() {
             if (energy > 0) {
                 energy -= 1;
                 coins += 0.0001;
-                tapCount += 1; // زیادبوونی ژمارەی تاپەکان
 
                 scoreElement.innerText = coins.toFixed(4);
                 energyText.innerText = energy + " / 500";
 
                 localStorage.setItem('fox_coins', coins);
                 localStorage.setItem('fox_energy', energy);
-                localStorage.setItem('fox_tap_count', tapCount);
 
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('medium');
-                }
-
-                // ئەگەر گەیشتە 20 تاپ، ڕیکلامەکە کارا بکە
-                if (tapCount >= 20) {
-                    tapCount = 0; // سفرکردنەوەی ژمارەکە بۆ دەستپێکردنەوەی 20 تاپی نوێ
-                    localStorage.setItem('fox_tap_count', tapCount);
-                    watchAdsgramVideo(); // ڤەکرنا ڕیکلامێ ب خۆکارانه
                 }
             } else {
                 if (tg.HapticFeedback) {
