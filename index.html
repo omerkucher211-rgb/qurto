@@ -374,6 +374,57 @@
             text-align: center;
             border: 0.5px solid rgba(0,0,0,0.3);
         }
+
+        /* دیزاینا مینی یاریا کارتا بەختەوەر (Flip Cards) */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .flip-card {
+            background-color: transparent;
+            height: 70px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 10px;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            border: 1px solid #d4af37;
+        }
+        .flip-card-front {
+            background: linear-gradient(135deg, #1b2438, #0b0f19);
+            color: #d4af37;
+            font-size: 18px;
+        }
+        .flip-card-back {
+            background: rgba(212, 175, 55, 0.2);
+            color: #fff;
+            transform: rotateY(180deg);
+            font-size: 11px;
+            padding: 2px;
+        }
     </style>
 </head>
 <body>
@@ -481,9 +532,18 @@
             </div>
         </div>
 
-        <!-- 3. پەڕەیا ئەرکان و چرخێ 12 پشکی -->
+        <!-- 3. پەڕەیا ئەرکان، چرخێ و مینی یاریا کارتا بەختەوەر -->
         <div id="tasksScreen" class="screen" style="gap: 10px;">
-            <h3 style="color: #d4af37; margin-bottom: 2px;">🌟 ئەرک و چرخی بەختەوەرێ</h3>
+            <h3 style="color: #d4af37; margin-bottom: 2px;">🌟 ئەرک و یاریێن بەختەوەرێ</h3>
+
+            <!-- مینی یاریا کارتا بەختەوەر (Lucky Cards) -->
+            <div class="shop-section" style="border: 1.5px solid #3498db;">
+                <h4 style="font-size: 14px; color: #3498db; margin-bottom: 2px;">🃏 مینی یاریا کارتا بەختەوەر</h4>
+                <p style="font-size: 11px; color: #b0c4de; margin-bottom: 6px;">ئەڤرۆ 1 کارت هەلبژێرە و بەختێ خۆ تاقی بکە!</p>
+                <div class="cards-grid" id="cardsGridContainer">
+                    <!-- 6 کارت دێ لێرە هێنە چێکرن -->
+                </div>
+            </div>
 
             <div class="shop-section" style="text-align: center; align-items: center;">
                 <h4 style="font-size: 14px; color: #d4af37; margin-bottom: 4px;">🎡 چرخی بەختەوەرێ (12 خەڵات)</h4>
@@ -560,7 +620,8 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        const REAL_PREFIX = 'fox_ultimate_storage_v4_' + telegramUserId + '_';
+        // بەستنا LocalStorage ب تایبەتی ب ID یا هەر بکارهێنەرەکی ڤە دا کو کۆینێن کەسان نەهێنە گوهۆڕین
+        const REAL_PREFIX = 'fox_ultimate_storage_v5_' + telegramUserId + '_';
 
         let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins')) || 0;
         let maxEnergy = parseInt(localStorage.getItem(REAL_PREFIX + 'max_energy')) || 500;
@@ -575,6 +636,8 @@
         let isPremium = localStorage.getItem(REAL_PREFIX + 'is_premium') === 'true';
         let lastDailyClaim = localStorage.getItem(REAL_PREFIX + 'last_daily') || '';
         let lastSpinDay = localStorage.getItem(REAL_PREFIX + 'last_spin') || '';
+        let lastCardDay = localStorage.getItem(REAL_PREFIX + 'last_card_day') || '';
+        let hasChosenCardToday = localStorage.getItem(REAL_PREFIX + 'card_chosen') === 'true';
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
@@ -659,6 +722,79 @@
             }
         }
 
+        // پشکا مینی یاریا کارتا بەختەوەر (Lucky Cards)
+        const cardPrizes = [
+            { text: "+0.30 FOX", value: 0.30, type: "coins" },
+            { text: "+0.05 FOX", value: 0.05, type: "coins" },
+            { text: "پەکێتا ڤالا ❌", value: 0.00, type: "none" },
+            { text: "+0.50 FOX 🟡", value: 0.50, type: "coins" },
+            { text: "+0.10 FOX", value: 0.10, type: "coins" },
+            { text: "+1000 ئینرجی ⚡", value: 1000, type: "energy" }
+        ];
+
+        function renderLuckyCards() {
+            const gridContainer = document.getElementById('cardsGridContainer');
+            gridContainer.innerHTML = '';
+
+            let today = new Date().toDateString();
+            if (lastCardDay !== today) {
+                hasChosenCardToday = false;
+                localStorage.setItem(REAL_PREFIX + 'card_chosen', 'false');
+                localStorage.setItem(REAL_PREFIX + 'last_card_day', today);
+                lastCardDay = today;
+            }
+
+            // تێکدانا کارتێن ڕێکەفت ئەڤرۆ
+            cardPrizes.sort(() => Math.random() - 0.5);
+
+            cardPrizes.forEach((prize, index) => {
+                let card = document.createElement('div');
+                card.className = 'flip-card';
+                if (hasChosenCardToday) {
+                    card.classList.add('flipped');
+                }
+
+                card.innerHTML = `
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">🦊 #${index + 1}</div>
+                        <div class="flip-card-back">${prize.text}</div>
+                    </div>
+                `;
+
+                if (!hasChosenCardToday) {
+                    card.addEventListener('click', () => {
+                        if (hasChosenCardToday) return;
+                        hasChosenCardToday = true;
+                        localStorage.setItem(REAL_PREFIX + 'card_chosen', 'true');
+
+                        // هەموو کارتێن دی بدە دیارکرن و وێ کارتێ فلپ بکە
+                        document.querySelectorAll('.flip-card').forEach(c => c.classList.add('flipped'));
+
+                        if (prize.type === 'coins') {
+                            coins += prize.value;
+                            scoreElement.innerText = coins.toFixed(5);
+                            localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                            showModal('بەختێ کارتێ 🃏', `پیرۆزە! تە (${prize.text}) وەرگرت لە کارتا هەلبژاردى.`);
+                        } else if (prize.type === 'energy') {
+                            energy += prize.value;
+                            if (energy > maxEnergy) maxEnergy = energy;
+                            energyText.innerText = energy + " / " + maxEnergy;
+                            localStorage.setItem(REAL_PREFIX + 'energy', energy);
+                            localStorage.setItem(REAL_PREFIX + 'max_energy', maxEnergy);
+                            showModal('بەختێ کارتێ ⚡', `پیرۆزە! تە (+1000 ئینرجی) وەرگرت!`);
+                        } else {
+                            showModal('بەختێ کارتێ ❌', 'ئەڤرۆ بەختێ تە نەبوو، کارتەکا ڤالا دەرکەت! سبە تاقی بکەڤە.');
+                        }
+
+                        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    });
+                }
+
+                gridContainer.appendChild(card);
+            });
+        }
+        renderLuckyCards();
+
         // 12 تشتێن چرخی بەختەوەرێ
         const wheelPrizes = [
             { text: "+0.05 FOX", type: "coins", value: 0.05, color: "#e74c3c" },
@@ -686,7 +822,6 @@
                 let slice = document.createElement('div');
                 slice.className = 'wheel-slice';
                 slice.style.backgroundColor = prize.color;
-                // چراندن و جهگیرکرنا پارچەیێن چرخێ
                 slice.style.transform = `rotate(${index * sliceAngle}deg) skewY(-30deg)`;
                 
                 let span = document.createElement('span');
@@ -706,7 +841,6 @@
         }
         renderWheel();
 
-        // چراندنا چرخی بەختەوەرێ
         function spinTheWheel() {
             let today = new Date().toDateString();
             if (lastSpinDay === today) {
@@ -724,7 +858,6 @@
             let randomIndex = Math.floor(Math.random() * wheelPrizes.length);
             let sliceAngle = 360 / wheelPrizes.length;
             
-            // زڤرینەکا مەزن (بۆ نموونە 5 بۆ 8 خولان + زاویەیا تشتێ هەلبژاردى)
             let extraSpins = 360 * 6;
             let targetDegree = extraSpins + (360 - (randomIndex * sliceAngle) - (sliceAngle / 2));
             
@@ -759,7 +892,6 @@
             }, 4000);
         }
 
-        // دیارییا ڕۆژانە
         function claimDailyBonus() {
             let today = new Date().toDateString();
             if (lastDailyClaim === today) {
