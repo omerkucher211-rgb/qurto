@@ -245,6 +245,7 @@
                     <span style="font-weight: bold;" id="energyText">500 / 500</span>
                     <span>:ئینرجی ⚡</span>
                 </div>
+                <!-- دوگمەیا Use کو ب تنێ کرتەکرن تێبسە و پەکێتی کێم دکەت -->
                 <button class="action-btn" id="useEnergyBtn" onclick="usePacket()">بەکاربینە (Use) ⚡</button>
             </div>
         </div>
@@ -319,7 +320,6 @@
         const energyText = document.getElementById('energyText');
         const timerText = document.getElementById('timerText');
         const packetText = document.getElementById('packetText');
-        const useEnergyBtn = document.getElementById('useEnergyBtn');
 
         scoreElement.innerText = coins.toFixed(4);
         energyText.innerText = energy + " / 500";
@@ -330,7 +330,7 @@
             taskBtn.disabled = true;
         }
 
-        // کارپێکرنا دەمژمێرێ
+        // کارپێکرنا دەمژمێرێ بەردەوام
         function startTimer() {
             if (isTimerRunning) return;
             isTimerRunning = true;
@@ -375,34 +375,24 @@
                 foxStorage.setItem('fox_coins', coins);
                 foxStorage.setItem('fox_energy', energy);
 
-                // ئەگەر ئینرجی بوو سفر (0)، پەکێتەکێ بخۆدکار خەرج بکە ئەگەر پەکێت هەبن!
-                if (energy === 0 && packets > 0) {
-                    usePacket();
-                }
-
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('medium');
                 }
             } else {
-                // ئەگەر ئینرجی 0 بوو و پەکێت ژی نەمان
-                if (packets > 0) {
-                    usePacket();
-                } else {
-                    if (tg.HapticFeedback) {
-                        tg.HapticFeedback.notificationOccurred('error');
-                    }
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
                 }
             }
         });
 
-        // خەرجکرنا پەکێتی (Use Packet) و ڤەگەراندنا ئینرجیی بۆ 500
+        // خەرجکرنا پەکێتی (Use Packet) بە دەستپێکرنا دەمژمێرێ
         function usePacket() {
             if (packets > 0) {
-                packets -= 1;
+                packets -= 1; // پەکێت دکەوێتە خوار (بۆ نموونە ژ 4 دبتە 3)
                 packetText.innerText = packets + " / 5";
                 foxStorage.setItem('fox_packets', packets);
 
-                energy = 500;
+                energy = 500; // ئینرجی دگەڕێتڤە بۆ 500
                 energyText.innerText = energy + " / 500";
                 foxStorage.setItem('fox_energy', energy);
 
@@ -410,10 +400,14 @@
                     tg.HapticFeedback.notificationOccurred('success');
                 }
 
-                // دەستپێکرنا دەمژمێرێ ئەگەر نەهاتبا کارپێکرن
+                // دەستپێکرنا دەمژمێرا پەکێتان ئەگەر دەم نەبوو
                 if (!isTimerRunning) {
                     totalSeconds = (4 * 3600 + 48 * 60);
                     startTimer();
+                }
+            } else {
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
                 }
             }
         }
