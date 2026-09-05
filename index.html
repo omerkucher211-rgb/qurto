@@ -177,45 +177,6 @@
             transform: scale(0.98);
         }
 
-        #forcedTaskScreen {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            gap: 20px;
-            background: rgba(11, 15, 25, 0.98);
-            z-index: 999;
-        }
-
-        .forced-box {
-            background: rgba(18, 22, 33, 0.95);
-            border: 2px solid #d4af37;
-            border-radius: 20px;
-            padding: 20px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            align-items: center;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-        }
-
-        .forced-box h2 { color: #d4af37; font-size: 19px; }
-        .forced-box p { font-size: 13px; color: #b0c4de; line-height: 1.5; }
-
-        .task-main-btn {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 10px 15px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
-        .task-main-btn:disabled { background-color: #555; cursor: not-allowed; color: #aaa; }
-
         .shop-section {
             background-color: rgba(18, 22, 33, 0.95);
             border: 1px solid #2a3447;
@@ -297,20 +258,8 @@
             </div>
         </div>
 
-        <!-- 0. ئەرکێ یجباری -->
-        <div id="forcedTaskScreen" class="screen">
-            <div class="forced-box">
-                <span style="font-size: 35px;">📢</span>
-                <h2>پێدڤییە بەشدار بی!</h2>
-                <p>بۆ ڤەکرنا یاریێ، دڤێت جۆینی کەناڵی و گروپا مە ببی، پاشی وەرگرتنا 1 کۆینێ دیاری بکەی.</p>
-                <button class="task-main-btn" id="forcedChannelBtn" onclick="openChannel()">1. جۆینی کەناڵی بکە 🦊</button>
-                <button class="task-main-btn" id="forcedGroupBtn" onclick="openGroup()">2. جۆینی گروپا (BAR) بکە 💬</button>
-                <button class="task-main-btn" id="forcedCheckBtn" onclick="checkBothTasks()" disabled style="background-color: #555;">پشکنین و وەرگرتنا 1 کۆینێ 🔓</button>
-            </div>
-        </div>
-
-        <!-- 1. پەڕەیا تاپ (Tap) -->
-        <div id="tapScreen" class="screen main-content">
+        <!-- 1. پەڕەیا تاپ (Tap) - ڕاستەوخۆ ڤەدبیت -->
+        <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
                 <span style="font-size: 55px;">🟡</span>
             </div>
@@ -407,31 +356,35 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        // کۆدێ پاشەکەوتکرنێ یێ فەرمی یێ کەڤن (دا کۆینێن هەمیا وەکی خۆ بمینن و نینەبن سفێر)
-        const OLD_PREFIX = 'fox_ultimate_storage_v8_' + telegramUserId + '_';
-        const REAL_PREFIX = 'fox_ultimate_storage_v9_' + telegramUserId + '_';
+        // کۆدێ پاراستنا کۆین و داتایێن کەڤن (دا ب هیچ شێوەیەک کۆین نەبنە سفێر)
+        const OLD_PREFIX_8 = 'fox_ultimate_storage_v8_' + telegramUserId + '_';
+        const OLD_PREFIX_9 = 'fox_ultimate_storage_v9_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_ultimate_storage_v10_' + telegramUserId + '_';
 
-        // گۆڕینا کۆینان ژ گۆهەرتۆکا کەڤن بۆ یا نوی ئەگەر یا نوی هەبت یان نەبی
-        let savedCoins = localStorage.getItem(REAL_PREFIX + 'coins');
-        if (savedCoins === null) {
-            let oldCoins = localStorage.getItem(OLD_PREFIX + 'coins');
-            coins = oldCoins !== null ? parseFloat(oldCoins) : 0;
-        } else {
-            coins = parseFloat(savedCoins);
+        function getStoredData(key, defaultValue) {
+            let val = localStorage.getItem(REAL_PREFIX + key);
+            if (val !== null) return val;
+            val = localStorage.getItem(OLD_PREFIX_9 + key);
+            if (val !== null) return val;
+            val = localStorage.getItem(OLD_PREFIX_8 + key);
+            if (val !== null) return val;
+            return defaultValue;
         }
 
-        let maxEnergy = parseInt(localStorage.getItem(REAL_PREFIX + 'max_energy') || localStorage.getItem(OLD_PREFIX + 'max_energy')) || 500;
-        let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : (localStorage.getItem(OLD_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(OLD_PREFIX + 'energy')) : maxEnergy);
-        let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level') || localStorage.getItem(OLD_PREFIX + 'level')) || 1;
-        let totalTaps = parseInt(localStorage.getItem(REAL_PREFIX + 'total_taps') || localStorage.getItem(OLD_PREFIX + 'total_taps')) || 0;
-        let packets = localStorage.getItem(REAL_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'packets')) : (localStorage.getItem(OLD_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(OLD_PREFIX + 'packets')) : 4);
-        let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (localStorage.getItem(OLD_PREFIX + 'timer') ? parseInt(localStorage.getItem(OLD_PREFIX + 'timer')) : (2 * 3600));
+        let savedCoins = getStoredData('coins', null);
+        let coins = savedCoins !== null ? parseFloat(savedCoins) : 0;
+
+        let maxEnergy = parseInt(getStoredData('max_energy', '500'));
+        let energy = parseInt(getStoredData('energy', maxEnergy));
+        let level = parseInt(getStoredData('level', '1'));
+        let totalTaps = parseInt(getStoredData('total_taps', '0'));
+        let packets = parseInt(getStoredData('packets', '4'));
+        let totalSeconds = parseInt(getStoredData('timer', (2 * 3600)));
         let isTimerRunning = false;
         
-        let isTasksDone = (localStorage.getItem(REAL_PREFIX + 'tasks_done') === 'true') || (localStorage.getItem(OLD_PREFIX + 'tasks_done') === 'true');
-        let isSubscribed = (localStorage.getItem(REAL_PREFIX + 'is_subscribed') === 'true') || (localStorage.getItem(OLD_PREFIX + 'is_subscribed') === 'true');
-        let expiryDateString = localStorage.getItem(REAL_PREFIX + 'expiry_date') || localStorage.getItem(OLD_PREFIX + 'expiry_date') || '';
-        let lastDailyClaim = localStorage.getItem(REAL_PREFIX + 'last_daily') || localStorage.getItem(OLD_PREFIX + 'last_daily') || '';
+        let isSubscribed = getStoredData('is_subscribed', 'false') === 'true';
+        let expiryDateString = getStoredData('expiry_date', '');
+        let lastDailyClaim = getStoredData('last_daily', '');
 
         // Check if subscription has expired
         if (isSubscribed && expiryDateString) {
@@ -448,9 +401,6 @@
         const energyText = document.getElementById('energyText');
         const timerText = document.getElementById('timerText');
         const packetText = document.getElementById('packetText');
-        const forcedTaskScreen = document.getElementById('forcedTaskScreen');
-        const tapScreen = document.getElementById('tapScreen');
-        const navBar = document.getElementById('navBar');
         const buySubscriptionBtn = document.getElementById('buySubscriptionBtn');
         const subscriptionInfo = document.getElementById('subscriptionInfo');
         const expiryDateText = document.getElementById('expiryDateText');
@@ -474,58 +424,6 @@
         }
         function closeModal() {
             document.getElementById('customModal').style.display = 'none';
-        }
-
-        let channelClicked = false;
-        let groupClicked = false;
-
-        if (isTasksDone) {
-            forcedTaskScreen.classList.remove('active');
-            tapScreen.classList.add('active');
-            navBar.style.display = 'flex';
-        } else {
-            forcedTaskScreen.classList.add('active');
-            tapScreen.classList.remove('active');
-            navBar.style.display = 'none';
-        }
-
-        function openChannel() {
-            window.open('https://t.me/TORSEII', '_blank');
-            channelClicked = true;
-            document.getElementById('forcedChannelBtn').innerText = 'کەناڵ هاتە ڤەکرن ✔';
-            checkEnableButton();
-        }
-
-        function openGroup() {
-            window.open('https://t.me/TURSE_GROUP', '_blank');
-            groupClicked = true;
-            document.getElementById('forcedGroupBtn').innerText = 'گروپ هاتە ڤەکرن ✔';
-            checkEnableButton();
-        }
-
-        function checkEnableButton() {
-            if (channelClicked && groupClicked) {
-                let btn = document.getElementById('forcedCheckBtn');
-                btn.disabled = false;
-                btn.style.backgroundColor = '#2ecc71';
-                btn.innerText = 'وەرگرتنا 1 کۆینێ دیاری 🟡';
-            }
-        }
-
-        function checkBothTasks() {
-            if (!isTasksDone && channelClicked && groupClicked) {
-                isTasksDone = true;
-                localStorage.setItem(REAL_PREFIX + 'tasks_done', 'true');
-                coins += 1.00000;
-                scoreElement.innerText = coins.toFixed(5);
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-
-                forcedTaskScreen.classList.remove('active');
-                tapScreen.classList.add('active');
-                navBar.style.display = 'flex';
-                showModal('پیرۆزە! 🎉', 'تە هەردو ئەرک تەواو کرن و 1 کۆین وەرگرت.');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            }
         }
 
         function buySubscription() {
@@ -690,9 +588,7 @@
         }
 
         function switchTab(screenId, event) {
-            document.querySelectorAll('.screen').forEach(s => {
-                if (s.id !== 'forcedTaskScreen') s.classList.remove('active');
-            });
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
             document.getElementById(screenId).classList.add('active');
