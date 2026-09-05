@@ -116,7 +116,6 @@
             position: relative;
         }
 
-        /* 15% مەستر لێهاتنا بازنێ تەپ تەپێ (184px) */
         .big-coin-btn {
             width: 184px;
             height: 184px;
@@ -384,9 +383,9 @@
 
         <!-- 4. Ranking Screen -->
         <div id="rankingScreen" class="screen">
-            <h3 style="margin-bottom: 12px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان (ئۆنلاین)</h3>
+            <h3 style="margin-bottom: 12px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان (گشتی)</h3>
             <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;">
-                <p style="text-align: center; color: #8b9bb4; font-size: 13px; margin-top: 20px;">داتایێن ئۆنلاین بار دبن...</p>
+                <p style="text-align: center; color: #8b9bb4; font-size: 13px; margin-top: 20px;">داتایێن ڕێزبەندیێ بار دبن...</p>
             </div>
         </div>
 
@@ -418,12 +417,11 @@
 
         let telegramUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
         
-        // پاراستنا ownid یا ڕاستەقینە یا تلگرامی (أو کلیلەکێ گشتی بۆ تاقیکرنێ ئەگەر نە ل تلگرامێ بیت)
-        let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id : 'user_' + Math.floor(Math.random() * 1000000);
+        let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id.toString() : 'user_' + Math.floor(Math.random() * 1000000);
         let defaultTelegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'FOX Player';
         let telegramPhotoUrl = telegramUser && telegramUser.photo_url ? telegramUser.photo_url : null;
 
-        // دروستکرنا پڕێفیکسا تایبەت ب هەر کەسەکی تنێ (تەنیابوونا داتایان)
+        // کلیلێ تایبەت ب پاشەکەوتکرنا کوین و داتایێن کەسەی (تنێ ل مۆبایلا وی دهێنە پاراستن)
         const REAL_PREFIX = 'fox_pro_secure_storage_' + telegramUserId + '_';
 
         let telegramName = localStorage.getItem(REAL_PREFIX + 'custom_name') || defaultTelegramName;
@@ -435,15 +433,17 @@
 
         function openProfileSettings() {
             let currentName = document.getElementById('userNameText').innerText;
-            let newName = prompt(`تایبەتمەندییا پروفایلی:\n\n🆔 ownid (Telegram ID): ${telegramUserId}\n\nتکایە ناڤێ خۆ یێ نوێ ل خوارێ بنڤیسە:`, currentName);
+            let newName = prompt(`تایبەتمەندییا پروفایلی:\n\n🆔 Telegram ID: ${telegramUserId}\n\nتکایە ناڤێ خۆ یێ نوێ ل خوارێ بنڤیسە:`, currentName);
             
             if (newName !== null && newName.trim() !== "") {
                 telegramName = newName.trim();
                 document.getElementById('userNameText').innerText = telegramName;
                 localStorage.setItem(REAL_PREFIX + 'custom_name', telegramName);
                 
+                // نووژەنکرنا داتایێن گشتی
+                syncUserToGlobalStorage();
                 alert(`پیرۆزە! ناڤێ تە هاتە گۆڕین بۆ: ${telegramName}`);
-                if (updateOnlineRanking) updateOnlineRanking();
+                updateOnlineRanking();
             }
         }
 
@@ -493,6 +493,27 @@
             buyPremiumBtn.disabled = true;
         }
 
+        // سیستمێ סינکرۆنکرنا ڕێزبەندیێ (ب بکارئینانا LocalStorage-ێ یا پێکڤەگرێدای یان localStorage گشتی بۆ ڕێزبەندیێ ب تنێ ب مەرجەکێ کو کوینێن کەسێن دی نەهێنە گۆڕین)
+        function syncUserToGlobalStorage() {
+            try {
+                let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
+                let allUsers = allUsersRaw ? JSON.parse(allUsersRaw) : {};
+
+                // وەرگرتنا داتایێن ڤی یاریزانی و تۆمارکرن د لیستا گشتی دا بۆ دیتنا ناڤی و کۆینان ل ڕێزبەندیێ
+                allUsers[telegramUserId] = {
+                    id: telegramUserId,
+                    name: telegramName,
+                    score: coins,
+                    avatar: telegramPhotoUrl
+                };
+
+                localStorage.setItem('fox_global_ranking_db', JSON.stringify(allUsers));
+            } catch(e) {
+                console.log("Sync error:", e);
+            }
+        }
+        syncUserToGlobalStorage();
+
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy = Math.min(maxEnergy, energy + 1);
@@ -509,6 +530,7 @@
                 scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
                 localStorage.setItem(REAL_PREFIX + 'is_premium', 'true');
+                syncUserToGlobalStorage();
 
                 buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔';
                 buyPremiumBtn.style.backgroundColor = '#27ae60';
@@ -540,6 +562,7 @@
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
                 localStorage.setItem(REAL_PREFIX + 'multitap_level', multitapLevel);
                 localStorage.setItem(REAL_PREFIX + 'max_energy', maxEnergy);
+                syncUserToGlobalStorage();
 
                 alert('پیرۆزە! ئاستێ کلیکی بلندا بوو بۆ لڤل ' + multitapLevel);
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -559,13 +582,14 @@
                 coins -= 1.00000;
                 scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                syncUserToGlobalStorage();
 
                 const botToken = "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs";
                 const chatId = "8832347891";
                 
                 let message = `🚀 داخوازییا 100 مێمبەران هاتە کرن!\n\n` +
                               `👤 ناڤێ یاریزانی: ${telegramName}\n` +
-                              `🆔 ownid: ${telegramUserId}\n` +
+                              `🆔 Telegram ID: ${telegramUserId}\n` +
                               `🔗 لینکێ کەناڵی: ${channelLink}`;
 
                 fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -603,6 +627,7 @@
             coins += reward;
             scoreElement.innerText = coins.toFixed(5);
             localStorage.setItem(REAL_PREFIX + 'coins', coins);
+            syncUserToGlobalStorage();
 
             lastStreakDate = today;
             streakDay++;
@@ -626,31 +651,41 @@
         function updateOnlineRanking() {
             const rankingContainer = document.getElementById('rankingListContainer');
             
-            let onlineUsers = [
-                { id: telegramUserId, name: telegramName, score: coins, avatar: telegramPhotoUrl, isMe: true }
-            ];
+            // دڵنیابوون کو داتایێن خودێ دهێنە نووژەنکرن
+            syncUserToGlobalStorage();
 
-            onlineUsers.sort((a, b) => b.score - a.score);
+            let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
+            let allUsersObj = allUsersRaw ? JSON.parse(allUsersRaw) : {};
+            
+            let usersArray = Object.values(allUsersObj);
+
+            // رێزبەندکرنا یاریزانان ل دویڤ کۆینێن وان (زۆرترین بۆ کێمترین)
+            usersArray.sort((a, b) => b.score - a.score);
 
             let htmlContent = '';
-            onlineUsers.forEach((user, index) => {
-                let avatarHTML = user.avatar ? `<img src="${user.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : `<span style="font-size: 18px;">⚽</span>`;
-                let itemClass = user.isMe ? "rank-item top-user" : "rank-item";
-                let tagText = user.isMe ? ` <span style="font-size: 10px; color: #d4af37;">(تە)</span>` : '';
+            if (usersArray.length === 0) {
+                htmlContent = `<p style="text-align: center; color: #8b9bb4; font-size: 13px; margin-top: 20px;">چ یاریزان نینن هێشتا...</p>`;
+            } else {
+                usersArray.forEach((user, index) => {
+                    let avatarHTML = user.avatar ? `<img src="${user.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : `<span style="font-size: 18px;">⚽</span>`;
+                    let isMe = user.id === telegramUserId;
+                    let itemClass = isMe ? "rank-item top-user" : "rank-item";
+                    let tagText = isMe ? ` <span style="font-size: 10px; color: #d4af37;">(تە)</span>` : '';
 
-                htmlContent += `
-                    <div class="${itemClass}">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div class="rank-avatar">${avatarHTML}</div>
-                            <div>
-                                <div style="font-size: 13px; font-weight: bold;">${user.name}${tagText}</div>
-                                <div style="font-size: 10px; color: #8b9bb4;">#${index + 1}</div>
+                    htmlContent += `
+                        <div class="${itemClass}">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div class="rank-avatar">${avatarHTML}</div>
+                                <div>
+                                    <div style="font-size: 13px; font-weight: bold;">${user.name || 'FOX Player'}${tagText}</div>
+                                    <div style="font-size: 10px; color: #8b9bb4;">#${index + 1}</div>
+                                </div>
                             </div>
+                            <span style="color: #d4af37; font-weight: bold; direction: ltr;">${parseFloat(user.score).toFixed(5)} 🟡</span>
                         </div>
-                        <span style="color: #d4af37; font-weight: bold; direction: ltr;">${user.score.toFixed(5)} 🟡</span>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
             rankingContainer.innerHTML = htmlContent;
         }
 
@@ -686,6 +721,9 @@
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
                 localStorage.setItem(REAL_PREFIX + 'energy', energy);
                 localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
+                
+                // پاشەکەوتکرنا کوینان بۆ ناڤ ڕێزبەندییا گشتی ب بکارئینانا ID یا وی تنێ
+                syncUserToGlobalStorage();
 
                 tapBtn.classList.add('tapped');
                 setTimeout(() => {
