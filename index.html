@@ -196,85 +196,16 @@
             margin-bottom: 10px;
         }
 
-        .invite-card {
-            border: 2px solid #3498db;
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%);
+        /* ستایلێن یارییا چیچکی (Catch the Chick Game) */
+        .game-canvas-container {
+            width: 100%;
+            height: 380px;
+            background: radial-gradient(circle, #1a2536 0%, #0b0f19 100%);
+            border: 2px solid #d4af37;
             border-radius: 15px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-        }
-
-        .invite-input {
-            width: 100%;
-            background: #0b0f19;
-            border: 1px solid #3498db;
-            border-radius: 8px;
-            padding: 9px;
-            color: #ffffff;
-            font-size: 13px;
-            outline: none;
-            text-align: center;
-        }
-
-        .telegram-members-card {
-            border: 2px solid #2481cc;
-            background: linear-gradient(135deg, rgba(36, 129, 204, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%);
-            border-radius: 15px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(36, 129, 204, 0.3);
-        }
-
-        .telegram-1000-card {
-            border: 2px solid #9b59b6;
-            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%);
-            border-radius: 15px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
-        }
-
-        .tg-card-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .tg-logo {
-            width: 36px;
-            height: 36px;
-            background: #2481cc;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-            box-shadow: 0 0 10px rgba(36, 129, 204, 0.6);
-        }
-
-        .tg-logo-purple {
-            width: 36px;
-            height: 36px;
-            background: #9b59b6;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-            box-shadow: 0 0 10px rgba(155, 89, 182, 0.6);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
         }
 
         /* بەشێ ڕیگلاما ل خوارێ بەرێخودانا لژنا خوارێ (Banner Ad Container) */
@@ -337,19 +268,6 @@
             flex-direction: column;
             gap: 12px;
         }
-
-        .modal-input {
-            width: 100%;
-            background: #0b0f19;
-            border: 1px solid #2481cc;
-            border-radius: 8px;
-            padding: 10px;
-            color: #ffffff;
-            font-size: 13px;
-            outline: none;
-            direction: ltr;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -398,48 +316,6 @@
         <!-- 2. پەڕەیا شوپ (دووکان) -->
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px; padding-top: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 2px;">🛒 دووکان و تەلەبی</h3>
-
-            <!-- چوارگوشەیی 100 مێمبەرێن تەلەگرامێ -->
-            <div class="telegram-members-card">
-                <div class="tg-card-header">
-                    <div class="tg-logo">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21.5 3.5C21.5 3.5 22.8 3 22.2 4.3C21.5 5.9 17.7 14.8 16 19C15.2 21 14.2 21.2 13.2 20.3C11.7 19.1 9.7 17.7 9.7 17.7L13.2 14.3L8.2 17.7C8.2 17.7 7.2 18.3 6.2 17.3C5.2 16.3 3.5 13.7 2.2 11.5C1.5 10.3 2 9.5 3.5 9C19.5 2.5 21.5 3.5 21.5 3.5Z" fill="white"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h4 style="font-size: 14px; color: #ffffff;">100 مێمبەرێن تەلەگرامێ 👥</h4>
-                        <p style="font-size: 11px; color: #73b3e7;">بهایێ: 1 FOX</p>
-                    </div>
-                </div>
-                <button onclick="openTelegramModal(100, 1.0)" style="background-color: #2481cc; color: white; border: none; border-radius: 8px; padding: 9px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">دانانا لینکێ کەناڵێ (1 FOX) 🎯</button>
-            </div>
-
-            <!-- چوارگوشەیی 1000 مێمبەرێن تەلەگرامێ -->
-            <div class="telegram-1000-card">
-                <div class="tg-card-header">
-                    <div class="tg-logo-purple">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21.5 3.5C21.5 3.5 22.8 3 22.2 4.3C21.5 5.9 17.7 14.8 16 19C15.2 21 14.2 21.2 13.2 20.3C11.7 19.1 9.7 17.7 9.7 17.7L13.2 14.3L8.2 17.7C8.2 17.7 7.2 18.3 6.2 17.3C5.2 16.3 3.5 13.7 2.2 11.5C1.5 10.3 2 9.5 3.5 9C19.5 2.5 21.5 3.5 21.5 3.5Z" fill="white"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h4 style="font-size: 14px; color: #ffffff;">1000 مێمبەرێن تەلەگرامێ 🚀</h4>
-                        <p style="font-size: 11px; color: #d7bde2;">بهایێ: 8 FOX</p>
-                    </div>
-                </div>
-                <button onclick="openTelegramModal(1000, 8.0)" style="background-color: #9b59b6; color: white; border: none; border-radius: 8px; padding: 9px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">دانانا لینکێ کەناڵێ (8 FOX) 🌟</button>
-            </div>
-
-            <div class="shop-section" style="border: 2px solid #d4af37; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(18, 22, 33, 0.95) 100%);">
-                <h4 style="font-size: 14px; color: #d4af37;">تەلەبی / پرێمیوما 7 ڕۆژی (+7 ڕۆژ) ✨</h4>
-                <p style="font-size: 11px; color: #b0c4de;">تەپ تەپا تە دێ بیتە دوو هێندە و ماوەیێ 7 ڕۆژان بۆ دێ هێتە زێدەکرن.</p>
-                <div id="subscriptionInfo" style="font-size: 11px; color: #2ecc71; margin-top: 4px; display: none;">
-                    بسەرڤەچوون: <span id="expiryDateText" style="direction: ltr; display: inline-block;"></span>
-                </div>
-                <button id="buySubscriptionBtn" onclick="buySubscription()" style="background-color: #f39c12; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 5px;">کرنا تەلەبیێ (0.2 FOX 🟡)</button>
-            </div>
-
             <div class="shop-section">
                 <h4 style="font-size: 14px; color: #fff;">بەرفرهکرنا ئینرجییێ ⚡ (+500 کاپاسیتى)</h4>
                 <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: <span id="energyUpgradeCost">0.50000</span> FOX</p>
@@ -447,49 +323,32 @@
             </div>
         </div>
 
-        <!-- 3. پەڕەیا ئەرکان (Tasks) -->
-        <div id="tasksScreen" class="screen" style="gap: 10px; align-items: center; justify-content: flex-start; padding-top: 10px;">
-            <h3 style="color: #d4af37; margin-bottom: 2px;">🌟 ئەرک و بانگهێشت</h3>
-            
-            <!-- بەشێ بانگهێشتکرنا هەڤالا (Invite Code) -->
-            <div class="invite-card">
-                <div class="tg-card-header">
-                    <div style="width: 36px; height: 36px; background: #3498db; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
-                        <span>🔗</span>
-                    </div>
-                    <div>
-                        <h4 style="font-size: 14px; color: #ffffff;">کۆدا بانگهێشتکرنێ (Invite) 👥</h4>
-                        <p style="font-size: 11px; color: #85c1e9;">هەڤالێ خۆ بانگهێشت بکە و 0.00001 FOX وەربگرە</p>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" id="myInviteLink" class="invite-input" readonly style="direction: ltr; font-size: 11px;">
-                    <button onclick="copyInviteLink()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 0 12px; font-size: 12px; font-weight: bold; cursor: pointer;">کۆپی</button>
-                </div>
-                <div style="border-top: 1px dashed rgba(52,152,219,0.4); padding-top: 8px; display: flex; flex-direction: column; gap: 6px;">
-                    <input type="text" id="promoCodeInput" class="invite-input" placeholder="کۆدا هەڤالێ خۆ لێرە بنوڤیسە...">
-                    <button onclick="redeemInviteCode()" style="background-color: #2980b9; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا خەلاتێ کۆدی 🟡</button>
-                </div>
+        <!-- 3. پەڕەیا ئەرکان (Tasks) - یارییا چیچک و عەمودێ -->
+        <div id="tasksScreen" class="screen" style="gap: 8px; align-items: center; justify-content: flex-start; padding-top: 5px;">
+            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                <h3 style="color: #d4af37; font-size: 15px;">🐥 یارییا گرتنا چیچکی</h3>
+                <div style="font-size: 12px; color: #2ecc71; font-weight: bold;">خاڵ: <span id="gameScore">0</span></div>
             </div>
 
-            <div class="shop-section">
-                <h4 style="font-size: 14px; color: #d4af37;">📅 دیارییا ڕۆژانە (Daily Streak)</h4>
-                <p style="font-size: 11px; color: #b0c4de;">هەموو ڕۆژەکێ وەرگرتنا 0.00050 FOX!</p>
-                <button id="claimDailyBtn" onclick="claimDailyBonus()" style="background-color: #27ae60; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا دیارییا ڕۆژانە 🎁</button>
+            <!-- کەنڤاسێ یاریێ (Game Canvas) -->
+            <div class="game-canvas-container" id="gameContainerDiv">
+                <canvas id="chickGameCanvas" width="370" height="370"></canvas>
             </div>
+
+            <button id="startGameBtn" onclick="toggleGame()" class="action-btn" style="width: 100%; padding: 8px; font-size: 14px; background-color: #f39c12;">دەستپێکرنا یاریێ 🎮</button>
         </div>
 
         <!-- لژنا خوارێ و بەشێ ڕیگلاما Banner Ad -->
         <div>
-            <!-- بەشێ ڕیگلاما مۆنێتاگ (Banner Ad Container) کە هاتیە زێدەکرن -->
+            <!-- بەشێ ڕیگلاما مۆنێتاگ (Banner Ad Container) -->
             <div class="banner-ad-bar">
                 <script src="https://3nbf4.com/pfp.js?zoneid=11731281" async></script>
             </div>
 
             <div class="nav-bar" id="navBar">
                 <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
-                    <span class="icon">🌟</span>
-                    <span>Tasks</span>
+                    <span class="icon">🐥</span>
+                    <span>Tasks/Game</span>
                 </button>
                 <button onclick="switchTab('shopScreen', event)" class="nav-item" id="navShop">
                     <span class="icon">🛒</span>
@@ -499,22 +358,6 @@
                     <span class="icon">👆</span>
                     <span>Tap</span>
                 </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- پۆداڵ بۆ وەرگرتنا لینکێ کەناڵێ مێمبەرا -->
-    <div id="telegramModal" class="modal">
-        <div class="modal-content" style="border-color: #9b59b6;">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span style="font-size: 20px;">👥</span>
-                <h3 id="modalHeaderTitle" style="color: #2481cc; font-size: 16px;">لینکێ کەناڵێ خۆ بنوڤیسە</h3>
-            </div>
-            <p id="modalHeaderDesc" style="font-size: 12px; color: #b0c4de;">بهایێ مێمبەرا...</p>
-            <input type="text" id="channelLinkInput" class="modal-input" placeholder="t.me/your_channel يا @channel">
-            <div style="display: flex; gap: 8px; margin-top: 5px;">
-                <button id="modalSubmitBtn" onclick="submitTelegramMembers()" style="flex: 1; background-color: #2481cc; color: white; border: none; border-radius: 8px; padding: 9px; font-weight: bold; cursor: pointer;">ناردن (Send)</button>
-                <button onclick="closeTelegramModal()" style="flex: 1; background-color: #e74c3c; color: white; border: none; border-radius: 8px; padding: 9px; font-weight: bold; cursor: pointer;">پەشیمانبوون</button>
             </div>
         </div>
     </div>
@@ -546,7 +389,6 @@
         let telegramUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
         let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id : ADMIN_ID;
         let telegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'FOX Player';
-        let telegramUsername = telegramUser && telegramUser.username ? '@' + telegramUser.username : 'نەدیار';
         let telegramPhotoUrl = telegramUser && telegramUser.photo_url ? telegramUser.photo_url : null;
 
         document.getElementById('userNameText').innerText = telegramName;
@@ -574,53 +416,6 @@
         let isTimerRunning = false;
         
         let isSubscribed = getStoredData('is_subscribed', 'false') === 'true';
-        let expiryDateString = getStoredData('expiry_date', '');
-        let lastDailyClaim = getStoredData('last_daily', '');
-        let hasRedeemedInvite = getStoredData('has_redeemed_invite', 'false') === 'true';
-
-        let myBotUsername = "FoxCoinBot";
-        let inviteLink = `https://t.me/${myBotUsername}?start=ref_${telegramUserId}`;
-        document.getElementById('myInviteLink').value = inviteLink;
-
-        function copyInviteLink() {
-            let input = document.getElementById('myInviteLink');
-            input.select();
-            input.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(input.value);
-            showModal('کۆپی بوو 📋', 'لینکێ بانگهێشتکرنێ هاتە کۆپیکرن!');
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        }
-
-        function redeemInviteCode() {
-            let inputCode = document.getElementById('promoCodeInput').value.trim();
-            if (!inputCode) {
-                showModal('ئاگاداری ⚠️', 'هیڤیدە کۆدەکێ بانگهێشتکرنێ بنوڤیسە!');
-                return;
-            }
-
-            if (hasRedeemedInvite) {
-                showModal('ئاگاداری ⚠️', 'تە پێشتر کۆدا بانگهێشتکرنێ کارپێکرییە!');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-                return;
-            }
-
-            if (inputCode == telegramUserId) {
-                showModal('چەوتی ❌', 'ناتوانی کۆدا خۆ ل دەف خۆ کارپێکی!');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-                return;
-            }
-
-            coins += 0.00001;
-            hasRedeemedInvite = true;
-            scoreElement.innerText = coins.toFixed(5);
-
-            localStorage.setItem(REAL_PREFIX + 'coins', coins);
-            localStorage.setItem(REAL_PREFIX + 'has_redeemed_invite', 'true');
-
-            showModal('پیرۆزە! ✨', 'کۆدا بانگهێشتکرنێ کارا بوو و 0.00001 FOX بۆ کۆینێن تە هاتە زێدەکرن.');
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            document.getElementById('promoCodeInput').value = '';
-        }
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
@@ -628,21 +423,11 @@
         const energyText = document.getElementById('energyText');
         const timerText = document.getElementById('timerText');
         const packetText = document.getElementById('packetText');
-        const buySubscriptionBtn = document.getElementById('buySubscriptionBtn');
-        const subscriptionInfo = document.getElementById('subscriptionInfo');
-        const expiryDateText = document.getElementById('expiryDateText');
 
         scoreElement.innerText = coins.toFixed(5);
         levelText.innerText = "Lvl " + level;
         energyText.innerText = energy + " / " + maxEnergy;
         packetText.innerText = packets + " / 5";
-
-        if (isSubscribed && expiryDateString) {
-            buySubscriptionBtn.innerText = 'تەلەبییا 7 ڕۆژی چالاکە ✔';
-            buySubscriptionBtn.style.backgroundColor = '#27ae60';
-            subscriptionInfo.style.display = 'block';
-            expiryDateText.innerText = expiryDateString;
-        }
 
         function showModal(title, msg) {
             document.getElementById('modalTitle').innerText = title;
@@ -651,120 +436,6 @@
         }
         function closeModal() {
             document.getElementById('customModal').style.display = 'none';
-        }
-
-        let selectedPackageCount = 100;
-        let selectedPackageCost = 1.0;
-
-        function openTelegramModal(count, cost) {
-            selectedPackageCount = count;
-            selectedPackageCost = cost;
-
-            document.getElementById('channelLinkInput').value = '';
-            document.getElementById('modalHeaderTitle').innerText = count + ' مێمبەرێن تەلەگرامێ';
-            document.getElementById('modalHeaderDesc').innerText = 'بهایێ ڤێ تەلەبیێ ' + cost + ' FOX هەیە.';
-            document.getElementById('modalSubmitBtn').style.backgroundColor = (count === 1000) ? '#9b59b6' : '#2481cc';
-            document.getElementById('telegramModal').style.display = 'flex';
-        }
-
-        function closeTelegramModal() {
-            document.getElementById('telegramModal').style.display = 'none';
-        }
-
-        function submitTelegramMembers() {
-            let channelLink = document.getElementById('channelLinkInput').value.trim();
-            if (!channelLink) {
-                alert('هیڤیدە لینکێ کەناڵێ خۆ بنوڤیسە!');
-                return;
-            }
-
-            if (coins >= selectedPackageCost) {
-                coins -= selectedPackageCost;
-                scoreElement.innerText = coins.toFixed(5);
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-
-                let purchaseDate = new Date().toLocaleString();
-                closeTelegramModal();
-
-                let notifMessage = `👥 *تەلەبییا ${selectedPackageCount} مێمبەرێن تەلەگرامێ هاتە کرن!* 👥\n\n` +
-                                   `👤 ناڤ: ${telegramName}\n` +
-                                   `🔗 یۆزەرمەید: ${telegramUsername}\n` +
-                                   `🆔 ئایدی: \`${telegramUserId}\`\n` +
-                                   `📢 لینکێ کەناڵێ: ${channelLink}\n` +
-                                   `💰 بڕێ خەرجکری: ${selectedPackageCost} FOX\n` +
-                                   `📅 دەم: ${purchaseDate}`;
-                
-                let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-                fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: ADMIN_ID, text: notifMessage, parse_mode: 'Markdown' })
-                }).catch(err => console.log('Telegram API Error:', err));
-
-                showModal('پیرۆزە تەلەبییا مێمبەرا! ✨', `${selectedPackageCount} مێمبەر ب سەرکەفتن هاتنە داخوازکرن و ${selectedPackageCost} FOX هاتە کێمکرن.`);
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                closeTelegramModal();
-                showModal('کێمیا کۆینان 🟡', `پێدڤی ب ${selectedPackageCost} FOX هەیە بۆ ئەنجامدانا ڤێ تەلەبیێ.`);
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-            }
-        }
-
-        function buySubscription() {
-            let subCost = 0.2;
-            if (coins >= subCost) {
-                coins -= subCost;
-                isSubscribed = true;
-                
-                let purchaseDate = new Date();
-                let expiryDate = new Date(purchaseDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-                let formattedExpiry = expiryDate.toLocaleString();
-
-                scoreElement.innerText = coins.toFixed(5);
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-                localStorage.setItem(REAL_PREFIX + 'is_subscribed', 'true');
-                localStorage.setItem(REAL_PREFIX + 'expiry_date', formattedExpiry);
-
-                buySubscriptionBtn.innerText = 'تەلەبییا 7 ڕۆژی چالاکە ✔';
-                buySubscriptionBtn.style.backgroundColor = '#27ae60';
-                subscriptionInfo.style.display = 'block';
-                expiryDateText.innerText = formattedExpiry;
-
-                let notifMessage = `✨ *بەکارهێنەرەکی تەلەبییا 7 ڕۆژی کرڕی!* ✨\n\n` +
-                                   `👤 ناڤ: ${telegramName}\n` +
-                                   `🔗 یۆزەرمەید: ${telegramUsername}\n` +
-                                   `🆔 ئایدی: \`${telegramUserId}\`\n` +
-                                   `📅 بسەرڤەچوون: ${formattedExpiry}`;
-                
-                let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-                fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: ADMIN_ID, text: notifMessage, parse_mode: 'Markdown' })
-                }).catch(err => console.log('Telegram API Error:', err));
-
-                showModal('پیرۆزە تەلەبییا 7 ڕۆژی! ✨', 'تە تەلەبییا 7 ڕۆژی سەرکەفتنەک کر و بۆ ماوەیێ حەفت ڕۆژان هاتە فعالکرن هەتا ڕێکەفتا: ' + formattedExpiry);
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                showModal('کێمیا کۆینان 🟡', 'پێدڤی ب 0.2 FOX هەیە بۆ ئەنجامدانا ڤێ تەلەبیێ.');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-            }
-        }
-
-        function claimDailyBonus() {
-            let today = new Date().toDateString();
-            if (lastDailyClaim === today) {
-                showModal('ئاگاداری 📅', 'تە دیارییا ئەڤرۆ ڕۆژانە وەرگرتییە! سبە وەرەڤە.');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-                return;
-            }
-            lastDailyClaim = today;
-            localStorage.setItem(REAL_PREFIX + 'last_daily', today);
-            coins += 0.00050;
-            scoreElement.innerText = coins.toFixed(5);
-            localStorage.setItem(REAL_PREFIX + 'coins', coins);
-            showModal('دیارییا ڕۆژانە 🎁', 'پیرۆزە! 0.00050 FOX هاتە زێدەکرن بۆ کۆینێن تە.');
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
 
         function upgradeEnergyCapacity() {
@@ -889,6 +560,134 @@
             document.getElementById(screenId).classList.add('active');
             event.currentTarget.classList.add('active');
         }
+
+        // --- کۆدێ یارییا چیچکی (Catch the Chick Game Logic) ---
+        const canvas = document.getElementById('chickGameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameRunning = false;
+        let gameScore = 0;
+        
+        // سەبەتە / عەمود یان مەسحکور ل بنێ ئەکرانێ
+        let catcher = {
+            x: canvas.width / 2 - 40,
+            y: canvas.height - 30,
+            width: 80,
+            height: 16,
+            speed: 8
+        };
+
+        // چیچک
+        let chick = {
+            x: Math.random() * (canvas.width - 30),
+            y: 0,
+            radius: 14,
+            speed: 3
+        };
+
+        let leftPressed = false;
+        let rightPressed = false;
+
+        // کنترۆلا تەمسوککرنێ (Touch / Mouse / Keyboard)
+        canvas.addEventListener('mousemove', (e) => {
+            let rect = canvas.getBoundingClientRect();
+            let mouseX = e.clientX - rect.left;
+            catcher.x = mouseX - catcher.width / 2;
+            if (catcher.x < 0) catcher.x = 0;
+            if (catcher.x + catcher.width > canvas.width) catcher.x = canvas.width - catcher.width;
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            let rect = canvas.getBoundingClientRect();
+            let touchX = e.touches[0].clientX - rect.left;
+            catcher.x = touchX - catcher.width / 2;
+            if (catcher.x < 0) catcher.x = 0;
+            if (catcher.x + catcher.width > canvas.width) catcher.x = canvas.width - catcher.width;
+            e.preventDefault();
+        }, { passive: false });
+
+        function toggleGame() {
+            if (!gameRunning) {
+                gameRunning = true;
+                gameScore = 0;
+                document.getElementById('gameScore').innerText = gameScore;
+                document.getElementById('startGameBtn').innerText = "د وەستاندنێ دا... ⏸";
+                document.getElementById('startGameBtn').style.backgroundColor = "#e74c3c";
+                resetChick();
+                loopGame();
+            } else {
+                gameRunning = false;
+                document.getElementById('startGameBtn').innerText = "دەستپێکرنا یاریێ 🎮";
+                document.getElementById('startGameBtn').style.backgroundColor = "#f39c12";
+            }
+        }
+
+        function resetChick() {
+            chick.x = Math.random() * (canvas.width - 40) + 20;
+            chick.y = 0;
+            chick.speed = 2.5 + Math.random() * 2; // لەزاتیا چیچکی ب سەر هەلیکەت
+        }
+
+        function updateGame() {
+            if (!gameRunning) return;
+
+            // جووگرافیا کەڤتنا چیچکی
+            chick.y += chick.speed;
+
+            // پێکڤەدانا چیچکی ب سەبەتێ/عەمودی ڤە
+            if (
+                chick.y + chick.radius >= catcher.y &&
+                chick.x >= catcher.x &&
+                chick.x <= catcher.x + catcher.width
+            ) {
+                gameScore += 1;
+                document.getElementById('gameScore').innerText = gameScore;
+                
+                // زێدەکرنا کۆینان وەک خەلات بۆ یاریێ
+                coins += 0.00005;
+                scoreElement.innerText = coins.toFixed(5);
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                resetChick();
+            }
+
+            // ئەگەر چیچک کەفتە خارێ وبەر نەهات گرتن
+            if (chick.y > canvas.height) {
+                gameRunning = false;
+                showModal('خلاس بوو! ❌', 'چیچک کەفتە خوارێ! خاڵێن تە: ' + gameScore);
+                document.getElementById('startGameBtn').innerText = "دوبارە ل یاریێ بکە 🔄";
+                document.getElementById('startGameBtn').style.backgroundColor = "#f39c12";
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // نیشاندانا عەمودا ڕاگرتنێ (Platform / Catcher)
+            ctx.fillStyle = '#d4af37';
+            ctx.shadowColor = '#d4af37';
+            ctx.shadowBlur = 10;
+            ctx.fillRect(catcher.x, catcher.y, catcher.width, catcher.height);
+            ctx.shadowBlur = 0; // پاقژکرنا سایدی
+
+            // نیشاندانا چیچکی (Chick Emoji یا ژۆر)
+            ctx.font = '24px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🐥', chick.x, chick.y);
+        }
+
+        function loopGame() {
+            if (!gameRunning) return;
+            updateGame();
+            drawGame();
+            requestAnimationFrame(loopGame);
+        }
+
+        // کێکشانا ئێکەم جار
+        drawGame();
     </script>
 </body>
 </html>
