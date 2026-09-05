@@ -481,9 +481,6 @@
         let expiryDateString = localStorage.getItem(REAL_PREFIX + 'expiry_date') || '';
         let lastDailyClaim = localStorage.getItem(REAL_PREFIX + 'last_daily') || '';
 
-        // گۆڕگۆڕکا هژمارتنا تێپدانان بۆ نیشاندانا ڕیکلامێ د هەر 10 تێپان دا
-        let tapCounterForAd = 0;
-
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
         const tapBtn = document.getElementById('tapBtn');
@@ -571,7 +568,6 @@
             }
         }
 
-        // پشکا کرینا تەلەبیێ و زێدەکرنا سالەکێ (Subscription + 1 Year)
         function buySubscription() {
             if (isSubscribed) return;
             if (coins >= 1.00000) {
@@ -705,19 +701,7 @@
             if (energy > 0) {
                 energy -= 1;
                 totalTaps += 1;
-                tapCounterForAd += 1; // زێدەکرنا هەژمارا تێپان
 
-                // ئەگەر گەهشتە 10 تێپان، ڕیکلاما Monetag ڤەکە و ژ نوو سفڕ بکە
-                if (tapCounterForAd >= 10) {
-                    tapCounterForAd = 0;
-                    try {
-                        window.open('https://www.monetag.com', '_blank'); // دکاری لینکا پۆپ‌ئەپا خۆ ل ڤێرە بگوڕی
-                    } catch (err) {
-                        console.log("Ad error", err);
-                    }
-                }
-
-                // ئەگەر تەلەبییا سالانە چالاک بیت، تێپ تێپ دێ بیتە دوو هێندە (2x)
                 let clickReward = isSubscribed ? 0.00002 : 0.00001;
                 coins += clickReward;
 
