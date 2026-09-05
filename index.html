@@ -116,9 +116,10 @@
             position: relative;
         }
 
+        /* 20% مەزنتربوونا بازنا سەرەکی (بویە 220px αντί بۆ 184px) */
         .big-coin-btn {
-            width: 184px;
-            height: 184px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             background: radial-gradient(circle, #222 30%, #000 90%);
             border: 4px solid #d4af37;
@@ -131,6 +132,7 @@
             position: relative;
             touch-action: manipulation;
             transition: transform 0.1s ease;
+            flex-shrink: 0;
         }
 
         .big-coin-btn.tapped {
@@ -421,7 +423,6 @@
         let defaultTelegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'FOX Player';
         let telegramPhotoUrl = telegramUser && telegramUser.photo_url ? telegramUser.photo_url : null;
 
-        // کلیلێ تایبەت ب پاشەکەوتکرنا کوین و داتایێن کەسەی (تنێ ل مۆبایلا وی دهێنە پاراستن)
         const REAL_PREFIX = 'fox_pro_secure_storage_' + telegramUserId + '_';
 
         let telegramName = localStorage.getItem(REAL_PREFIX + 'custom_name') || defaultTelegramName;
@@ -440,7 +441,6 @@
                 document.getElementById('userNameText').innerText = telegramName;
                 localStorage.setItem(REAL_PREFIX + 'custom_name', telegramName);
                 
-                // نووژەنکرنا داتایێن گشتی
                 syncUserToGlobalStorage();
                 alert(`پیرۆزە! ناڤێ تە هاتە گۆڕین بۆ: ${telegramName}`);
                 updateOnlineRanking();
@@ -493,13 +493,11 @@
             buyPremiumBtn.disabled = true;
         }
 
-        // سیستمێ סינکرۆنکرنا ڕێزبەندیێ (ب بکارئینانا LocalStorage-ێ یا پێکڤەگرێدای یان localStorage گشتی بۆ ڕێزبەندیێ ب تنێ ب مەرجەکێ کو کوینێن کەسێن دی نەهێنە گۆڕین)
         function syncUserToGlobalStorage() {
             try {
                 let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
                 let allUsers = allUsersRaw ? JSON.parse(allUsersRaw) : {};
 
-                // وەرگرتنا داتایێن ڤی یاریزانی و تۆمارکرن د لیستا گشتی دا بۆ دیتنا ناڤی و کۆینان ل ڕێزبەندیێ
                 allUsers[telegramUserId] = {
                     id: telegramUserId,
                     name: telegramName,
@@ -651,15 +649,12 @@
         function updateOnlineRanking() {
             const rankingContainer = document.getElementById('rankingListContainer');
             
-            // دڵنیابوون کو داتایێن خودێ دهێنە نووژەنکرن
             syncUserToGlobalStorage();
 
             let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
             let allUsersObj = allUsersRaw ? JSON.parse(allUsersRaw) : {};
             
             let usersArray = Object.values(allUsersObj);
-
-            // رێزبەندکرنا یاریزانان ل دویڤ کۆینێن وان (زۆرترین بۆ کێمترین)
             usersArray.sort((a, b) => b.score - a.score);
 
             let htmlContent = '';
@@ -722,7 +717,6 @@
                 localStorage.setItem(REAL_PREFIX + 'energy', energy);
                 localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
                 
-                // پاشەکەوتکرنا کوینان بۆ ناڤ ڕێزبەندییا گشتی ب بکارئینانا ID یا وی تنێ
                 syncUserToGlobalStorage();
 
                 tapBtn.classList.add('tapped');
