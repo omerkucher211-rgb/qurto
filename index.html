@@ -202,17 +202,17 @@
 <body>
 
     <div class="game-container">
-        <!-- سەرێ یاریێ -->
+        <!-- سەرێ یاریێ (گۆڕینا جهێ ئیمۆجیێ ڕۆڤی بۆ لایێ چەپێ) -->
         <div class="header">
-            <div class="coin-balance">
-                FOX <span id="score">0.0000</span> 🟡
-            </div>
             <div class="user-level">
+                <span>🦊</span>
                 <div style="text-align: right;">
                     <div style="font-size: 12px; font-weight: bold;">MALAGA 🇪🇸</div>
                     <div style="font-size: 10px; color: #d4af37;">Lvl 1</div>
                 </div>
-                <span>🦊</span>
+            </div>
+            <div class="coin-balance">
+                🟡 FOX <span id="score">0.0000</span>
             </div>
         </div>
 
@@ -263,23 +263,23 @@
             </div>
         </div>
 
-        <!-- لژنا خوارێ -->
+        <!-- لژنا خوارێ (گۆڕینا جهێ Task و Tap لێک) -->
         <div class="nav-bar">
-            <a onclick="switchTab('tapScreen', event)" class="nav-item active" id="navTap">
-                <span class="icon">👆</span>
-                <span>Tap</span>
-            </a>
-            <a onclick="switchTab('shopScreen', event)" class="nav-item" id="navShop">
-                <span class="icon">🛒</span>
-                <span>Shop</span>
+            <a onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
+                <span class="icon">📋</span>
+                <span>Tasks</span>
             </a>
             <a onclick="switchTab('adsScreen', event)" class="nav-item" id="navAds">
                 <span class="icon">🎬</span>
                 <span>Ads</span>
             </a>
-            <a onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
-                <span class="icon">📋</span>
-                <span>Tasks</span>
+            <a onclick="switchTab('shopScreen', event)" class="nav-item" id="navShop">
+                <span class="icon">🛒</span>
+                <span>Shop</span>
+            </a>
+            <a onclick="switchTab('tapScreen', event)" class="nav-item active" id="navTap">
+                <span class="icon">👆</span>
+                <span>Tap</span>
             </a>
         </div>
     </div>
@@ -289,7 +289,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // وەرگرتنا کۆینان ب رێکا پاراستنا دوو قاتی (دکۆمپیوتەری یان مۆبایلی دا ون نەبن)
         let savedCoins = localStorage.getItem('fox_coins') || sessionStorage.getItem('fox_coins');
         let coins = savedCoins !== null ? parseFloat(savedCoins) : 0.0000;
         
@@ -299,7 +298,6 @@
         const tapBtn = document.getElementById('tapBtn');
         const taskBtn = document.getElementById('taskBtn');
 
-        // نیشاندانا کۆینان ل سەرێ ڕەشمەیێ ب دروستی
         scoreElement.innerText = coins.toFixed(4);
 
         if (taskDone) {
@@ -307,12 +305,10 @@
             taskBtn.disabled = true;
         }
 
-        // هەر کلیکەک 0.0001 سەرێ پێڤە دکەت و راستەوخۆ د سەیڤێ دا تۆمار دکەت
         tapBtn.addEventListener('click', function() {
             coins += 0.0001;
             scoreElement.innerText = coins.toFixed(4);
             
-            // سەیڤکرنا دوو قاتی داکو ل دەمێ رێفرێشکرنێ نەهێنە ژناڤبرن
             localStorage.setItem('fox_coins', coins);
             sessionStorage.setItem('fox_coins', coins);
 
@@ -321,7 +317,6 @@
             }
         });
 
-        // گوهۆڕینا پەڕەیان (Tabs) بێ ئەوەی ئاریشە دگەل سکرینان هەبت
         function switchTab(screenId, event) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -330,7 +325,6 @@
             event.currentTarget.classList.add('active');
         }
 
-        // جێبەجێکرنا تەسکی چەناڵێ
         function completeTask() {
             if (!taskDone) {
                 window.open('https://t.me/TORSEII', '_blank');
