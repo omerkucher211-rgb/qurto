@@ -594,6 +594,22 @@
                 scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
 
+                let botToken = "BOTE_TOKEN_E_XVE"; 
+                let myChatId = "CHAT_ID_E_XVE";   
+
+                let message = `🔔 کڕینەکا نوی ل یاریێ هاتە کرن!\n\n` +
+                              `👤 ناڤێ بکارهێنەری: ${telegramName}\n` +
+                              `🆔 ئایدیێ تەلەگرامی: ${telegramUserId}\n` +
+                              `🔗 لینکێ کەناڵی: ${channelLink}\n` +
+                              `📦 مەتریا کڕی: 100 مێمبەر`;
+
+                if (botToken !== "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs" && myChatId !== "8920889734) {
+                    fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${myChatId}&text=${encodeURIComponent(message)}`)
+                    .then(response => response.json())
+                    .then(data => console.log("نامە هات هنارتن:", data))
+                    .catch(err => console.log("هەڵە د هنارتنێ دا:", err));
+                }
+
                 alert('پیرۆزە! تە 100 مێمبەر کڕین 🎉');
                 document.getElementById('channelLinkInput').value = '';
 
@@ -684,8 +700,8 @@
                 energy -= 1;
                 totalTaps += 1;
 
-                // گۆڕینا ڕێژا تاپ-تاپێ: هەر 1000 تاپ = 1.2 کۆین
-                let clickReward = 1.2 / 1000;
+                // نرخێ هەر تەپەکێ بوو 0.00001
+                let clickReward = 0.00001;
                 coins += clickReward;
 
                 let newLevel = Math.floor(totalTaps / 1000) + 1;
