@@ -113,6 +113,13 @@
             touch-action: manipulation;
         }
 
+        .big-coin-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
         .big-coin-btn:active {
             transform: scale(0.93);
         }
@@ -187,9 +194,9 @@
             margin-bottom: 10px;
         }
 
-        .promo-card {
-            border: 2px solid #e67e22;
-            background: linear-gradient(135deg, rgba(230, 126, 34, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%);
+        .invite-card {
+            border: 2px solid #3498db;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%);
             border-radius: 15px;
             padding: 14px;
             display: flex;
@@ -197,20 +204,19 @@
             gap: 10px;
             width: 100%;
             margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
         }
 
-        .promo-input {
+        .invite-input {
             width: 100%;
             background: #0b0f19;
-            border: 1px solid #e67e22;
+            border: 1px solid #3498db;
             border-radius: 8px;
             padding: 9px;
             color: #ffffff;
             font-size: 13px;
             outline: none;
             text-align: center;
-            text-transform: uppercase;
         }
 
         .telegram-members-card {
@@ -354,7 +360,7 @@
         <!-- 1. پەڕەیا تاپ (Tap) -->
         <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
-                <span style="font-size: 55px;">🟡</span>
+                <img src="COIN.jpg" alt="Coin" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23ffd700\'/></svg>';">
             </div>
 
             <div class="info-card">
@@ -379,19 +385,25 @@
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px; padding-top: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 2px;">🛒 دووکان و تەلەبی</h3>
 
-            <!-- بەشێ پڕومۆ کۆدێ نهێنی (پەنهان کرى و پاراستی) -->
-            <div class="promo-card">
+            <!-- بەشێ بانگهێشتکرنا هه‌ڤالا (Invite Code) -->
+            <div class="invite-card">
                 <div class="tg-card-header">
-                    <div style="width: 36px; height: 36px; background: #e67e22; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
-                        <span>🎁</span>
+                    <div style="width: 36px; height: 36px; background: #3498db; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
+                        <span>🔗</span>
                     </div>
                     <div>
-                        <h4 style="font-size: 14px; color: #ffffff;">کۆدا دیارییا تایبەت 🎟️</h4>
-                        <p style="font-size: 11px; color: #f39c12;">کۆدا خۆ لێرە بنوڤیسە</p>
+                        <h4 style="font-size: 14px; color: #ffffff;">کۆدا بانگهێشتکرنێ (Invite) 👥</h4>
+                        <p style="font-size: 11px; color: #85c1e9;">هەڤالێ خۆ بانگهێشت بکە و 0.5 FOX وەربگرە</p>
                     </div>
                 </div>
-                <input type="text" id="promoCodeInput" class="promo-input" placeholder="کۆدا خۆ بنوڤیسە...">
-                <button onclick="redeemSecretCode()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 9px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا دیاریێ 🟡</button>
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="myInviteLink" class="invite-input" readonly style="direction: ltr; font-size: 11px;">
+                    <button onclick="copyInviteLink()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 0 12px; font-size: 12px; font-weight: bold; cursor: pointer;">کۆپی</button>
+                </div>
+                <div style="border-top: 1px dashed rgba(52,152,219,0.4); padding-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                    <input type="text" id="promoCodeInput" class="invite-input" placeholder="کۆدا هەڤالێ خۆ لێرە بنوڤیسە...">
+                    <button onclick="redeemInviteCode()" style="background-color: #2980b9; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا خەلاتێ کۆدی 🟡</button>
+                </div>
             </div>
 
             <!-- چوارگوشەیی 100 مێمبەرێن تەلەگرامێ -->
@@ -513,7 +525,7 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        const REAL_PREFIX = 'fox_ultimate_storage_v16_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_ultimate_storage_v17_' + telegramUserId + '_';
 
         function getStoredData(key, defaultValue) {
             let val = localStorage.getItem(REAL_PREFIX + key);
@@ -535,7 +547,52 @@
         let isSubscribed = getStoredData('is_subscribed', 'false') === 'true';
         let expiryDateString = getStoredData('expiry_date', '');
         let lastDailyClaim = getStoredData('last_daily', '');
-        let hasRedeemedSecret = getStoredData('has_redeemed_secret', 'false') === 'true';
+        let hasRedeemedInvite = getStoredData('has_redeemed_invite', 'false') === 'true';
+
+        // دروستکرنا لینکێ بانگهێشتکرنێ یێ تایبەت ب بکارهێنەری
+        let myBotUsername = "FoxCoinBot"; // ناڤێ بۆتا خۆ ل ڤێرە بنوڤیسە ئەگەر پێدڤی بکەت
+        let inviteLink = `https://t.me/${myBotUsername}?start=ref_${telegramUserId}`;
+        document.getElementById('myInviteLink').value = inviteLink;
+
+        function copyInviteLink() {
+            let input = document.getElementById('myInviteLink');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(input.value);
+            showModal('کۆپی بوو 📋', 'لینکێ بانگهێشتکرنێ هاتە کۆپیکرن!');
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        function redeemInviteCode() {
+            let inputCode = document.getElementById('promoCodeInput').value.trim();
+            if (!inputCode) {
+                showModal('ئاگاداری ⚠️', 'هیڤیدە کۆدەکێ بانگهێشتکرنێ بنوڤیسە!');
+                return;
+            }
+
+            if (hasRedeemedInvite) {
+                showModal('ئاگاداری ⚠️', 'تە پێشتر کۆدا بانگهێشتکرنێ کارپێکرییە!');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
+            }
+
+            if (inputCode == telegramUserId) {
+                showModal('چەوتی ❌', 'ناتوانی کۆدا خۆ ل دەف خۆ کارپێکی!');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
+            }
+
+            coins += 0.5;
+            hasRedeemedInvite = true;
+            scoreElement.innerText = coins.toFixed(5);
+
+            localStorage.setItem(REAL_PREFIX + 'coins', coins);
+            localStorage.setItem(REAL_PREFIX + 'has_redeemed_invite', 'true');
+
+            showModal('پیرۆزە! ✨', 'کۆدا بانگهێشتکرنێ کارا بوو و 0.5 FOX بۆ کۆینێن تە هاتە زێدەکرن.');
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            document.getElementById('promoCodeInput').value = '';
+        }
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
@@ -566,63 +623,6 @@
         }
         function closeModal() {
             document.getElementById('customModal').style.display = 'none';
-        }
-
-        // کۆدا نهێنی لێرە بە شێوەیەکێ ڤەشارتى (Hashed) هاتییە دانان
-        // (هاشەی کۆدا نووکه: TURSE) - کەس نەشێت بەخۆ کۆدی ژ ناڤ کۆدێ بخوینێت
-        const SECRET_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
-
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        async function redeemSecretCode() {
-            let inputCode = document.getElementById('promoCodeInput').value.trim().toUpperCase();
-            if (!inputCode) {
-                showModal('ئاگاداری ⚠️', 'هیڤیدە کۆدەکێ بنوڤیسە!');
-                return;
-            }
-
-            let inputHash = await sha256(inputCode);
-
-            if (inputHash !== SECRET_HASH) {
-                showModal('چەوتی ❌', 'کۆدا نڤیسکری شاشە یان ب سەر نەچوویە!');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-                return;
-            }
-
-            if (hasRedeemedSecret) {
-                showModal('ئاگاداری ⚠️', 'تە پێشتر ئەڤ کۆدە کارپێکرییە و دیارییا خۆ وەرگرتییە!');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-                return;
-            }
-
-            coins += 10.0; // بڕێ کۆینان
-            hasRedeemedSecret = true;
-            scoreElement.innerText = coins.toFixed(5);
-
-            localStorage.setItem(REAL_PREFIX + 'coins', coins);
-            localStorage.setItem(REAL_PREFIX + 'has_redeemed_secret', 'true');
-
-            let notifMessage = `🎟️ *کۆدا نهێنی ب سەرکەفتن هاتە کارپێکرن!* 🎟️\n\n` +
-                               `👤 ناڤ: ${telegramName}\n` +
-                               `🔗 یۆزەرمەید: ${telegramUsername}\n` +
-                               `🆔 ئایدی: \`${telegramUserId}\`\n` +
-                               `💰 بڕێ دیاریێ: 10 FOX`;
-            
-            let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-            fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: ADMIN_ID, text: notifMessage, parse_mode: 'Markdown' })
-            }).catch(err => console.log('Telegram API Error:', err));
-
-            showModal('پیرۆزە! ✨', 'کۆدا تە ب سەرکەفتن کارا بوو و 10 کۆین بۆ هژمارا تە هاتنە زێدەکرن.');
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            document.getElementById('promoCodeInput').value = '';
         }
 
         let selectedPackageCount = 100;
