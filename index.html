@@ -230,6 +230,23 @@
             color: #aaa;
         }
 
+        /* ستایلێن تایبەت بۆ ڕێزبەندیێ (Ranking) */
+        .rank-item {
+            background-color: rgba(18, 22, 33, 0.9);
+            border: 1px solid #2a3447;
+            border-radius: 12px;
+            width: 100%;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .rank-item.top-user {
+            border: 1.5px solid #d4af37;
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+
         .nav-bar {
             display: flex;
             justify-content: space-around;
@@ -265,6 +282,7 @@
 <body>
 
     <div class="game-container">
+        <!-- سەرێ یاریێ -->
         <div class="header">
             <div class="coin-balance">
                 🟡 FOX <span id="score">0.0000</span>
@@ -280,6 +298,7 @@
             </div>
         </div>
 
+        <!-- 0. پەڕەیا ئەرکێ یجباری -->
         <div id="forcedTaskScreen" class="screen">
             <div class="forced-box">
                 <span style="font-size: 40px;">📢</span>
@@ -289,6 +308,7 @@
             </div>
         </div>
 
+        <!-- 1. پەڕەیا تاپ -->
         <div id="tapScreen" class="screen main-content">
             <div class="big-coin-btn" id="tapBtn">
                 <img src="coin.jpg" alt="FOX Coin" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
@@ -312,6 +332,7 @@
             </div>
         </div>
 
+        <!-- 2. پەڕەیا شوپ (دووکان) -->
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 15px; padding-top: 20px;">
             <h3 style="color: #d4af37; margin-bottom: 5px;">🛒 دووکانێ</h3>
 
@@ -334,6 +355,7 @@
             </div>
         </div>
 
+        <!-- 3. پەڕەیا ئەرکان -->
         <div id="tasksScreen" class="screen">
             <h3 style="margin-bottom: 15px; color: #d4af37;">ئەرکێن ڕۆژانە (Tasks)</h3>
             
@@ -346,7 +368,20 @@
             </div>
         </div>
 
+        <!-- 4. پەڕەیا ڕێزبەندیێ (Ranking) -->
+        <div id="rankingScreen" class="screen">
+            <h3 style="margin-bottom: 15px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان</h3>
+            <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;">
+                <!-- لیستا ڕێزبەندیێ ب ڕێکا جاڤاسکریتێ ل ڤێرە دێ هاتە پڕکرن -->
+            </div>
+        </div>
+
+        <!-- لژنا خوارێ (Navigation Bar) -->
         <div class="nav-bar" id="navBar">
+            <button onclick="switchTab('rankingScreen', event)" class="nav-item" id="navRanking">
+                <span class="icon">🏆</span>
+                <span>Rank</span>
+            </button>
             <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
                 <span class="icon">📋</span>
                 <span>Tasks</span>
@@ -470,7 +505,6 @@
             }
         }
 
-        // سیستەمێ کڕینێ و هنارتنا نامەیێ بۆ بۆتا تێلێگرامێ تە
         function buyMembers() {
             let channelLink = document.getElementById('channelLinkInput').value.trim();
 
@@ -485,14 +519,11 @@
                 scoreElement.innerText = coins.toFixed(4);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
 
-                // ========================================================
-                // ل ڤێرە زانیاریێن بۆتا خۆ و چات ئایدیێ خۆ بنڤیسە:
-                // ========================================================
-                let botToken = "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs"; // نموونە: "123456:ABC-DEF..."
-                let myChatId = "8920889734";   // نموونە: "987654321"
+                let botToken = "BOTE_TOKEN_E_XVE"; 
+                let myChatId = "CHAT_ID_E_XVE";   
 
                 let message = `🔔 کڕینەکا نوی ل یاریێ هاتە کرن!\n\n` +
-                              `👤 ناڤێ بکارهێنەری: ${telegramName}\n` +
+                              `👤 ناڤێ بەکارهێنەری: ${telegramName}\n` +
                               `🆔 ئایدیێ تەلەگرامی: ${telegramUserId}\n` +
                               `🔗 لینکێ کەناڵی: ${channelLink}\n` +
                               `📦 مەتریا کڕی: 100 مێمبەر`;
@@ -516,6 +547,48 @@
                     tg.HapticFeedback.notificationOccurred('error');
                 }
             }
+        }
+
+        // دروستکرنا ڕێزبەندییا یاریزانان (Ranking System)
+        function updateRankingList() {
+            const rankingContainer = document.getElementById('rankingListContainer');
+            
+            // نموونەیێن یاریزانێن پێشەنگ (Top Players)
+            let dummyRanks = [
+                { name: "👑 Ahmad Fox", score: "45.2000" },
+                { name: "🥈 Dlshad_99", score: "32.1500" },
+                { name: "🥉 Hawre VIP", score: "28.9000" },
+                { name: "4. Zyad Kurdi", score: "19.4000" },
+                { name: "5. Rebwar King", score: "15.0000" },
+                { name: "6. Shilan 🌟", score: "12.8500" },
+                { name: "7. Dlawer Pro", score: "9.3300" },
+                { name: "8. Aryan 🦊", score: "7.1200" }
+            ];
+
+            // زێدەکرنا یاریزانێ نوکە د ڕێزبەندیێ دا ل سەر بنەمایێ کۆینێن وی خۆ
+            let htmlContent = `
+                <div class="rank-item top-user">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-weight: bold; color: #d4af37;">📍 (تە)</span>
+                        <span style="font-size: 14px; font-weight: bold;">${telegramName}</span>
+                    </div>
+                    <span style="color: #d4af37; font-weight: bold; direction: ltr;">${coins.toFixed(4)} 🟡</span>
+                </div>
+            `;
+
+            dummyRanks.forEach((item, index) => {
+                htmlContent += `
+                    <div class="rank-item">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-weight: bold; color: #8b9bb4;">#${index + 1}</span>
+                            <span style="font-size: 14px;">${item.name}</span>
+                        </div>
+                        <span style="color: #d4af37; font-weight: bold; direction: ltr;">${item.score} 🟡</span>
+                    </div>
+                `;
+            });
+
+            rankingContainer.innerHTML = htmlContent;
         }
 
         function startTimer() {
@@ -637,6 +710,11 @@
 
             document.getElementById(screenId).classList.add('active');
             event.currentTarget.classList.add('active');
+
+            // ئەگەر پەڕەیا ڕێزبەندیێ هاتە ڤەکرن، لیستی نوو بکە
+            if (screenId === 'rankingScreen') {
+                updateRankingList();
+            }
         }
     </script>
 </body>
