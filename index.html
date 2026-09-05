@@ -50,8 +50,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 15px;
-            gap: 8px;
+            padding: 10px 12px;
+            gap: 6px;
             z-index: 10;
         }
 
@@ -59,35 +59,51 @@
             background-color: rgba(20, 25, 35, 0.9);
             border: 1px solid #d4af37;
             border-radius: 12px;
-            padding: 6px 10px;
-            font-size: 13px;
+            padding: 5px 8px;
+            font-size: 12px;
             color: #d4af37;
             font-weight: bold;
         }
 
-        .sound-toggle-btn {
-            background-color: rgba(20, 25, 35, 0.9);
-            border: 1px solid #d4af37;
-            border-radius: 12px;
-            padding: 6px 10px;
-            font-size: 13px;
-            color: #d4af37;
-            cursor: pointer;
+        .music-control-group {
             display: flex;
             align-items: center;
             gap: 4px;
+            background-color: rgba(20, 25, 35, 0.9);
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 4px 8px;
+        }
+
+        .sound-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 12px;
+            color: #d4af37;
+            cursor: pointer;
             font-weight: bold;
             outline: none;
+        }
+
+        .music-select {
+            background: rgba(11, 15, 25, 0.9);
+            color: #d4af37;
+            border: 1px solid #2a3447;
+            border-radius: 8px;
+            font-size: 10px;
+            padding: 2px 4px;
+            outline: none;
+            max-width: 85px;
         }
 
         .user-level {
             background-color: rgba(20, 25, 35, 0.9);
             border: 1px solid #d4af37;
             border-radius: 12px;
-            padding: 5px 10px;
+            padding: 4px 8px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -116,7 +132,6 @@
             position: relative;
         }
 
-        /* بازنا نیڤێ ب تەواوی سابت بوو (بێ transform و چ جووڵەیەک ل دەمێ کلیک کرنێ) */
         .big-coin-btn {
             width: 187px;
             height: 187px;
@@ -141,7 +156,6 @@
             pointer-events: none;
         }
 
-        /* انیمەیشنا ژمارەی 18% مەزنتر بوو و تنێ ژمارە بلند دبت */
         .floating-score {
             position: absolute;
             color: #ffd700;
@@ -198,6 +212,31 @@
         }
 
         .action-btn:active { transform: scale(0.98); }
+
+        .task-item {
+            background-color: rgba(18, 22, 33, 0.9);
+            border: 1px solid #2a3447;
+            border-radius: 12px;
+            width: 100%;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .task-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+        }
+        .task-btn:active { transform: scale(0.95); }
 
         .rank-item {
             background-color: rgba(18, 22, 33, 0.9);
@@ -273,6 +312,24 @@
 
     <script>
         let isMusicPlaying = false;
+        
+        function changeMusic(selectElement) {
+            let music = document.getElementById('bgMusic');
+            let selectedSource = selectElement.value;
+            let wasPlaying = isMusicPlaying;
+
+            music.pause();
+            music.src = selectedSource;
+            music.load();
+
+            if (wasPlaying) {
+                music.play().then(() => {
+                    isMusicPlaying = true;
+                    document.getElementById('soundToggleBtn').innerHTML = '🎵 ON';
+                }).catch(e => console.log("Audio play blocked:", e));
+            }
+        }
+
         function toggleMusic() {
             let music = document.getElementById('bgMusic');
             let btn = document.getElementById('soundToggleBtn');
@@ -280,14 +337,10 @@
                 music.pause();
                 isMusicPlaying = false;
                 btn.innerHTML = '🔇 OFF';
-                btn.style.borderColor = '#d4af37';
-                btn.style.color = '#d4af37';
             } else {
                 music.play().then(() => {
                     isMusicPlaying = true;
                     btn.innerHTML = '🎵 ON';
-                    btn.style.borderColor = '#2ecc71';
-                    btn.style.color = '#2ecc71';
                 }).catch(e => console.log("Audio play blocked:", e));
             }
         }
@@ -299,16 +352,23 @@
             <div class="coin-balance">
                 🟡 <span id="score">0.00000</span>
             </div>
-            <button class="sound-toggle-btn" id="soundToggleBtn" onclick="toggleMusic()">
-                🔇 OFF
-            </button>
+            
+            <div class="music-control-group">
+                <button class="sound-toggle-btn" id="soundToggleBtn" onclick="toggleMusic()">🔇 OFF</button>
+                <select class="music-select" id="musicSelector" onchange="changeMusic(this)">
+                    <option value="abdulqahar_zakhoee.mp3">عبدالقهار</option>
+                    <option value="kurdish_song2.mp3">گۆرانی 2</option>
+                    <option value="kurdish_song3.mp3">گۆرانی 3</option>
+                </select>
+            </div>
+
             <div class="user-level" id="profileHeaderBtn" onclick="openProfileSettings()">
                 <div style="text-align: right;">
-                    <div style="font-size: 11px; font-weight: bold;" id="userNameText">FOX Player</div>
-                    <div style="font-size: 9px; color: #d4af37;" id="levelText">Lvl 1</div>
+                    <div style="font-size: 10px; font-weight: bold;" id="userNameText">FOX Player</div>
+                    <div style="font-size: 8px; color: #d4af37;" id="levelText">Lvl 1</div>
                 </div>
-                <div id="userAvatarHeader" style="width: 28px; height: 28px; border-radius: 50%; overflow: hidden; border: 1px solid #d4af37; background: #222; display: flex; justify-content: center; align-items: center;">
-                    <span id="fallbackAvatarHeader" style="font-size: 14px;">⚽</span>
+                <div id="userAvatarHeader" style="width: 26px; height: 26px; border-radius: 50%; overflow: hidden; border: 1px solid #d4af37; background: #222; display: flex; justify-content: center; align-items: center;">
+                    <span id="fallbackAvatarHeader" style="font-size: 12px;">⚽</span>
                 </div>
             </div>
         </div>
@@ -370,6 +430,27 @@
                 <h4 style="font-size: 14px; color: #d4af37;">📅 پاداشتێ سەردانا ڕۆژانە (Streak)</h4>
                 <p style="font-size: 11px; color: #b0c4de;" id="streakStatusText">ڕۆژی هەنووکەیی: ڕۆژی 1</p>
                 <button id="claimStreakBtn" onclick="claimDailyStreak()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">وەرگرتنا پاداشتێ ڕۆژانە 🎁</button>
+            </div>
+
+            <!-- Social Media Tasks -->
+            <div class="section-box">
+                <h4 style="font-size: 14px; color: #d4af37; margin-bottom: 4px;">🔗 ئەرکێن سۆشیال مێدیا (+0.50 FOX)</h4>
+                
+                <div class="task-item">
+                    <div>
+                        <div style="font-size: 13px; font-weight: bold;">سەردانا اینستاگرامێ 📸</div>
+                        <div style="font-size: 10px; color: #8b9bb4;">فۆلۆ یا سەردانکرنا پەیجی</div>
+                    </div>
+                    <button class="task-btn" id="taskInstaBtn" onclick="completeSocialTask('insta', 'https://www.instagram.com/om4r_k9rdi?stkn=a2N3bjJjNHR4ZDN6')">سەردانكەن</button>
+                </div>
+
+                <div class="task-item">
+                    <div>
+                        <div style="font-size: 13px; font-weight: bold;">سەردانا تیک تۆکی 🎵</div>
+                        <div style="font-size: 10px; color: #8b9bb4;">فۆلۆ یا سەردانکرنا ئەکاونتی</div>
+                    </div>
+                    <button class="task-btn" id="taskTiktokBtn" onclick="completeSocialTask('tiktok', 'https://www.tiktok.com/@MS4wLjABAAAACqznv-RM4An-XldhBj862Zn7mTCKobhE8QBc3iDawOywEvqKLffEccMjPH7UwuFi?_r=1&_t=ZS-99UTVxmw3Oa')">سەردانكەن</button>
+                </div>
             </div>
 
             <div class="section-box">
@@ -489,6 +570,42 @@
             buyPremiumBtn.disabled = true;
         }
 
+        function checkSocialTasksUI() {
+            let instaDone = localStorage.getItem(REAL_PREFIX + 'task_insta') === 'true';
+            if (instaDone) {
+                let btn = document.getElementById('taskInstaBtn');
+                btn.innerText = 'وەرگرتیە ✔';
+                btn.style.backgroundColor = '#555';
+                btn.disabled = true;
+            }
+            let tiktokDone = localStorage.getItem(REAL_PREFIX + 'task_tiktok') === 'true';
+            if (tiktokDone) {
+                let btn = document.getElementById('taskTiktokBtn');
+                btn.innerText = 'وەرگرتیە ✔';
+                btn.style.backgroundColor = '#555';
+                btn.disabled = true;
+            }
+        }
+
+        function completeSocialTask(taskName, url) {
+            let taskKey = REAL_PREFIX + 'task_' + taskName;
+            if (localStorage.getItem(taskKey) === 'true') return;
+
+            window.open(url, '_blank');
+
+            setTimeout(() => {
+                coins += 0.50000;
+                scoreElement.innerText = coins.toFixed(5);
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                localStorage.setItem(taskKey, 'true');
+                syncUserToGlobalStorage();
+                checkSocialTasksUI();
+
+                alert('پیرۆزە! تە 0.50 کۆین وەرگرت بۆ تەواوکرنا ئەرکی 🎉');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }, 3000);
+        }
+
         function syncUserToGlobalStorage() {
             try {
                 let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
@@ -507,6 +624,7 @@
             }
         }
         syncUserToGlobalStorage();
+        checkSocialTasksUI();
 
         setInterval(() => {
             if (energy < maxEnergy) {
@@ -776,7 +894,7 @@
                     packetText.innerText = packets + " / 5";
                     localStorage.setItem(REAL_PREFIX + 'packets', packets);
                     localStorage.removeItem(REAL_PREFIX + 'timer');
-                    isTimerRunning, false;
+                    isTimerRunning = false;
                     clearInterval(timerInterval);
                 }
             }, 1000);
