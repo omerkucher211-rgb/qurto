@@ -243,7 +243,7 @@
     <div class="game-container">
         <div class="header">
             <div class="coin-balance">
-                🟡 <span id="score">0.00000</span>
+                🟡 <span id="score">1.00000</span>
             </div>
             <div class="user-level">
                 <div style="text-align: right;">
@@ -350,10 +350,10 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        // کۆدێ پاراستنا کۆین و داتایێن کەڤن (دا ب هیچ شێوەیەک کۆین نەبنە سفێر)
+        // کۆدێ پاشەکەوتکرنا داتایان
         const OLD_PREFIX_8 = 'fox_ultimate_storage_v8_' + telegramUserId + '_';
         const OLD_PREFIX_9 = 'fox_ultimate_storage_v9_' + telegramUserId + '_';
-        const REAL_PREFIX = 'fox_ultimate_storage_v10_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_ultimate_storage_v11_' + telegramUserId + '_';
 
         function getStoredData(key, defaultValue) {
             let val = localStorage.getItem(REAL_PREFIX + key);
@@ -366,7 +366,15 @@
         }
 
         let savedCoins = getStoredData('coins', null);
-        let coins = savedCoins !== null ? parseFloat(savedCoins) : 0;
+        // گوهۆڕینا کۆینێن هەمیا بۆ 1 کۆین ل سەرەتا یان بهایێ وان یێ بەری نوکە
+        let coins = savedCoins !== null ? parseFloat(savedCoins) : 1.00000;
+        
+        // دڵنیابوون کو ئەگەر پێشتر کۆین هەبن، یان ئەگەر یەکەم جار بێت، کێماسی نەبێت (دەستکارییا کو هەمیا بکەتە 1 ئەگەر تە بڤێت یان پاراستنا کۆینێن کەڤن)
+        let isFirstTimeReset = localStorage.getItem(REAL_PREFIX + 'reset_to_one_done');
+        if (!isFirstTimeReset) {
+            coins = 1.00000;
+            localStorage.setItem(REAL_PREFIX + 'reset_to_one_done', 'true');
+        }
 
         let maxEnergy = parseInt(getStoredData('max_energy', '500'));
         let energy = parseInt(getStoredData('energy', maxEnergy));
@@ -420,7 +428,7 @@
             document.getElementById('customModal').style.display = 'none';
         }
 
-        // ڤەنکشنا هنارتنا ئاگاهدارییا تەلەگرام بۆت بۆ ئەدمنی
+        // هنارتنا ئاگاهدارییا تەلەگرام بۆت بۆ ئەدمنی
         function sendTelegramNotification(msgText) {
             let url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
             let data = {
