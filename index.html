@@ -116,7 +116,7 @@
             position: relative;
         }
 
-        /* بازنا نیڤێ 15% بچیکتر بوو (220px کێما بوو بۆ 187px) */
+        /* بازنا نیڤێ ب تەواوی سابت بوو (بێ transform و چ جووڵەیەک ل دەمێ کلیک کرنێ) */
         .big-coin-btn {
             width: 187px;
             height: 187px;
@@ -131,12 +131,7 @@
             overflow: hidden;
             position: relative;
             touch-action: manipulation;
-            transition: transform 0.1s ease;
             flex-shrink: 0;
-        }
-
-        .big-coin-btn.tapped {
-            transform: scale(1.15) translateY(-8px);
         }
 
         .big-coin-btn img {
@@ -146,7 +141,7 @@
             pointer-events: none;
         }
 
-        /* انیمەیشنا ژمارەی 18% مەزنتر بوو (فۆنت بۆ 13px و پەدینگ هاتە گەورەکرن) */
+        /* انیمەیشنا ژمارەی 18% مەزنتر بوو و تنێ ژمارە بلند دبت */
         .floating-score {
             position: absolute;
             color: #ffd700;
@@ -720,11 +715,6 @@
                 
                 syncUserToGlobalStorage();
 
-                tapBtn.classList.add('tapped');
-                setTimeout(() => {
-                    tapBtn.classList.remove('tapped');
-                }, 100);
-
                 const rect = tapBtn.getBoundingClientRect();
                 let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width / 2);
                 let clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : rect.top + rect.height / 2);
@@ -786,7 +776,7 @@
                     packetText.innerText = packets + " / 5";
                     localStorage.setItem(REAL_PREFIX + 'packets', packets);
                     localStorage.removeItem(REAL_PREFIX + 'timer');
-                    isTimerRunning = false;
+                    isTimerRunning, false;
                     clearInterval(timerInterval);
                 }
             }, 1000);
