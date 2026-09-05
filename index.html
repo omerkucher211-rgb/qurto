@@ -294,12 +294,26 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let coins = parseFloat(localStorage.getItem('fox_coins') || 0);
-        let energy = parseInt(localStorage.getItem('fox_energy') ?? 500);
-        let packets = localStorage.getItem('fox_packets') !== null ? parseInt(localStorage.getItem('fox_packets')) : 4;
-        let totalSeconds = localStorage.getItem('fox_timer') ? parseInt(localStorage.getItem('fox_timer')) : (4 * 3600 + 48 * 60);
+        // وەرگرتنا ID یا تێلیگرامێ، یان چێکرنا IDـەکا ڕێککەفتی بۆ پشتڕاستکرنا وێ چەندێ کو هەر کەسەک تنێ کۆینێن خۆ هەبن
+        let telegramUserId = (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) ? tg.initDataUnsafe.user.id : null;
+        
+        if (!telegramUserId) {
+            // ئەگەر ل دەرڤەی تێلێگرامێ بیت، پشتڕاست بە کو ناسنامەکا جیاواز هەیە
+            telegramUserId = localStorage.getItem('fox_random_device_id');
+            if (!telegramUserId) {
+                telegramUserId = 'dev_' + Math.random().toString(36.substring(2));
+                localStorage.setItem('fox_random_device_id', telegramUserId);
+            }
+        }
+
+        const STORAGE_PREFIX = 'fox_unique_game_' + telegramUserId + '_';
+
+        let coins = parseFloat(localStorage.getItem(STORAGE_PREFIX + 'coins') || 0);
+        let energy = parseInt(localStorage.getItem(STORAGE_PREFIX + 'energy') ?? 500);
+        let packets = localStorage.getItem(STORAGE_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(STORAGE_PREFIX + 'packets')) : 4;
+        let totalSeconds = localStorage.getItem(STORAGE_PREFIX + 'timer') ? parseInt(localStorage.getItem(STORAGE_PREFIX + 'timer')) : (4 * 3600 + 48 * 60);
         let isTimerRunning = false;
-        let taskState = localStorage.getItem('fox_task_state') || 'join';
+        let taskState = localStorage.getItem(STORAGE_PREFIX + 'task_state') || 'join';
 
         const scoreElement = document.getElementById('score');
         const tapBtn = document.getElementById('tapBtn');
@@ -336,12 +350,12 @@
                         String(minutes).padStart(2, '0') + ":" + 
                         String(seconds).padStart(2, '0');
 
-                    localStorage.setItem('fox_timer', totalSeconds);
+                    localStorage.setItem(STORAGE_PREFIX + 'timer', totalSeconds);
                 } else {
                     packets = 5;
                     packetText.innerText = packets + " / 5";
-                    localStorage.setItem('fox_packets', packets);
-                    localStorage.removeItem('fox_timer');
+                    localStorage.setItem(STORAGE_PREFIX + 'packets', packets);
+                    localStorage.removeItem(STORAGE_PREFIX + 'timer');
                     isTimerRunning = false;
                     clearInterval(timerInterval);
                 }
@@ -352,7 +366,7 @@
             startTimer();
         }
 
-        // Tap لیدان
+        // Tap لیدان (ب تنێ کۆینێن وی یاریکەری زێدە دبن)
         tapBtn.addEventListener('click', function() {
             if (energy > 0) {
                 energy -= 1;
@@ -361,8 +375,8 @@
                 scoreElement.innerText = coins.toFixed(4);
                 energyText.innerText = energy + " / 500";
 
-                localStorage.setItem('fox_coins', coins);
-                localStorage.setItem('fox_energy', energy);
+                localStorage.setItem(STORAGE_PREFIX + 'coins', coins);
+                localStorage.setItem(STORAGE_PREFIX + 'energy', energy);
 
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('medium');
@@ -379,11 +393,11 @@
             if (packets > 0) {
                 packets -= 1; 
                 packetText.innerText = packets + " / 5";
-                localStorage.setItem('fox_packets', packets);
+                localStorage.setItem(STORAGE_PREFIX + 'packets', packets);
 
                 energy = 500; 
                 energyText.innerText = energy + " / 500";
-                localStorage.setItem('fox_energy', energy);
+                localStorage.setItem(STORAGE_PREFIX + 'energy', energy);
 
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.notificationOccurred('success');
@@ -414,7 +428,7 @@
                 window.open('https://t.me/TORSEII', '_blank');
                 
                 taskState = 'checking';
-                localStorage.setItem('fox_task_state', 'checking');
+                localStorage.setItem(STORAGE_PREFIX + 'task_state', 'checking');
                 
                 taskBtn.innerText = 'چاوەڕێ بکە (20)...';
                 taskBtn.disabled = true;
@@ -427,7 +441,7 @@
                     } else {
                         clearInterval(checkInterval);
                         taskState = 'ready';
-                        localStorage.setItem('fox_task_state', 'ready');
+                        localStorage.setItem(STORAGE_PREFIX + 'task_state', 'ready');
                         taskBtn.innerText = 'پشکنین و وەرگرتن 🎁';
                         taskBtn.disabled = false;
                     }
@@ -436,10 +450,10 @@
             } else if (taskState === 'ready') {
                 coins += 0.0010;
                 scoreElement.innerText = coins.toFixed(4);
-                localStorage.setItem('fox_coins', coins);
+                localStorage.setItem(STORAGE_PREFIX + 'coins', coins);
 
                 taskState = 'claimed';
-                localStorage.setItem('fox_task_state', 'claimed');
+                localStorage.setItem(STORAGE_PREFIX + 'task_state', 'claimed');
 
                 taskBtn.innerText = 'وەرگرتن ✔';
                 taskBtn.disabled = true;
