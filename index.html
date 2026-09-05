@@ -126,28 +126,6 @@
             transform: scale(0.93);
         }
 
-        .floating-score {
-            position: absolute;
-            color: #d4af37;
-            font-weight: bold;
-            font-size: 18px;
-            pointer-events: none;
-            animation: floatUp 0.8s ease-out forwards;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.7);
-            background: rgba(11, 15, 25, 0.9);
-            border: 2px solid #d4af37;
-            padding: 4px 10px;
-            border-radius: 10px;
-            z-index: 100;
-            direction: ltr;
-            white-space: nowrap;
-        }
-
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(0.8); }
-            100% { opacity: 0; transform: translateY(-80px) scale(1.1); }
-        }
-
         .info-card {
             background-color: rgba(18, 22, 33, 0.85);
             border: 1px solid #2a3447;
@@ -196,7 +174,6 @@
             margin-bottom: 10px;
         }
 
-        /* ستایلێن یارییا چیچکی (Catch the Chick Game) */
         .game-canvas-container {
             width: 100%;
             height: 380px;
@@ -208,7 +185,6 @@
             box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
         }
 
-        /* بەشێ ڕیگلاما ل خوارێ بەرێخودانا لژنا خوارێ (Banner Ad Container) */
         .banner-ad-bar {
             width: 100%;
             background-color: #0b0f19;
@@ -289,7 +265,7 @@
             </div>
         </div>
 
-        <!-- 1. پەڕەیا تاپ (Tap) -->
+        <!-- 1. پەڕەیا تاپ (Tap) - کێشانا 24 دەمژمێری -->
         <div id="tapScreen" class="screen main-content active">
             <div class="big-coin-btn" id="tapBtn">
                 <img src="coin.jpg" alt="Coin" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23ffd700\'/></svg>';">
@@ -297,19 +273,14 @@
 
             <div class="info-card">
                 <div class="info-row">
-                    <span>پەکێت 📦</span>
-                    <span id="packetText" style="font-weight: bold; direction: ltr;">4 / 5</span>
+                    <span>مەرجێ 24 دەمژمێران ⏳</span>
+                    <span id="dailyStatusText" style="font-weight: bold; color: #2ecc71; direction: ltr;">ئامادەیە بۆ کلیککرنێ!</span>
                 </div>
                 <div class="info-row" style="color: #8b9bb4; font-size: 11px;">
-                    <span>پەکیتا داهاتی</span>
-                    <span id="timerText" style="direction: ltr;">02:00:00</span>
+                    <span>دەمی داهاتی بۆ کلیکێ</span>
+                    <span id="nextClickTimer" style="direction: ltr;">00:00:00</span>
                 </div>
-                <hr style="border: 0; border-top: 1px solid #2a3447;">
-                <div class="info-row">
-                    <span>ئینرجی ⚡</span>
-                    <span style="font-weight: bold; direction: ltr;" id="energyText">500 / 500</span>
-                </div>
-                <button class="action-btn" id="useEnergyBtn" onclick="usePacket()">بکاربینە (Use) ⚡</button>
+                <button class="action-btn" id="dailyClickBtn" onclick="performDailyClick()" style="background-color: #f39c12;">وەرگرتنا 1 خاڵ (0.00001) 🟡</button>
             </div>
         </div>
 
@@ -317,20 +288,18 @@
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px; padding-top: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 2px;">🛒 دووکان و تەلەبی</h3>
             <div class="shop-section">
-                <h4 style="font-size: 14px; color: #fff;">بەرفرهکرنا ئینرجییێ ⚡ (+500 کاپاسیتى)</h4>
-                <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: <span id="energyUpgradeCost">0.50000</span> FOX</p>
-                <button onclick="upgradeEnergyCapacity()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">پێشڤەبرن (Upgrade)</button>
+                <h4 style="font-size: 14px; color: #fff;">بەرفرهکرنا ئینرجییێ ⚡</h4>
+                <button onclick="showModal('ئاگاداری', 'ئەڤ بەشە کارا دە')" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">پێشڤەبرن</button>
             </div>
         </div>
 
-        <!-- 3. پەڕەیا ئەرکان (Tasks) - یارییا چیچک و عەمودێ -->
+        <!-- 3. پەڕەیا ئەرکان (Tasks) - یارییا چیچک -->
         <div id="tasksScreen" class="screen" style="gap: 8px; align-items: center; justify-content: flex-start; padding-top: 5px;">
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                 <h3 style="color: #d4af37; font-size: 15px;">🐥 یارییا گرتنا چیچکی</h3>
                 <div style="font-size: 12px; color: #2ecc71; font-weight: bold;">خاڵ: <span id="gameScore">0</span></div>
             </div>
 
-            <!-- کەنڤاسێ یاریێ (Game Canvas) -->
             <div class="game-canvas-container" id="gameContainerDiv">
                 <canvas id="chickGameCanvas" width="370" height="370"></canvas>
             </div>
@@ -340,7 +309,6 @@
 
         <!-- لژنا خوارێ و بەشێ ڕیگلاما Banner Ad -->
         <div>
-            <!-- بەشێ ڕیگلاما مۆنێتاگ (Banner Ad Container) -->
             <div class="banner-ad-bar">
                 <script src="https://3nbf4.com/pfp.js?zoneid=11731281" async></script>
             </div>
@@ -372,7 +340,6 @@
     </div>
 
     <script>
-        // تۆمارکرنا Service Worker بۆ مۆنێتاگ
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
             .then(reg => console.log('Service Worker Registered!', reg))
@@ -396,7 +363,7 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        const REAL_PREFIX = 'fox_ultimate_storage_v19_' + telegramUserId + '_';
+        const REAL_PREFIX = 'fox_ultimate_storage_24h_' + telegramUserId + '_';
 
         function getStoredData(key, defaultValue) {
             let val = localStorage.getItem(REAL_PREFIX + key);
@@ -407,27 +374,21 @@
         let savedCoins = getStoredData('coins', null);
         let coins = savedCoins !== null ? parseFloat(savedCoins) : 1.00000;
 
-        let maxEnergy = parseInt(getStoredData('max_energy', '500'));
-        let energy = parseInt(getStoredData('energy', maxEnergy));
         let level = parseInt(getStoredData('level', '1'));
-        let totalTaps = parseInt(getStoredData('total_taps', '0'));
-        let packets = parseInt(getStoredData('packets', '4'));
-        let totalSeconds = parseInt(getStoredData('timer', (2 * 3600)));
-        let isTimerRunning = false;
         
-        let isSubscribed = getStoredData('is_subscribed', 'false') === 'true';
+        // متغیرێن 24 دەمژمێری
+        let lastClickTime = parseInt(getStoredData('last_click_time', '0'));
+        const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000; // 24 دەمژمێر ب 밀یسەنیە
 
         const scoreElement = document.getElementById('score');
         const levelText = document.getElementById('levelText');
         const tapBtn = document.getElementById('tapBtn');
-        const energyText = document.getElementById('energyText');
-        const timerText = document.getElementById('timerText');
-        const packetText = document.getElementById('packetText');
+        const dailyClickBtn = document.getElementById('dailyClickBtn');
+        const dailyStatusText = document.getElementById('dailyStatusText');
+        const nextClickTimer = document.getElementById('nextClickTimer');
 
         scoreElement.innerText = coins.toFixed(5);
         levelText.innerText = "Lvl " + level;
-        energyText.innerText = energy + " / " + maxEnergy;
-        packetText.innerText = packets + " / 5";
 
         function showModal(title, msg) {
             document.getElementById('modalTitle').innerText = title;
@@ -438,120 +399,59 @@
             document.getElementById('customModal').style.display = 'none';
         }
 
-        function upgradeEnergyCapacity() {
-            let upgradeCost = 0.50000;
-            if (coins >= upgradeCost) {
-                coins -= upgradeCost;
-                maxEnergy += 500;
-                energy = maxEnergy;
-                scoreElement.innerText = coins.toFixed(5);
-                energyText.innerText = energy + " / " + maxEnergy;
+        // چککرنا دەمێ 24 دەمژمێران
+        function check24HourStatus() {
+            let now = new Date().getTime();
+            let elapsed = now - lastClickTime;
 
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-                localStorage.setItem(REAL_PREFIX + 'max_energy', maxEnergy);
-                localStorage.setItem(REAL_PREFIX + 'energy', energy);
-
-                showModal('پێشڤەبرن ⚡', 'کاپاسیتیا ئینرجییێ بوو ب ' + maxEnergy + '!');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            if (lastClickTime === 0 || elapsed >= TWENTY_FOUR_HOURS) {
+                dailyClickBtn.disabled = false;
+                dailyClickBtn.style.backgroundColor = '#2ecc71';
+                dailyStatusText.innerText = "ئامادەیە بۆ کلیککرنێ!";
+                nextClickTimer.innerText = "00:00:00";
             } else {
-                showModal('کێمیا کۆینان 🟡', 'پێدڤی ب 0.50000 FOX هەیە بۆ بلندکرنا ئینرجییێ.');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                dailyClickBtn.disabled = true;
+                dailyClickBtn.style.backgroundColor = '#7f8c8d';
+                dailyStatusText.innerText = "پێدڤیە 24 دەمژمێر ببۆرن!";
+                
+                let remaining = TWENTY_FOUR_HOURS - elapsed;
+                let hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+                
+                nextClickTimer.innerText = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
             }
         }
 
-        function startTimer() {
-            if (isTimerRunning) return;
-            isTimerRunning = true;
-            let timerInterval = setInterval(function() {
-                if (totalSeconds > 0) {
-                    totalSeconds--;
-                    let hours = Math.floor(totalSeconds / 3600);
-                    let minutes = Math.floor((totalSeconds % 3600) / 60);
-                    let seconds = totalSeconds % 60;
-                    timerText.innerText = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
-                    localStorage.setItem(REAL_PREFIX + 'timer', totalSeconds);
-                } else {
-                    packets = 5;
-                    packetText.innerText = packets + " / 5";
-                    localStorage.setItem(REAL_PREFIX + 'packets', packets);
-                    localStorage.removeItem(REAL_PREFIX + 'timer');
-                    isTimerRunning = false;
-                    clearInterval(timerInterval);
-                }
-            }, 1000);
-        }
+        setInterval(check24HourStatus, 1000);
+        check24HourStatus();
 
-        if (packets < 5) startTimer();
-
-        function handleTapAction(e) {
-            if (energy > 0) {
-                energy -= 1;
-                totalTaps += 1;
-
-                let clickReward = isSubscribed ? 0.00002 : 0.00001;
-                coins += clickReward;
-
-                let newLevel = Math.floor(totalTaps / 1000) + 1;
-                if (newLevel !== level) {
-                    level = newLevel;
-                    levelText.innerText = "Lvl " + level;
-                    localStorage.setItem(REAL_PREFIX + 'level', level);
-                }
-
-                scoreElement.innerText = coins.toFixed(5);
-                energyText.innerText = energy + " / " + maxEnergy;
-
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-                localStorage.setItem(REAL_PREFIX + 'energy', energy);
-                localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
-
-                const rect = tapBtn.getBoundingClientRect();
-                let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width / 2);
-                let clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : rect.top + rect.height / 2);
-
-                const x = clientX - rect.left;
-                const y = clientY - rect.top;
-
-                const floatingEl = document.createElement('div');
-                floatingEl.className = 'floating-score';
-                floatingEl.innerText = "+" + clickReward.toFixed(5);
-                floatingEl.style.left = (x - 30) + 'px';
-                floatingEl.style.top = (y - 20) + 'px';
-
-                tapBtn.appendChild(floatingEl);
-                setTimeout(() => floatingEl.remove(), 800);
-
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            } else {
+        // ئەنجامدانا کلیکا 24 دەمژمێری (1 خاڵ ب 0.00001)
+        function performDailyClick() {
+            let now = new Date().getTime();
+            if (lastClickTime !== 0 && (now - lastClickTime) < TWENTY_FOUR_HOURS) {
+                showModal('ئاگاداری ⏳', 'هێشتا 24 دەمژمێر نە تەواو بوونە!');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
             }
+
+            lastClickTime = now;
+            localStorage.setItem(REAL_PREFIX + 'last_click_time', lastClickTime);
+
+            // زێدەکرنا 1 خاڵ ب بهایێ 0.00001 کوینێ
+            coins += 0.00001;
+            scoreElement.innerText = coins.toFixed(5);
+            localStorage.setItem(REAL_PREFIX + 'coins', coins);
+
+            showModal('پیرۆزە! ✨', 'تە 1 خاڵ وەرگرت و 0.00001 FOX بۆ کۆینێن تە هاتە زێدەکرن.');
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            check24HourStatus();
         }
 
-        tapBtn.addEventListener('click', handleTapAction);
-        tapBtn.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            handleTapAction(e);
-        }, { passive: false });
-
-        function usePacket() {
-            if (packets > 0) {
-                packets -= 1;
-                packetText.innerText = packets + " / 5";
-                localStorage.setItem(REAL_PREFIX + 'packets', packets);
-
-                energy = maxEnergy;
-                energyText.innerText = energy + " / " + maxEnergy;
-                localStorage.setItem(REAL_PREFIX + 'energy', energy);
-
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                if (!isTimerRunning) {
-                    totalSeconds = (2 * 3600);
-                    startTimer();
-                }
-            } else {
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-            }
-        }
+        // کۆنترۆلا دوگمەیا تاپ سەرەکی
+        tapBtn.addEventListener('click', function(e) {
+            performDailyClick();
+        });
 
         function switchTab(screenId, event) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -561,23 +461,20 @@
             event.currentTarget.classList.add('active');
         }
 
-        // --- کۆدێ یارییا چیچکی (Catch the Chick Game Logic) ---
+        // --- یارییا چیچکی (Tasks) ---
         const canvas = document.getElementById('chickGameCanvas');
         const ctx = canvas.getContext('2d');
         
         let gameRunning = false;
         let gameScore = 0;
         
-        // سەبەتە / عەمود یان مەسحکور ل بنێ ئەکرانێ
         let catcher = {
             x: canvas.width / 2 - 40,
             y: canvas.height - 30,
             width: 80,
-            height: 16,
-            speed: 8
+            height: 16
         };
 
-        // چیچک
         let chick = {
             x: Math.random() * (canvas.width - 30),
             y: 0,
@@ -585,10 +482,6 @@
             speed: 3
         };
 
-        let leftPressed = false;
-        let rightPressed = false;
-
-        // کنترۆلا تەمسوککرنێ (Touch / Mouse / Keyboard)
         canvas.addEventListener('mousemove', (e) => {
             let rect = canvas.getBoundingClientRect();
             let mouseX = e.clientX - rect.left;
@@ -625,16 +518,13 @@
         function resetChick() {
             chick.x = Math.random() * (canvas.width - 40) + 20;
             chick.y = 0;
-            chick.speed = 2.5 + Math.random() * 2; // لەزاتیا چیچکی ب سەر هەلیکەت
+            chick.speed = 2.5 + Math.random() * 2;
         }
 
         function updateGame() {
             if (!gameRunning) return;
-
-            // جووگرافیا کەڤتنا چیچکی
             chick.y += chick.speed;
 
-            // پێکڤەدانا چیچکی ب سەبەتێ/عەمودی ڤە
             if (
                 chick.y + chick.radius >= catcher.y &&
                 chick.x >= catcher.x &&
@@ -643,8 +533,7 @@
                 gameScore += 1;
                 document.getElementById('gameScore').innerText = gameScore;
                 
-                // زێدەکرنا کۆینان وەک خەلات بۆ یاریێ
-                coins += 0.00005;
+                coins += 0.00001; // هەر چیچکەک 1 خاڵ ب 0.00001
                 scoreElement.innerText = coins.toFixed(5);
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
 
@@ -652,7 +541,6 @@
                 resetChick();
             }
 
-            // ئەگەر چیچک کەفتە خارێ وبەر نەهات گرتن
             if (chick.y > canvas.height) {
                 gameRunning = false;
                 showModal('خلاس بوو! ❌', 'چیچک کەفتە خوارێ! خاڵێن تە: ' + gameScore);
@@ -664,15 +552,9 @@
 
         function drawGame() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // نیشاندانا عەمودا ڕاگرتنێ (Platform / Catcher)
             ctx.fillStyle = '#d4af37';
-            ctx.shadowColor = '#d4af37';
-            ctx.shadowBlur = 10;
             ctx.fillRect(catcher.x, catcher.y, catcher.width, catcher.height);
-            ctx.shadowBlur = 0; // پاقژکرنا سایدی
 
-            // نیشاندانا چیچکی (Chick Emoji یا ژۆر)
             ctx.font = '24px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -686,7 +568,6 @@
             requestAnimationFrame(loopGame);
         }
 
-        // کێکشانا ئێکەم جار
         drawGame();
     </script>
 </body>
