@@ -297,10 +297,13 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        // وەرگرتنی داتایان؛ ئەگەر یەکەم جار بوو یان گۆڕکاری هەبوو
         let coins = parseFloat(localStorage.getItem('fox_coins') || 0);
         let energy = parseInt(localStorage.getItem('fox_energy') ?? 500);
-        let packets = parseInt(localStorage.getItem('fox_packets') ?? 4);
-        let totalSeconds = parseInt(localStorage.getItem('fox_timer') || (4 * 3600 + 48 * 60));
+        
+        // ڕێکخستنا سەرەتایی بۆ پەکێتان (دڵنیابوون ژ ژمارە ڕاستەقینە)
+        let packets = localStorage.getItem('fox_packets') !== null ? parseInt(localStorage.getItem('fox_packets')) : 4;
+        let totalSeconds = localStorage.getItem('fox_timer') ? parseInt(localStorage.getItem('fox_timer')) : (4 * 3600 + 48 * 60);
         let isTimerRunning = false;
         let taskDone = (localStorage.getItem('fox_task_done') === 'true');
 
@@ -320,7 +323,6 @@
             taskBtn.disabled = true;
         }
 
-        // کارپێکرنا دەمژمێرێ
         function startTimer() {
             if (isTimerRunning) return;
             isTimerRunning = true;
@@ -353,7 +355,7 @@
             startTimer();
         }
 
-        // Tap لیدان و کێمکرنا ئینرجیی و پەکێتان ب دروستی
+        // لێدانا کۆینێ (Tap) و کێمکرنا ئینرجیی
         tapBtn.addEventListener('click', function() {
             if (energy > 0) {
                 energy -= 1;
@@ -365,29 +367,20 @@
                 localStorage.setItem('fox_coins', coins);
                 localStorage.setItem('fox_energy', energy);
 
-                // ئەگەر ئینرجی بوو 0 و پەکێت مابوون، پەکێتەک دکەوێتە خوار
-                if (energy === 0 && packets > 0) {
-                    usePacket();
-                }
-
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.impactOccurred('medium');
                 }
             } else {
-                if (packets > 0) {
-                    usePacket();
-                } else {
-                    if (tg.HapticFeedback) {
-                        tg.HapticFeedback.notificationOccurred('error');
-                    }
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
                 }
             }
         });
 
-        // Use Packet پەکێتی کێم دکەت (بۆ نموونە ژ 4 دبتە 3) و ئینرجی دکەتە 500
+        // ڤەکرنا پەکێتی و کێمکرنا ڕەقەمی (Use)
         function usePacket() {
             if (packets > 0) {
-                packets -= 1; 
+                packets -= 1; // لێرە ڕەقەم دکەوێتە خوار (بۆ نموونە 4 دبتە 3)
                 packetText.innerText = packets + " / 5";
                 localStorage.setItem('fox_packets', packets);
 
