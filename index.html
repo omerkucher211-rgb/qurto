@@ -137,7 +137,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            pointer-events: none; /* ئەڤە پشتراست دکەت کو کلیک راستەوخۆ سەر دوگمەیێ بکەڤیت و نە وێنەی */
+            pointer-events: none;
         }
 
         .floating-score {
@@ -495,7 +495,8 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        const REAL_PREFIX = 'fox_safe_storage_' + telegramUserId + '_';
+        // ڤێرژنا نوی یا سەکۆرێ دا هەمی تشتی ژ سفرێ دەست پێ بکەت (Rank هەمیا سفر)
+        const REAL_PREFIX = 'fox_safe_storage_v2_' + telegramUserId + '_';
 
         let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins')) || 0;
         let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : 500;
@@ -641,17 +642,19 @@
             }
         }
 
+        // نووکرنا ڕێزبەندیێ ب شێوەیەکێ کو هەمی یاریزان ژ سفر (0) دەست پێ بکەن و یاریزانێن نوێ بێ کێشە بچنە سەرێ یان جهێ خۆ بگرن
         function updateRankingList() {
             const rankingContainer = document.getElementById('rankingListContainer');
             
             let realUsersList = [
                 { id: "u1", name: telegramName, score: coins, avatar: telegramPhotoUrl, isMe: true },
-                { id: "u2", name: "محەمەد ئەمین", score: 35.20000, avatar: null, isMe: false },
-                { id: "u3", name: "شەهلا عەبدوڵڵا", score: 28.15000, avatar: null, isMe: false },
-                { id: "u4", name: "دیار حەسەن", score: 19.40000, avatar: null, isMe: false },
-                { id: "u5", name: "ڕۆژین ئاکۆ", score: 12.00000, avatar: null, isMe: false }
+                { id: "u2", name: "محەمەد ئەمین", score: 0.00000, avatar: null, isMe: false },
+                { id: "u3", name: "شەهلا عەبدوڵڵا", score: 0.00000, avatar: null, isMe: false },
+                { id: "u4", name: "دیار حەسەن", score: 0.00000, avatar: null, isMe: false },
+                { id: "u5", name: "ڕۆژین ئاکۆ", score: 0.00000, avatar: null, isMe: false }
             ];
 
+            // ڕێزبەندکرن ل سەر بنەمایێ بلندترین کۆین
             realUsersList.sort((a, b) => b.score - a.score);
 
             let htmlContent = '';
@@ -719,7 +722,6 @@
             startTimer();
         }
 
-        // فۆنگشنا تاپکرنێ (هەم بۆ پەنەلا مۆبایلی touchstart و هەم click)
         function handleTapAction(e) {
             if (energy > 0) {
                 energy -= 1;
@@ -745,8 +747,6 @@
                 updateRankingList();
 
                 const rect = tapBtn.getBoundingClientRect();
-                
-                // پشکنین بۆ دەستکاریکرنا جهێ نیشاندانا کۆینێ زێدەبووی (هەم تاچا مۆبایلی و هەم موسێ کۆمپیووتەری)
                 let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width / 2);
                 let clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : rect.top + rect.height / 2);
 
@@ -768,10 +768,9 @@
             }
         }
 
-        // زێدەکرنا هەردوو ڕوودانێن (touchstart و click) دا ل سەر هەموو جۆرێن مۆبایلان بێ کێشە کار بکەت
         tapBtn.addEventListener('click', handleTapAction);
         tapBtn.addEventListener('touchstart', function(e) {
-            e.preventDefault(); // ڕێگری ل دوبارەبوونا کلیکێ دکەت ل سەر هەندەک مۆبایلان
+            e.preventDefault();
             handleTapAction(e);
         }, { passive: false });
 
