@@ -385,27 +385,6 @@
         <div id="shopScreen" class="screen" style="flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px; padding-top: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 2px;">🛒 دووکان و تەلەبی</h3>
 
-            <!-- بەشێ بانگهێشتکرنا هه‌ڤالا (Invite Code) -->
-            <div class="invite-card">
-                <div class="tg-card-header">
-                    <div style="width: 36px; height: 36px; background: #3498db; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
-                        <span>🔗</span>
-                    </div>
-                    <div>
-                        <h4 style="font-size: 14px; color: #ffffff;">کۆدا بانگهێشتکرنێ (Invite) 👥</h4>
-                        <p style="font-size: 11px; color: #85c1e9;">هەڤالێ خۆ بانگهێشت بکە و 0.5 FOX وەربگرە</p>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" id="myInviteLink" class="invite-input" readonly style="direction: ltr; font-size: 11px;">
-                    <button onclick="copyInviteLink()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 0 12px; font-size: 12px; font-weight: bold; cursor: pointer;">کۆپی</button>
-                </div>
-                <div style="border-top: 1px dashed rgba(52,152,219,0.4); padding-top: 8px; display: flex; flex-direction: column; gap: 6px;">
-                    <input type="text" id="promoCodeInput" class="invite-input" placeholder="کۆدا هەڤالێ خۆ لێرە بنوڤیسە...">
-                    <button onclick="redeemInviteCode()" style="background-color: #2980b9; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا خەلاتێ کۆدی 🟡</button>
-                </div>
-            </div>
-
             <!-- چوارگوشەیی 100 مێمبەرێن تەلەگرامێ -->
             <div class="telegram-members-card">
                 <div class="tg-card-header">
@@ -454,9 +433,31 @@
             </div>
         </div>
 
-        <!-- 3. پەڕەیا ئەرکان -->
-        <div id="tasksScreen" class="screen" style="gap: 10px;">
-            <h3 style="color: #d4af37; margin-bottom: 2px;">🌟 ئەرک</h3>
+        <!-- 3. پەڕەیا ئەرکان (Tasks) -->
+        <div id="tasksScreen" class="screen" style="gap: 10px; align-items: center; justify-content: flex-start; padding-top: 10px;">
+            <h3 style="color: #d4af37; margin-bottom: 2px;">🌟 ئەرک و بانگهێشت</h3>
+            
+            <!-- بەشێ بانگهێشتکرنا هەڤالا (Invite Code) -->
+            <div class="invite-card">
+                <div class="tg-card-header">
+                    <div style="width: 36px; height: 36px; background: #3498db; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
+                        <span>🔗</span>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 14px; color: #ffffff;">کۆدا بانگهێشتکرنێ (Invite) 👥</h4>
+                        <p style="font-size: 11px; color: #85c1e9;">هەڤالێ خۆ بانگهێشت بکە و 0.00001 FOX وەربگرە</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="myInviteLink" class="invite-input" readonly style="direction: ltr; font-size: 11px;">
+                    <button onclick="copyInviteLink()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 0 12px; font-size: 12px; font-weight: bold; cursor: pointer;">کۆپی</button>
+                </div>
+                <div style="border-top: 1px dashed rgba(52,152,219,0.4); padding-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                    <input type="text" id="promoCodeInput" class="invite-input" placeholder="کۆدا هەڤالێ خۆ لێرە بنوڤیسە...">
+                    <button onclick="redeemInviteCode()" style="background-color: #2980b9; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%;">وەرگرتنا خەلاتێ کۆدی 🟡</button>
+                </div>
+            </div>
+
             <div class="shop-section">
                 <h4 style="font-size: 14px; color: #d4af37;">📅 دیارییا ڕۆژانە (Daily Streak)</h4>
                 <p style="font-size: 11px; color: #b0c4de;">هەموو ڕۆژەکێ وەرگرتنا 0.00050 FOX!</p>
@@ -489,7 +490,7 @@
                 <h3 id="modalHeaderTitle" style="color: #2481cc; font-size: 16px;">لینکێ کەناڵێ خۆ بنوڤیسە</h3>
             </div>
             <p id="modalHeaderDesc" style="font-size: 12px; color: #b0c4de;">بهایێ مێمبەرا...</p>
-            <input type="text" id="channelLinkInput" class="modal-input" placeholder="t.me/your_channel یا @channel">
+            <input type="text" id="channelLinkInput" class="modal-input" placeholder="t.me/your_channel يا @channel">
             <div style="display: flex; gap: 8px; margin-top: 5px;">
                 <button id="modalSubmitBtn" onclick="submitTelegramMembers()" style="flex: 1; background-color: #2481cc; color: white; border: none; border-radius: 8px; padding: 9px; font-weight: bold; cursor: pointer;">ناردن (Send)</button>
                 <button onclick="closeTelegramModal()" style="flex: 1; background-color: #e74c3c; color: white; border: none; border-radius: 8px; padding: 9px; font-weight: bold; cursor: pointer;">پەشیمانبوون</button>
@@ -525,7 +526,8 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
-        const REAL_PREFIX = 'fox_ultimate_storage_v17_' + telegramUserId + '_';
+        // کۆدێ پاراستنا داتایان ب پاشگرییا تایبەت بۆ هەر یاریزانەکی ب ڕێکا IDـیا وی
+        const REAL_PREFIX = 'fox_ultimate_storage_v19_' + telegramUserId + '_';
 
         function getStoredData(key, defaultValue) {
             let val = localStorage.getItem(REAL_PREFIX + key);
@@ -549,8 +551,7 @@
         let lastDailyClaim = getStoredData('last_daily', '');
         let hasRedeemedInvite = getStoredData('has_redeemed_invite', 'false') === 'true';
 
-        // دروستکرنا لینکێ بانگهێشتکرنێ یێ تایبەت ب بکارهێنەری
-        let myBotUsername = "FoxCoinBot"; // ناڤێ بۆتا خۆ ل ڤێرە بنوڤیسە ئەگەر پێدڤی بکەت
+        let myBotUsername = "FoxCoinBot";
         let inviteLink = `https://t.me/${myBotUsername}?start=ref_${telegramUserId}`;
         document.getElementById('myInviteLink').value = inviteLink;
 
@@ -582,14 +583,14 @@
                 return;
             }
 
-            coins += 0.5;
+            coins += 0.00001;
             hasRedeemedInvite = true;
             scoreElement.innerText = coins.toFixed(5);
 
             localStorage.setItem(REAL_PREFIX + 'coins', coins);
             localStorage.setItem(REAL_PREFIX + 'has_redeemed_invite', 'true');
 
-            showModal('پیرۆزە! ✨', 'کۆدا بانگهێشتکرنێ کارا بوو و 0.5 FOX بۆ کۆینێن تە هاتە زێدەکرن.');
+            showModal('پیرۆزە! ✨', 'کۆدا بانگهێشتکرنێ کارا بوو و 0.00001 FOX بۆ کۆینێن تە هاتە زێدەکرن.');
             if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             document.getElementById('promoCodeInput').value = '';
         }
