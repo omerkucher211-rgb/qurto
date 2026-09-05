@@ -111,7 +111,6 @@
             position: relative;
         }
 
-        /* لێرەدا ئەیمەیشنا گەورەبوون و سەرکەوتن بۆ بازنێ هاتە زێدەکرن */
         .big-coin-btn {
             width: 160px;
             height: 160px;
@@ -129,7 +128,6 @@
             transition: transform 0.1s ease;
         }
 
-        /* کاتێ تێپ دەبێت قەبارە مەزن دبێت و پچەک دچتە سەری */
         .big-coin-btn.tapped {
             transform: scale(1.15) translateY(-8px);
         }
@@ -343,7 +341,7 @@
             </button>
             <div class="user-level">
                 <div style="text-align: right;">
-                    <div style="font-size: 11px; font-weight: bold;" id="userNameText">MALAGA 🇪🇸</div>
+                    <div style="font-size: 11px; font-weight: bold;" id="userNameText">FOX Player</div>
                     <div style="font-size: 9px; color: #d4af37;" id="levelText">Lvl 1</div>
                 </div>
                 <div id="userAvatarHeader" style="width: 28px; height: 28px; border-radius: 50%; overflow: hidden; border: 1px solid #d4af37; background: #222; display: flex; justify-content: center; align-items: center;">
@@ -476,8 +474,10 @@
         tg.expand();
 
         let telegramUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
-        let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id : 'malaga_permanent_fixed_id';
-        let telegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'MALAGA 🇪🇸';
+        
+        // وەرگرتنا ئایدییا ڕاستەقینە یا تلگرام یان دانانا ئایدییەکێ سەرەکی ئەگەر ل دەرڤەی تلگرامێ ڤەکەری
+        let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id : '8832347891';
+        let telegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'FOX Player';
         let telegramPhotoUrl = telegramUser && telegramUser.photo_url ? telegramUser.photo_url : null;
 
         document.getElementById('userNameText').innerText = telegramName;
@@ -485,6 +485,7 @@
             document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
         }
 
+        // پاراستنا کوین و داتایێن هەر کەسەکی ب جارەکێ جیایە و ب ئایدییا وی هاتە گرێدان (LocalStorage Security)
         const REAL_PREFIX = 'fox_pro_storage_v4_' + telegramUserId + '_';
 
         let isFirstTimeUser = localStorage.getItem(REAL_PREFIX + 'first_welcome_done');
@@ -532,7 +533,7 @@
         multitapLevelText.innerText = multitapLevel;
 
         if (isPremium) {
-            buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔ (2x)';
+            buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔';
             buyPremiumBtn.style.backgroundColor = '#27ae60';
             buyPremiumBtn.disabled = true;
         }
@@ -617,10 +618,17 @@
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
                 localStorage.setItem(REAL_PREFIX + 'is_premium', 'true');
 
-                buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔ (2x)';
+                buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔';
                 buyPremiumBtn.style.backgroundColor = '#27ae60';
                 buyPremiumBtn.disabled = true;
-                alert('پیرۆزە! پەکەتا پرێمیوم هاتە چالاککرن ⭐');
+
+                // مەرجێ تایبەت بۆ ئایدیێ دیاریکری کو تنێ ئەڤ ئایدییە دێ بیتە x4
+                if (telegramUserId == '8832347891') {
+                    alert('پیرۆزە! پەکەتا پرێمیوم (x4) بۆ تۆ هاتە چالاککرن ⭐');
+                } else {
+                    alert('پیرۆزە! پەکەتا پرێمیوم (2x) هاتە چالاککرن ⭐');
+                }
+
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
                 alert('کوینێن تە بەس نینن! 🟡');
@@ -662,7 +670,7 @@
                 localStorage.setItem(REAL_PREFIX + 'coins', coins);
 
                 const botToken = "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs";
-                const chatId = "8920889734";
+                const chatId = "8832347891";
                 
                 let message = `🚀 داخوازییا 100 مێمبەران هاتە کرن!\n\n` +
                               `👤 ناڤێ یاریزانی: ${telegramName}\n` +
@@ -741,8 +749,7 @@
             let realUsersList = [
                 { id: "u1", name: telegramName, score: coins, avatar: telegramPhotoUrl, isMe: true },
                 { id: "u2", name: "محەمەد ئەمین", score: 1.25000, avatar: null, isMe: false },
-                { id: "u3", name: "شەهلا عەبدوڵڵا", score: 0.95000, avatar: null, isMe: false },
-                { id: "u4", name: "دیار حەسەن", score: 0.40000, avatar: null, isMe: false }
+                { id: "u3", name: "شەهلا عەبدوڵڵا", score: 0.95000, avatar: null, isMe: false }
             ];
             realUsersList.sort((a, b) => b.score - a.score);
 
@@ -776,7 +783,17 @@
                 totalTaps += consumeEnergy;
 
                 let baseReward = 0.00001 * multitapLevel;
-                let clickReward = isPremium ? baseReward * 2 : baseReward;
+                
+                // ئەگەر پرێمیوم چالاک بێت: تنێ بۆ ئایدییا 8832347891 دبتە x4، و بۆ کەسێن دی دبتە x2
+                let clickReward = baseReward;
+                if (isPremium) {
+                    if (telegramUserId == '8832347891') {
+                        clickReward = baseReward * 4; // تنێ بۆ تە x4 دبت
+                    } else {
+                        clickReward = baseReward * 2; // بۆ کەسێن دی x2 دبت
+                    }
+                }
+
                 coins += clickReward;
 
                 let newLevel = Math.floor(totalTaps / 1000) + 1;
@@ -795,7 +812,6 @@
 
                 updateRankingList();
 
-                // لێرەدا ئەیمەیشنا گەورەبوون و سەرکەوتن بۆ بازنێ چالاک دکەین
                 tapBtn.classList.add('tapped');
                 setTimeout(() => {
                     tapBtn.classList.remove('tapped');
