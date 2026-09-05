@@ -309,61 +309,33 @@
 </head>
 <body>
 
-    <!-- مۆزیکەارا ئارام (Background Ambient Music باستخدام Web Audio API بێ پێدڤی ب فایلێ دەرەکی) -->
+    <!-- پلەیەرێ دەنگی (Audio Element) بۆ سترانا عەبدولقەهار زاخویی یا ئارام -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="abdulqahar_zakhoee.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
-        let audioCtx = null;
         let isMusicPlaying = false;
-        let musicInterval = null;
-
-        function initAmbientMusic() {
-            if (audioCtx) return;
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-
-        function playAmbientTone() {
-            if (!isMusicPlaying || !audioCtx) return;
-
-            // ئەکۆردێن ئارام (Ambient Chords)
-            const notes = [261.63, 329.63, 392.00, 523.25, 587.33]; // C Major scale notes
-            let randomNote = notes[Math.floor(Math.random() * notes.length)];
-
-            let osc = audioCtx.createOscillator();
-            let gainNode = audioCtx.createGain();
-
-            osc.type = 'sine'; // دەنگەکێ زۆر نەرم و ئارام
-            osc.frequency.setValueAtTime(randomNote, audioCtx.currentTime);
-
-            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.03, audioCtx.currentTime + 1.5); // دەنگی کێم هێدی بلند دبت
-            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 4.5);   // هێدی ئارام نەماب دبت
-
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            osc.start();
-            osc.stop(audioCtx.currentTime + 4.5);
-        }
 
         function toggleMusic() {
-            initAmbientMusic();
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            isMusicPlaying = !isMusicPlaying;
+            let music = document.getElementById('bgMusic');
             let btn = document.getElementById('soundToggleBtn');
 
             if (isMusicPlaying) {
-                btn.innerHTML = '🎵 ON';
-                btn.style.borderColor = '#2ecc71';
-                btn.style.color = '#2ecc71';
-                playAmbientTone();
-                musicInterval = setInterval(playAmbientTone, 3500);
-            } else {
+                music.pause();
+                isMusicPlaying = false;
                 btn.innerHTML = '🔇 OFF';
                 btn.style.borderColor = '#d4af37';
                 btn.style.color = '#d4af37';
-                clearInterval(musicInterval);
+            } else {
+                music.play().then(() => {
+                    isMusicPlaying = true;
+                    btn.innerHTML = '🎵 ON';
+                    btn.style.borderColor = '#2ecc71';
+                    btn.style.color = '#2ecc71';
+                }).catch(e => {
+                    console.log("Audio play blocked:", e);
+                });
             }
         }
     </script>
