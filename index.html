@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FOX Coin Game - Pro Online</title>
+    <title>FOX Coin Game - Auth & Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -35,7 +35,7 @@
             max-width: 400px;
             height: 100%;
             max-height: 800px;
-            background-color: rgba(11, 15, 25, 0.92);
+            background-color: rgba(11, 15, 25, 0.94);
             backdrop-filter: blur(4px);
             display: flex;
             flex-direction: column;
@@ -46,6 +46,76 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
         }
 
+        /* Login & Register Screen Styling */
+        .auth-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(11, 15, 25, 0.98);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 1000;
+            gap: 15px;
+        }
+
+        .auth-screen.hidden {
+            display: none;
+        }
+
+        .auth-box {
+            background: rgba(18, 22, 33, 0.95);
+            border: 1px solid #d4af37;
+            border-radius: 15px;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #2a3447;
+            background-color: rgba(11, 15, 25, 0.9);
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            direction: ltr;
+            text-align: right;
+        }
+        .auth-input:focus { border-color: #d4af37; }
+
+        .auth-btn {
+            background-color: #d4af37;
+            color: #111;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+        }
+        .auth-btn:active { transform: scale(0.98); }
+
+        .auth-switch {
+            font-size: 12px;
+            color: #8b9bb4;
+            text-align: center;
+            cursor: pointer;
+        }
+        .auth-switch span { color: #d4af37; font-weight: bold; }
+
+        /* Game UI */
         .header {
             display: flex;
             justify-content: space-between;
@@ -89,10 +159,6 @@
             align-items: center;
             gap: 6px;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        .user-level:active {
-            transform: scale(0.95);
         }
 
         .screen {
@@ -155,7 +221,6 @@
             z-index: 100;
             direction: ltr;
             white-space: nowrap;
-            box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
         }
 
         @keyframes floatUp {
@@ -194,8 +259,6 @@
             text-align: center;
             outline: none;
         }
-
-        .action-btn:active { transform: scale(0.98); }
 
         .rank-item {
             background-color: rgba(18, 22, 33, 0.9);
@@ -246,7 +309,6 @@
             background: none;
             border: none;
         }
-
         .nav-item.active { color: #d4af37; }
         .nav-item span.icon { font-size: 16px; }
 
@@ -265,6 +327,38 @@
 </head>
 <body>
 
+    <!-- Authentication Screen (Login / Register) -->
+    <div id="authScreen" class="auth-screen">
+        <div style="text-align: center; margin-bottom: 5px;">
+            <h2 style="color: #d4af37; font-size: 20px;">FOX Coin Game</h2>
+            <p style="font-size: 12px; color: #8b9bb4;" id="authSubtitle">تکایە خۆت تۆمار بکە یان ژوورکەۆە</p>
+        </div>
+
+        <div class="auth-box">
+            <div id="nameFieldContainer">
+                <label style="font-size: 11px; color: #8b9bb4; display: block; margin-bottom: 4px;">ناڤێ یاریزانی</label>
+                <input type="text" id="authName" class="auth-input" placeholder="مژدە / Player Name">
+            </div>
+
+            <div>
+                <label style="font-size: 11px; color: #8b9bb4; display: block; margin-bottom: 4px;">ایمێل (Email)</label>
+                <input type="email" id="authEmail" class="auth-input" placeholder="example@gmail.com">
+            </div>
+
+            <div>
+                <label style="font-size: 11px; color: #8b9bb4; display: block; margin-bottom: 4px;">پاسوورد (Password)</label>
+                <input type="password" id="authPassword" class="auth-input" placeholder="••••••••">
+            </div>
+
+            <button class="auth-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">تۆمارکرن (Register)</button>
+        </div>
+
+        <div class="auth-switch" onclick="toggleAuthMode()">
+            هەژمار هەیە؟ <span id="switchModeText">چوونەژوورەوە (Login)</span>
+        </div>
+    </div>
+
+    <!-- Background Music -->
     <audio id="bgMusic" loop preload="auto">
         <source src="abdulqahar_zakhoee.mp3" type="audio/mpeg">
     </audio>
@@ -411,81 +505,176 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        // تۆکێن و چات ئایدییێ تە یێن فەرمی
+        const BOT_TOKEN = "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs";
+        const CHAT_ID = "8920889734";
+
         let telegramUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
-        
         let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id.toString() : 'user_' + Math.floor(Math.random() * 1000000);
-        let defaultTelegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'FOX Player';
         let telegramPhotoUrl = telegramUser && telegramUser.photo_url ? telegramUser.photo_url : null;
 
-        // کلیلا تایبەت بە هەر یاریزانەکی دا کو کۆینێن وان تێکەل نەبن
-        const REAL_PREFIX = 'fox_pro_secure_storage_' + telegramUserId + '_';
+        let isLoginMode = false;
 
-        let telegramName = localStorage.getItem(REAL_PREFIX + 'custom_name') || defaultTelegramName;
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            let titleEl = document.getElementById('authSubtitle');
+            let nameContainer = document.getElementById('nameFieldContainer');
+            let submitBtn = document.getElementById('authSubmitBtn');
+            let switchText = document.getElementById('switchModeText');
 
-        document.getElementById('userNameText').innerText = telegramName;
-        if (telegramPhotoUrl) {
-            document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
-        }
-
-        function openProfileSettings() {
-            let currentName = document.getElementById('userNameText').innerText;
-            let newName = prompt(`تایبەتمەندییا پروفایلی:\n\n🆔 Telegram ID: ${telegramUserId}\n\nتکایە ناڤێ خۆ یێ نوێ ل خوارێ بنڤیسە:`, currentName);
-            
-            if (newName !== null && newName.trim() !== "") {
-                telegramName = newName.trim();
-                document.getElementById('userNameText').innerText = telegramName;
-                localStorage.setItem(REAL_PREFIX + 'custom_name', telegramName);
-                
-                syncUserToGlobalStorage();
-                alert(`پیرۆزە! ناڤێ تە هاتە گۆڕین بۆ: ${telegramName}`);
-                updateOnlineRanking();
+            if (isLoginMode) {
+                titleEl.innerText = "چوونەژوورەوە بۆ ژمارا خۆ (Login)";
+                nameContainer.style.display = 'none';
+                submitBtn.innerText = "چوونەژوورەوە (Login)";
+                switchText.innerText = "تۆمارکرنا هەژمارا نوو (Register)";
+            } else {
+                titleEl.innerText = "تکایە خۆت تۆمار بکە (Register)";
+                nameContainer.style.display = 'block';
+                submitBtn.innerText = "تۆمارکرن (Register)";
+                switchText.innerText = "چوونەژوورەوە (Login)";
             }
         }
 
-        let isFirstTimeUser = localStorage.getItem(REAL_PREFIX + 'first_welcome_done');
-        let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins'));
-        
-        if (isFirstTimeUser === null) {
-            coins = 1.00000;
-            localStorage.setItem(REAL_PREFIX + 'coins', coins);
-            localStorage.setItem(REAL_PREFIX + 'first_welcome_done', 'true');
-        } else if (isNaN(coins)) {
-            coins = 0.00000;
+        let loggedUserEmail = localStorage.getItem('fox_logged_user_email');
+        if (loggedUserEmail) {
+            document.getElementById('authScreen').classList.add('hidden');
+            initializeGameForUser(loggedUserEmail);
         }
 
-        let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : 500;
-        let maxEnergy = parseInt(localStorage.getItem(REAL_PREFIX + 'max_energy')) || 500;
-        let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level')) || 1;
-        let totalTaps = parseInt(localStorage.getItem(REAL_PREFIX + 'total_taps')) || 0;
-        let packets = localStorage.getItem(REAL_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'packets')) : 4;
-        let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (2 * 3600);
-        let isTimerRunning = false;
-        
-        let isPremium = localStorage.getItem(REAL_PREFIX + 'is_premium') === 'true';
-        let multitapLevel = parseInt(localStorage.getItem(REAL_PREFIX + 'multitap_level')) || 1;
+        function handleAuthSubmit() {
+            let email = document.getElementById('authEmail').value.trim();
+            let password = document.getElementById('authPassword').value.trim();
+            let name = document.getElementById('authName').value.trim();
 
-        let lastStreakDate = localStorage.getItem(REAL_PREFIX + 'last_streak_date') || '';
-        let streakDay = parseInt(localStorage.getItem(REAL_PREFIX + 'streak_day')) || 1;
+            if (!email || !password || (!isLoginMode && !name)) {
+                alert('تکایە هەمی خانەیان پڕ بکە! ⚠️');
+                return;
+            }
 
-        const scoreElement = document.getElementById('score');
-        const levelText = document.getElementById('levelText');
-        const tapBtn = document.getElementById('tapBtn');
-        const energyText = document.getElementById('energyText');
-        const timerText = document.getElementById('timerText');
-        const packetText = document.getElementById('packetText');
-        const buyPremiumBtn = document.getElementById('buyPremiumBtn');
-        const multitapLevelText = document.getElementById('multitapLevelText');
+            let usersDB = JSON.parse(localStorage.getItem('fox_accounts_db') || '{}');
 
-        scoreElement.innerText = coins.toFixed(5);
-        levelText.innerText = "Lvl " + level;
-        energyText.innerText = energy + " / " + maxEnergy;
-        packetText.innerText = packets + " / 5";
-        multitapLevelText.innerText = multitapLevel;
+            if (isLoginMode) {
+                // Login Logic
+                if (usersDB[email] && usersDB[email].password === password) {
+                    localStorage.setItem('fox_logged_user_email', email);
+                    document.getElementById('authScreen').classList.add('hidden');
+                    initializeGameForUser(email);
+                    
+                    sendTelegramNotification(`🔑 چوونەژوورەوەیەکا سەرکەفتی!\n\n📧 ایمێل: ${email}`);
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                } else {
+                    alert('ایمێل یان پاسوورد خەلەتە! ❌');
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                }
+            } else {
+                // Register Logic
+                if (usersDB[email]) {
+                    alert('ئەڤ ایمێلە بەری نوها هاتیە تۆمارکرن! تکایە Login بکە.');
+                    return;
+                }
 
-        if (isPremium) {
-            buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔';
-            buyPremiumBtn.style.backgroundColor = '#27ae60';
-            buyPremiumBtn.disabled = true;
+                let newUserData = {
+                    name: name,
+                    email: email,
+                    password: password,
+                    coins: 1.00000,
+                    energy: 500,
+                    maxEnergy: 500,
+                    level: 1,
+                    totalTaps: 0,
+                    packets: 4,
+                    multitapLevel: 1,
+                    isPremium: false,
+                    streakDay: 1,
+                    lastStreakDate: ''
+                };
+
+                usersDB[email] = newUserData;
+                localStorage.setItem('fox_accounts_db', JSON.stringify(usersDB));
+                localStorage.setItem('fox_logged_user_email', email);
+
+                document.getElementById('authScreen').classList.add('hidden');
+                initializeGameForUser(email);
+
+                sendTelegramNotification(`✨ تۆمارکرنا هەژمارا نوو (Register)!\n\n👤 ناڤ: ${name}\n📧 ایمێل: ${email}\n🆔 Chat ID: ${CHAT_ID}`);
+                alert('پیرۆزە! هەژمارا تە ب سەرکەفتی هاتە دروستکرن 🎉');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
+        }
+
+        function sendTelegramNotification(textMessage) {
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CHAT_ID, text: textMessage })
+            }).catch(err => console.log("Telegram API Error:", err));
+        }
+
+        let REAL_PREFIX = '';
+        let telegramName = 'FOX Player';
+        let coins = 0, energy = 500, maxEnergy = 500, level = 1, totalTaps = 0, packets = 4, totalSeconds = 7200, isTimerRunning = false, isPremium = false, multitapLevel = 1, streakDay = 1, lastStreakDate = '';
+
+        function initializeGameForUser(email) {
+            REAL_PREFIX = 'fox_user_' + email.replace(/[@.]/g, '_') + '_';
+            
+            let usersDB = JSON.parse(localStorage.getItem('fox_accounts_db') || '{}');
+            let userData = usersDB[email] || {};
+
+            telegramName = userData.name || 'FOX Player';
+            coins = userData.coins !== undefined ? userData.coins : 1.00000;
+            energy = userData.energy !== undefined ? userData.energy : 500;
+            maxEnergy = userData.maxEnergy !== undefined ? userData.maxEnergy : 500;
+            level = userData.level !== undefined ? userData.level : 1;
+            totalTaps = userData.totalTaps !== undefined ? userData.totalTaps : 0;
+            packets = userData.packets !== undefined ? userData.packets : 4;
+            multitapLevel = userData.multitapLevel !== undefined ? userData.multitapLevel : 1;
+            isPremium = userData.isPremium === true;
+            streakDay = userData.streakDay !== undefined ? userData.streakDay : 1;
+            lastStreakDate = userData.lastStreakDate || '';
+
+            document.getElementById('userNameText').innerText = telegramName;
+            document.getElementById('score').innerText = coins.toFixed(5);
+            document.getElementById('levelText').innerText = "Lvl " + level;
+            document.getElementById('energyText').innerText = energy + " / " + maxEnergy;
+            document.getElementById('packetText').innerText = packets + " / 5";
+            document.getElementById('multitapLevelText').innerText = multitapLevel;
+
+            if (isPremium) {
+                let pBtn = document.getElementById('buyPremiumBtn');
+                pBtn.innerText = 'پرێمیوم چالاکە ✔';
+                pBtn.style.backgroundColor = '#27ae60';
+                pBtn.disabled = true;
+            }
+
+            if (telegramPhotoUrl) {
+                document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
+            }
+
+            syncUserToGlobalStorage();
+            checkStreakDisplay();
+            if (packets < 5) startTimer();
+        }
+
+        function saveCurrentUserData() {
+            let loggedEmail = localStorage.getItem('fox_logged_user_email');
+            if (!loggedEmail) return;
+
+            let usersDB = JSON.parse(localStorage.getItem('fox_accounts_db') || '{}');
+            if (usersDB[loggedEmail]) {
+                usersDB[loggedEmail].coins = coins;
+                usersDB[loggedEmail].energy = energy;
+                usersDB[loggedEmail].maxEnergy = maxEnergy;
+                usersDB[loggedEmail].level = level;
+                usersDB[loggedEmail].totalTaps = totalTaps;
+                usersDB[loggedEmail].packets = packets;
+                usersDB[loggedEmail].multitapLevel = multitapLevel;
+                usersDB[loggedEmail].isPremium = isPremium;
+                usersDB[loggedEmail].streakDay = streakDay;
+                usersDB[loggedEmail].lastStreakDate = lastStreakDate;
+
+                localStorage.setItem('fox_accounts_db', JSON.stringify(usersDB));
+            }
+            syncUserToGlobalStorage();
         }
 
         function syncUserToGlobalStorage() {
@@ -505,13 +694,12 @@
                 console.log("Sync error:", e);
             }
         }
-        syncUserToGlobalStorage();
 
         setInterval(() => {
             if (energy < maxEnergy) {
                 energy = Math.min(maxEnergy, energy + 1);
-                energyText.innerText = energy + " / " + maxEnergy;
-                localStorage.setItem(REAL_PREFIX + 'energy', energy);
+                document.getElementById('energyText').innerText = energy + " / " + maxEnergy;
+                saveCurrentUserData();
             }
         }, 3000);
 
@@ -520,21 +708,15 @@
             if (coins >= 1.00000) {
                 coins -= 1.00000;
                 isPremium = true;
-                scoreElement.innerText = coins.toFixed(5);
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-                localStorage.setItem(REAL_PREFIX + 'is_premium', 'true');
-                syncUserToGlobalStorage();
+                document.getElementById('score').innerText = coins.toFixed(5);
+                saveCurrentUserData();
 
-                buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔';
-                buyPremiumBtn.style.backgroundColor = '#27ae60';
-                buyPremiumBtn.disabled = true;
+                let pBtn = document.getElementById('buyPremiumBtn');
+                pBtn.innerText = 'پرێمیوم چالاکە ✔';
+                pBtn.style.backgroundColor = '#27ae60';
+                pBtn.disabled = true;
 
-                if (telegramUserId == '8832347891') {
-                    alert('پیرۆزە! پەکەتا پرێمیوم (x4) بۆ تۆ هاتە چالاککرن ⭐');
-                } else {
-                    alert('پیرۆزە! پەکەتا پرێمیوم (2x) هاتە چالاککرن ⭐');
-                }
-
+                alert('پیرۆزە! پەکەتا پرێمیوم هاتە چالاککرن ⭐');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
                 alert('کوینێن تە بەس نینن! 🟡');
@@ -548,14 +730,10 @@
                 coins -= cost;
                 multitapLevel++;
                 maxEnergy += 100;
-                scoreElement.innerText = coins.toFixed(5);
-                energyText.innerText = energy + " / " + maxEnergy;
-                multitapLevelText.innerText = multitapLevel;
-
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-                localStorage.setItem(REAL_PREFIX + 'multitap_level', multitapLevel);
-                localStorage.setItem(REAL_PREFIX + 'max_energy', maxEnergy);
-                syncUserToGlobalStorage();
+                document.getElementById('score').innerText = coins.toFixed(5);
+                document.getElementById('energyText').innerText = energy + " / " + maxEnergy;
+                document.getElementById('multitapLevelText').innerText = multitapLevel;
+                saveCurrentUserData();
 
                 alert('پیرۆزە! ئاستێ کلیکی بلندا بوو بۆ لڤل ' + multitapLevel);
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -573,23 +751,11 @@
             }
             if (coins >= 1.00000) {
                 coins -= 1.00000;
-                scoreElement.innerText = coins.toFixed(5);
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-                syncUserToGlobalStorage();
+                document.getElementById('score').innerText = coins.toFixed(5);
+                saveCurrentUserData();
 
-                const botToken = "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs";
-                const chatId = "8920889734";
-                
-                let message = `🚀 داخوازییا 100 مێمبەران هاتە کرن!\n\n` +
-                              `👤 ناڤێ یاریزانی: ${telegramName}\n` +
-                              `🆔 Telegram ID: ${telegramUserId}\n` +
-                              `🔗 لینکێ کەناڵی: ${channelLink}`;
-
-                fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: chatId, text: message })
-                }).catch(err => console.log(err));
+                let message = `🚀 داخوازییا 100 مێمبەران هاتە کرن!\n\n👤 ناڤ: ${telegramName}\n🔗 لینکێ کەناڵی: ${channelLink}`;
+                sendTelegramNotification(message);
 
                 alert('پیرۆزە! 100 مێمبەر هاتنە داخوازی کرن 🎉');
                 document.getElementById('channelLinkInput').value = '';
@@ -618,37 +784,31 @@
 
             let reward = streakDay * 0.05;
             coins += reward;
-            scoreElement.innerText = coins.toFixed(5);
-            localStorage.setItem(REAL_PREFIX + 'coins', coins);
-            syncUserToGlobalStorage();
+            document.getElementById('score').innerText = coins.toFixed(5);
 
             lastStreakDate = today;
             streakDay++;
-            localStorage.setItem(REAL_PREFIX + 'last_streak_date', lastStreakDate);
-            localStorage.setItem(REAL_PREFIX + 'streak_day', streakDay);
-
+            saveCurrentUserData();
             checkStreakDisplay();
+
             alert('پیرۆزە! تە ' + reward.toFixed(2) + ' کۆین وەرگرت وەک پاداشتێ ڕۆژانە 🎉');
             if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
-        checkStreakDisplay();
 
         function copyRefLink() {
             let refLink = 'https://t.me/YourBotName?start=ref_' + telegramUserId;
             navigator.clipboard.writeText(refLink).then(() => {
-                alert('لینکێ بانگهێشتێ هاتە کۆپیکرن! 📋 بۆ هاوڕێیێن خۆ بنێرە.');
+                alert('لینکێ بانگهێشتێ هاتە کۆپیکرن! 📋');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             });
         }
 
         function updateOnlineRanking() {
             const rankingContainer = document.getElementById('rankingListContainer');
-            
             syncUserToGlobalStorage();
 
             let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
             let allUsersObj = allUsersRaw ? JSON.parse(allUsersRaw) : {};
-            
             let usersArray = Object.values(allUsersObj);
             usersArray.sort((a, b) => b.score - a.score);
 
@@ -679,6 +839,7 @@
             rankingContainer.innerHTML = htmlContent;
         }
 
+        const tapBtn = document.getElementById('tapBtn');
         function handleTapAction(e) {
             if (energy > 0) {
                 let consumeEnergy = Math.min(energy, multitapLevel);
@@ -686,33 +847,18 @@
                 totalTaps += consumeEnergy;
 
                 let baseReward = 0.00001 * multitapLevel;
-                
-                let clickReward = baseReward;
-                if (isPremium) {
-                    if (telegramUserId == '8832347891') {
-                        clickReward = baseReward * 4;
-                    } else {
-                        clickReward = baseReward * 2;
-                    }
-                }
-
+                let clickReward = isPremium ? baseReward * 2 : baseReward;
                 coins += clickReward;
 
                 let newLevel = Math.floor(totalTaps / 1000) + 1;
                 if (newLevel !== level) {
                     level = newLevel;
-                    levelText.innerText = "Lvl " + level;
-                    localStorage.setItem(REAL_PREFIX + 'level', level);
+                    document.getElementById('levelText').innerText = "Lvl " + level;
                 }
 
-                scoreElement.innerText = coins.toFixed(5);
-                energyText.innerText = energy + " / " + maxEnergy;
-
-                localStorage.setItem(REAL_PREFIX + 'coins', coins);
-                localStorage.setItem(REAL_PREFIX + 'energy', energy);
-                localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
-                
-                syncUserToGlobalStorage();
+                document.getElementById('score').innerText = coins.toFixed(5);
+                document.getElementById('energyText').innerText = energy + " / " + maxEnergy;
+                saveCurrentUserData();
 
                 const rect = tapBtn.getBoundingClientRect();
                 let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width / 2);
@@ -720,8 +866,8 @@
 
                 const floatingEl = document.createElement('div');
                 floatingEl.className = 'floating-score';
-                floatingEl.innerHTML = `@T_U_R_S_E <span style="color:#2ecc71;">+${clickReward.toFixed(5)}</span>`;
-                floatingEl.style.left = (clientX - rect.left - 40) + 'px';
+                floatingEl.innerHTML = `+${clickReward.toFixed(5)}`;
+                floatingEl.style.left = (clientX - rect.left - 20) + 'px';
                 floatingEl.style.top = (clientY - rect.top - 25) + 'px';
 
                 tapBtn.appendChild(floatingEl);
@@ -742,18 +888,13 @@
         function usePacket() {
             if (packets > 0) {
                 packets -= 1;
-                packetText.innerText = packets + " / 5";
-                localStorage.setItem(REAL_PREFIX + 'packets', packets);
-
+                document.getElementById('packetText').innerText = packets + " / 5";
                 energy = maxEnergy;
-                energyText.innerText = energy + " / " + maxEnergy;
-                localStorage.setItem(REAL_PREFIX + 'energy', energy);
+                document.getElementById('energyText').innerText = energy + " / " + maxEnergy;
+                saveCurrentUserData();
 
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                if (!isTimerRunning) {
-                    totalSeconds = (2 * 3600);
-                    startTimer();
-                }
+                if (!isTimerRunning) startTimer();
             } else {
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
@@ -768,26 +909,31 @@
                     let hours = Math.floor(totalSeconds / 3600);
                     let minutes = Math.floor((totalSeconds % 3600) / 60);
                     let seconds = totalSeconds % 60;
-                    timerText.innerText = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
-                    localStorage.setItem(REAL_PREFIX + 'timer', totalSeconds);
+                    document.getElementById('timerText').innerText = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
                 } else {
                     packets = 5;
-                    packetText.innerText = packets + " / 5";
-                    localStorage.setItem(REAL_PREFIX + 'packets', packets);
-                    localStorage.removeItem(REAL_PREFIX + 'timer');
+                    document.getElementById('packetText').innerText = packets + " / 5";
+                    saveCurrentUserData();
                     isTimerRunning = false;
                     clearInterval(timerInterval);
                 }
             }, 1000);
         }
-        if (packets < 5) { startTimer(); }
 
         function switchTab(screenId, event) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
             event.currentTarget.classList.add('active');
-            if (screenId === 'rankingScreen') { updateOnlineRanking(); }
+            if (screenId === 'rankingScreen') updateOnlineRanking();
+        }
+
+        function openProfileSettings() {
+            let loggedEmail = localStorage.getItem('fox_logged_user_email');
+            if (confirm("تە چەی خۆ دەرخەی (Logout) ژ هەژمارا خۆ؟")) {
+                localStorage.removeItem('fox_logged_user_email');
+                location.reload();
+            }
         }
     </script>
 </body>
