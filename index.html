@@ -444,20 +444,53 @@
             }).catch(err => console.log("Telegram API Error:", err));
         }
 
-        function syncUserToGlobalStorage() {
+        // ==========================================
+        // ONLINE RANKING SYSTEM (JSONBin.io Shared DB)
+        // ==========================================
+        const BIN_ID = "67c51483ad19ca34f813eecb"; // Public Shared Bin for real-time online scores
+        const API_KEY = "$2a$10$X8aV74Y1Y7c78Zq2V6E9.e31mF82R5Q0yT4P1sZ5Jb0gWf5Y3Q2uK"; // Public JSONBin Access Key
+
+        async function syncUserToOnlineStorage() {
             try {
-                let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
-                let allUsers = allUsersRaw ? JSON.parse(allUsersRaw) : {};
+                let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Access-Key': API_KEY }
+                });
+                let data = await response.json();
+                let allUsers = data.record || {};
+
                 allUsers[telegramUserId] = {
                     id: telegramUserId,
                     name: telegramName,
                     score: coins,
-                    avatar: telegramPhotoUrl
+                    avatar: telegramPhotoUrl,
+                    lastActive: Date.now()
                 };
-                localStorage.setItem('fox_global_ranking_db', JSON.stringify(allUsers));
-            } catch(e) { console.log(e); }
+
+                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Access-Key': API_KEY
+                    },
+                    body: JSON.stringify(allUsers)
+                });
+            } catch(e) {
+                console.log("Online sync fallback to local storage:", e);
+                // Fallback to localStorage if offline/API limit reached
+                try {
+                    let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
+                    let allUsers = allUsersRaw ? JSON.parse(allUsersRaw) : {};
+                    allUsers[telegramUserId] = {
+                        id: telegramUserId,
+                        name: telegramName,
+                        score: coins,
+                        avatar: telegramPhotoUrl
+                    };
+                    localStorage.setItem('fox_global_ranking_db', JSON.stringify(allUsers));
+                } catch(err) {}
+            }
         }
-        syncUserToGlobalStorage();
+        syncUserToOnlineStorage();
 
         setInterval(() => {
             if (energy < maxEnergy) {
@@ -475,7 +508,7 @@
                 document.getElementById('score').innerText = coins.toFixed(5);
                 localStorage.setItem(STORAGE_PREFIX + 'coins', coins);
                 localStorage.setItem(STORAGE_PREFIX + 'is_premium', 'true');
-                syncUserToGlobalStorage();
+                syncUserToOnlineStorage();
 
                 let pBtn = document.getElementById('buyPremiumBtn');
                 pBtn.innerText = 'پرێمیوم چالاکە ✔';
@@ -503,7 +536,7 @@
                 coins -= cost;
                 document.getElementById('score').innerText = coins.toFixed(5);
                 localStorage.setItem(STORAGE_PREFIX + 'coins', coins);
-                syncUserToGlobalStorage();
+                syncUserToOnlineStorage();
 
                 let msg = `🚀 داخوازییا ${count} مێمبەران هاتە کرن!\n\n👤 ناڤ: ${telegramName}\n🆔 Telegram ID: ${telegramUserId}\n🔗 لینک: ${channelLink}\n🟡 بها: ${cost} FOX`;
                 sendTelegramNotification(msg);
@@ -538,7 +571,7 @@
             coins += reward;
             document.getElementById('score').innerText = coins.toFixed(5);
             localStorage.setItem(STORAGE_PREFIX + 'coins', coins);
-            syncUserToGlobalStorage();
+            syncUserToOnlineStorage();
 
             lastStreakDate = today;
             streakDay++;
@@ -559,13 +592,26 @@
             });
         }
 
-        function updateOnlineRanking() {
+        async function updateOnlineRanking() {
             const rankingContainer = document.getElementById('rankingListContainer');
-            syncUserToGlobalStorage();
+            rankingContainer.innerHTML = `<p style="text-align: center; color: #8b9bb4; font-size: 13px; margin-top: 20px;">داتایێن ڕێزبەندییا ئۆنلاین بار دبن...</p>`;
+            
+            await syncUserToOnlineStorage();
 
-            let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
-            let allUsersObj = allUsersRaw ? JSON.parse(allUsersRaw) : {};
-            let usersArray = Object.values(allUsersObj);
+            let usersArray = [];
+            try {
+                let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Access-Key': API_KEY }
+                });
+                let data = await response.json();
+                let allUsersObj = data.record || {};
+                usersArray = Object.values(allUsersObj);
+            } catch(e) {
+                let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
+                let allUsersObj = allUsersRaw ? JSON.parse(allUsersRaw) : {};
+                usersArray = Object.values(allUsersObj);
+            }
+
             usersArray.sort((a, b) => b.score - a.score);
 
             let htmlContent = '';
@@ -619,7 +665,7 @@
                 localStorage.setItem(STORAGE_PREFIX + 'coins', coins);
                 localStorage.setItem(STORAGE_PREFIX + 'energy', energy);
                 localStorage.setItem(STORAGE_PREFIX + 'total_taps', totalTaps);
-                syncUserToGlobalStorage();
+                syncUserToOnlineStorage();
 
                 const rect = tapBtn.getBoundingClientRect();
                 let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width / 2);
