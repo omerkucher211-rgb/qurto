@@ -59,26 +59,10 @@
             background: linear-gradient(135deg, rgba(20, 25, 35, 0.9) 0%, rgba(35, 42, 60, 0.9) 100%);
             border: 1.5px solid #d4af37;
             border-radius: 14px;
-            padding: 7px 12px;
+            padding: 7px 14px;
             font-size: 13px;
             color: #d4af37;
             font-weight: bold;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
-        }
-
-        .sound-toggle-btn {
-            background: linear-gradient(135deg, rgba(20, 25, 35, 0.9) 0%, rgba(35, 42, 60, 0.9) 100%);
-            border: 1.5px solid #d4af37;
-            border-radius: 14px;
-            padding: 7px 12px;
-            font-size: 13px;
-            color: #d4af37;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: bold;
-            outline: none;
             box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
         }
 
@@ -86,10 +70,10 @@
             background: linear-gradient(135deg, rgba(20, 25, 35, 0.9) 0%, rgba(35, 42, 60, 0.9) 100%);
             border: 1.5px solid #d4af37;
             border-radius: 14px;
-            padding: 5px 10px;
+            padding: 5px 12px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
         }
@@ -167,7 +151,6 @@
             100% { opacity: 0; transform: translateY(-80px) scale(1); }
         }
 
-        /* --- دیزاینێ نوو و سەرنجڕاکێش بۆ کارتا پەکێت و ئینرجی --- */
         .info-card {
             background: linear-gradient(145deg, rgba(22, 28, 45, 0.85) 0%, rgba(12, 16, 26, 0.95) 100%);
             border: 1.5px solid rgba(212, 175, 55, 0.35);
@@ -296,41 +279,12 @@
 </head>
 <body>
 
-    <audio id="bgMusic" loop preload="auto">
-        <source src="abdulqahar_zakhoee.mp3" type="audio/mpeg">
-    </audio>
-
-    <script>
-        let isMusicPlaying = false;
-        function toggleMusic() {
-            let music = document.getElementById('bgMusic');
-            let btn = document.getElementById('soundToggleBtn');
-            if (isMusicPlaying) {
-                music.pause();
-                isMusicPlaying = false;
-                btn.innerHTML = '🔇 OFF';
-                btn.style.borderColor = '#d4af37';
-                btn.style.color = '#d4af37';
-            } else {
-                music.play().then(() => {
-                    isMusicPlaying = true;
-                    btn.innerHTML = '🎵 ON';
-                    btn.style.borderColor = '#2ecc71';
-                    btn.style.color = '#2ecc71';
-                }).catch(e => console.log("Audio play blocked:", e));
-            }
-        }
-    </script>
-
     <div class="game-container">
         <!-- Header -->
         <div class="header">
             <div class="coin-balance">
                 🟡 <span id="score">0.00000</span>
             </div>
-            <button class="sound-toggle-btn" id="soundToggleBtn" onclick="toggleMusic()">
-                🔇 OFF
-            </button>
             <div class="user-level" id="profileHeaderBtn" onclick="openProfileSettings()">
                 <div style="text-align: right;">
                     <div style="font-size: 11px; font-weight: bold;" id="userNameText">FOX Player</div>
@@ -348,7 +302,6 @@
                 <img src="logo1.jpg" alt="FOX Coin">
             </div>
 
-            <!-- دیزاینێ نوو و سەرنجڕاکێش (Redesigned Info Card) -->
             <div class="info-card">
                 <div class="info-row">
                     <span style="color: #b0c4de;">📦 پەکیتا چالاک</span>
@@ -371,7 +324,6 @@
         <div id="shopScreen" class="screen" style="align-items: center; justify-content: flex-start; gap: 10px;">
             <h3 style="color: #d4af37; margin-bottom: 5px;">🛒 دووکانێ و بۆوێستەر</h3>
 
-            <!-- Premium Package -->
             <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(18, 22, 33, 0.95) 100%); border: 2px solid #d4af37; border-radius: 15px; width: 100%; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
                 <h4 style="font-size: 14px; color: #d4af37;">⭐ پەکەتا پرێمیوم (2x Tap)</h4>
                 <p style="font-size: 11px; color: #b0c4de; text-align: center;">تەپ تەپای تە دکەتە دوو هێندە!</p>
@@ -379,27 +331,24 @@
                 <button id="buyPremiumBtn" onclick="buyPremium()" style="background-color: #f39c12; color: white; border: none; border-radius: 8px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%;">کڕینا پرێمیوم ✨</button>
             </div>
 
-            <!-- Multitap Upgrade -->
             <div class="section-box">
                 <h4 style="font-size: 13px; color: #fff;">بەرزکرنا ئاستێ کلیکی (Multitap)</h4>
                 <p style="font-size: 11px; color: #8b9bb4;">ئاستی هەنووکەیی: <span id="multitapLevelText">1</span></p>
                 <button onclick="upgradeMultitap()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 7px; font-size: 11px; font-weight: bold; cursor: pointer;">بهایێ بەرزکرنێ: 0.50 FOX 🟡</button>
             </div>
 
-            <!-- 500 Members -->
+            <div class="section-box">
+                <h4 style="font-size: 13px; color: #fff;">👥 100 مێمبەر بۆ کەناڵی (1 کوین)</h4>
+                <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: 1.00 FOX 🟡</p>
+                <input type="text" id="link100" placeholder="لینکێ کەناڵی لێرە بنڤیسە..." style="width: 100%; padding: 7px; border-radius: 6px; border: 1px solid #d4af37; background-color: rgba(11, 15, 25, 0.9); color: #fff; font-size: 11px; text-align: right; outline: none;">
+                <button onclick="buyMembers(100, 1.0, 'link100')" style="background-color: #2ecc71; color: white; border: none; border-radius: 8px; padding: 7px; font-size: 11px; font-weight: bold; cursor: pointer;">کڕینا 100 مێمبەران 🚀</button>
+            </div>
+
             <div class="section-box">
                 <h4 style="font-size: 13px; color: #fff;">👥 500 مێمبەر بۆ کەناڵی (5 کوین)</h4>
                 <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: 5.00 FOX 🟡</p>
                 <input type="text" id="link500" placeholder="لینکێ کەناڵی لێرە بنڤیسە..." style="width: 100%; padding: 7px; border-radius: 6px; border: 1px solid #d4af37; background-color: rgba(11, 15, 25, 0.9); color: #fff; font-size: 11px; text-align: right; outline: none;">
                 <button onclick="buyMembers(500, 5.0, 'link500')" style="background-color: #2ecc71; color: white; border: none; border-radius: 8px; padding: 7px; font-size: 11px; font-weight: bold; cursor: pointer;">کڕینا 500 مێمبەران 🚀</button>
-            </div>
-
-            <!-- 1000 Members -->
-            <div class="section-box">
-                <h4 style="font-size: 13px; color: #fff;">👥 1000 مێمبەر بۆ کەناڵی (10 کوین)</h4>
-                <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: 10.00 FOX 🟡</p>
-                <input type="text" id="link1000" placeholder="لینکێ کەناڵی لێرە بنڤیسە..." style="width: 100%; padding: 7px; border-radius: 6px; border: 1px solid #d4af37; background-color: rgba(11, 15, 25, 0.9); color: #fff; font-size: 11px; text-align: right; outline: none;">
-                <button onclick="buyMembers(1000, 10.0, 'link1000')" style="background-color: #2ecc71; color: white; border: none; border-radius: 8px; padding: 7px; font-size: 11px; font-weight: bold; cursor: pointer;">کڕینا 1000 مێمبەران 🚀</button>
             </div>
         </div>
 
