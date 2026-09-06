@@ -330,12 +330,6 @@
             </div>
 
             <div class="section-box">
-                <h4 style="font-size: 13px; color: #fff;">بەرزکرنا ئاستێ کلیکی (Multitap)</h4>
-                <p style="font-size: 11px; color: #8b9bb4;">ئاستی هەنووکەیی: <span id="multitapLevelText">1</span></p>
-                <button onclick="upgradeMultitap()" style="background-color: #3498db; color: white; border: none; border-radius: 8px; padding: 7px; font-size: 11px; font-weight: bold; cursor: pointer;">بهایێ بەرزکرنێ: 0.50 FOX 🟡</button>
-            </div>
-
-            <div class="section-box">
                 <h4 style="font-size: 13px; color: #fff;">👥 100 مێمبەر بۆ کەناڵی (1 کوین)</h4>
                 <p style="font-size: 11px; color: #d4af37; font-weight: bold;">بهایێ: 1.00 FOX 🟡</p>
                 <input type="text" id="link100" placeholder="لینکێ کەناڵی لێرە بنڤیسە..." style="width: 100%; padding: 7px; border-radius: 6px; border: 1px solid #d4af37; background-color: rgba(11, 15, 25, 0.9); color: #fff; font-size: 11px; text-align: right; outline: none;">
@@ -415,14 +409,13 @@
         if (isNaN(coins)) { coins = 1.00000; localStorage.setItem(STORAGE_PREFIX + 'coins', coins); }
 
         let energy = localStorage.getItem(STORAGE_PREFIX + 'energy') !== null ? parseInt(localStorage.getItem(STORAGE_PREFIX + 'energy')) : 500;
-        let maxEnergy = parseInt(localStorage.getItem(STORAGE_PREFIX + 'max_energy')) || 500;
+        let maxEnergy = 500;
         let level = parseInt(localStorage.getItem(STORAGE_PREFIX + 'level')) || 1;
         let totalTaps = parseInt(localStorage.getItem(STORAGE_PREFIX + 'total_taps')) || 0;
         let packets = localStorage.getItem(STORAGE_PREFIX + 'packets') !== null ? parseInt(localStorage.getItem(STORAGE_PREFIX + 'packets')) : 4;
         let totalSeconds = localStorage.getItem(STORAGE_PREFIX + 'timer') ? parseInt(localStorage.getItem(STORAGE_PREFIX + 'timer')) : 7200;
         let isTimerRunning = false;
         let isPremium = localStorage.getItem(STORAGE_PREFIX + 'is_premium') === 'true';
-        let multitapLevel = parseInt(localStorage.getItem(STORAGE_PREFIX + 'multitap_level')) || 1;
         let lastStreakDate = localStorage.getItem(STORAGE_PREFIX + 'last_streak_date') || '';
         let streakDay = parseInt(localStorage.getItem(STORAGE_PREFIX + 'streak_day')) || 1;
 
@@ -431,7 +424,6 @@
         document.getElementById('levelText').innerText = "Lvl " + level;
         document.getElementById('energyText').innerText = energy + " / " + maxEnergy;
         document.getElementById('packetText').innerText = packets + " / 5";
-        document.getElementById('multitapLevelText').innerText = multitapLevel;
 
         if (isPremium) {
             let pBtn = document.getElementById('buyPremiumBtn');
@@ -497,29 +489,6 @@
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
                 alert('کوینێن تە بەس نینن! 🟡');
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-            }
-        }
-
-        function upgradeMultitap() {
-            let cost = 0.50;
-            if (coins >= cost) {
-                coins -= cost;
-                multitapLevel++;
-                maxEnergy += 100;
-                document.getElementById('score').innerText = coins.toFixed(5);
-                document.getElementById('energyText').innerText = energy + " / " + maxEnergy;
-                document.getElementById('multitapLevelText').innerText = multitapLevel;
-
-                localStorage.setItem(STORAGE_PREFIX + 'coins', coins);
-                localStorage.setItem(STORAGE_PREFIX + 'multitap_level', multitapLevel);
-                localStorage.setItem(STORAGE_PREFIX + 'max_energy', maxEnergy);
-                syncUserToGlobalStorage();
-
-                alert('پیرۆزە! ئاستێ کلیکی بلندا بوو بۆ لڤل ' + multitapLevel);
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                alert('کوینێن تە بەس نینن بۆ ڤی بووستەری! 🟡');
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
         }
@@ -629,11 +598,11 @@
         const tapBtn = document.getElementById('tapBtn');
         function handleTapAction(e) {
             if (energy > 0) {
-                let consumeEnergy = Math.min(energy, multitapLevel);
+                let consumeEnergy = 1;
                 energy -= consumeEnergy;
                 totalTaps += consumeEnergy;
 
-                let baseReward = 0.00001 * multitapLevel;
+                let baseReward = 0.00001;
                 let clickReward = isPremium ? baseReward * 2 : baseReward;
                 coins += clickReward;
 
